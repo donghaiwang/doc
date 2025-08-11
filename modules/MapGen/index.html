@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>CityMapMeshHolder 模块说明文档 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "CityMapMeshHolder \u6a21\u5757\u8bf4\u660e\u6587\u6863";
+        var mkdocs_page_input_path = "modules/MapGen.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">CityMapMeshHolder 模块说明文档</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/MapGen.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="citymapmeshholder">CityMapMeshHolder 模块说明文档</h1>
+<h2 id="_1">概述</h2>
+<p>本模块为虚幻引擎 HUTB 项目提供城市道路网格实例化管理功能，主要负责道路网格的生成、更新和销毁操作。核心类ACityMapMeshHolder继承自AActor，包含网格实例化、坐标转换、资源管理等功能，支持编辑器环境下的实时更新。</p>
+<h2 id="_2">核心功能架构</h2>
+<pre class="mermaid"><code>graph LR
+
+    A[ACityMapMeshHolder] --&gt; B[组件管理]
+    A --&gt; C[实例生成]
+    A --&gt; D[坐标转换]
+    A --&gt; E[资源管理]
+    B --&gt; B1[场景根组件]
+    B --&gt; B2[静态网格组件]
+    C --&gt; C1[AddInstance]
+    C --&gt; C2[DeletePieces]
+    D --&gt; D1[GetTileLocation]
+    E --&gt; E1[Tag映射系统]
+    E --&gt; E2[比例尺计算]
+
+</code></pre>
+<h2 id="_3">核心方法说明</h2>
+<h3 id="1">1. 构造函数</h3>
+<p>ACityMapMeshHolder::ACityMapMeshHolder(const FObjectInitializer&amp; ObjectInitializer)</p>
+<ul>
+<li>
+<p>初始化流程
+<div class="highlight"><pre><span></span><code>创建静态场景根组件（Mobility<span class="o">=</span>Static）
+
+预初始化所有标签类型的静态网格容器
+
+禁用Actor<span class="w"> </span>Tick功能
+</code></pre></div></p>
+</li>
+<li>
+<p>关键参数
+<div class="highlight"><pre><span></span><code>ObjectInitializer：虚幻引擎对象初始化器
+
+NUMBER_OF_TAGS：通过CityMapMeshTag::GetNumberOfTags<span class="o">()</span>获取标签总数
+</code></pre></div></p>
+</li>
+</ul>
+<h3 id="2-postinitializecomponents">2. PostInitializeComponents</h3>
+<p>void ACityMapMeshHolder::PostInitializeComponents()
+* 运行时逻辑</p>
+<p>检查当前关卡有效性</p>
+<p>检测附加道路部件是否存在</p>
+<p>自动触发地图生成流程（当无附加部件时）</p>
+<ul>
+<li>错误处理</li>
+</ul>
+<p>输出错误日志：Please regenerate the road in edit mode...</p>
+<h3 id="3-addinstance">3. AddInstance 方法组</h3>
+<div class="highlight"><pre><span></span><code>基础版本
+void<span class="w"> </span>AddInstance<span class="o">(</span>ECityMapMeshTag<span class="w"> </span>Tag,<span class="w"> </span>uint32<span class="w"> </span>X,<span class="w"> </span>uint32<span class="w"> </span>Y<span class="o">)</span>
+使用默认旋转创建实例
+
+旋转版本
+void<span class="w"> </span>AddInstance<span class="o">(</span>ECityMapMeshTag<span class="w"> </span>Tag,<span class="w"> </span>uint32<span class="w"> </span>X,<span class="w"> </span>uint32<span class="w"> </span>Y,<span class="w"> </span>float<span class="w"> </span>Angle<span class="o">)</span>
+Z轴旋转角度参数（弧度制）
+
+高级版本
+void<span class="w"> </span>AddInstance<span class="o">(</span>ECityMapMeshTag<span class="w"> </span>Tag,<span class="w"> </span>FTransform<span class="w"> </span>Transform<span class="o">)</span>
+实例生成流程
+配置生成参数：ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+
+生成AStaticMeshActor
+
+设置静态属性：Mobility<span class="o">=</span>Static
+
+附加道路标签：UCarlaSettings::CARLA_ROAD_TAG
+</code></pre></div>
+<h3 id="4-deletepieces">4. DeletePieces</h3>
+<div class="highlight"><pre><span></span><code>void<span class="w"> </span>ACityMapMeshHolder::DeletePieces<span class="o">()</span>
+清理操作
+销毁所有UInstancedStaticMeshComponent组件
+
+遍历并销毁带CARLA_ROAD_TAG标签的附加Actor
+</code></pre></div>
+<p>设计特点
+<div class="highlight"><pre><span></span><code>逆向遍历删除确保索引安全
+//<span class="w"> </span>示例1：传统数组遍历
+<span class="k">for</span><span class="o">(</span>int32<span class="w"> </span><span class="nv">i</span><span class="o">=</span><span class="m">0</span><span class="p">;</span><span class="w"> </span>i&lt;oldcomponents.Num<span class="o">()</span><span class="p">;</span><span class="w"> </span>i++<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span>oldcomponents<span class="o">[</span>i<span class="o">]</span>-&gt;DestroyComponent<span class="o">()</span><span class="p">;</span>
+<span class="o">}</span>
+
+//<span class="w"> </span>示例2：逆向遍历删除
+<span class="k">for</span><span class="o">(</span>int32<span class="w"> </span><span class="nv">i</span><span class="o">=</span>roadpieces.Num<span class="o">()</span>-1<span class="p">;</span><span class="w"> </span>i&gt;<span class="o">=</span><span class="m">0</span><span class="p">;</span><span class="w"> </span>i--<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="k">if</span><span class="o">(</span>roadpieces<span class="o">[</span>i<span class="o">]</span>-&gt;ActorHasTag<span class="o">(</span>...<span class="o">))</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>roadpieces<span class="o">[</span>i<span class="o">]</span>-&gt;Destroy<span class="o">()</span><span class="p">;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></p>
+<h3 id="_4">存在的问题</h3>
+<ul>
+<li>
+<p>索引管理复杂：需要手动控制索引范围，易出现越界</p>
+</li>
+<li>
+<p>逆向遍历不直观：i--方式不符合自然阅读顺序</p>
+</li>
+<li>
+<p>空指针风险：未检查数组元素有效性</p>
+</li>
+<li>
+<p>删除元素后迭代器失效：直接删除元素可能导致后续索引错位</p>
+</li>
+</ul>
+<h3 id="_5">改进方案与分步讲解</h3>
+<p>优化目标</p>
+<ul>
+<li>
+<p>提高代码可读性</p>
+</li>
+<li>
+<p>增强空指针安全性</p>
+</li>
+<li>
+<p>避免迭代器失效</p>
+</li>
+<li>
+<p>利用现代C++特性</p>
+</li>
+</ul>
+<h3 id="1for">改进示例1：范围for循环</h3>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>原始代码
+<span class="k">for</span><span class="o">(</span>int32<span class="w"> </span><span class="nv">i</span><span class="o">=</span><span class="m">0</span><span class="p">;</span><span class="w"> </span>i&lt;oldcomponents.Num<span class="o">()</span><span class="p">;</span><span class="w"> </span>i++<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span>oldcomponents<span class="o">[</span>i<span class="o">]</span>-&gt;DestroyComponent<span class="o">()</span><span class="p">;</span>
+<span class="o">}</span>
+
+//<span class="w"> </span>改进代码
+<span class="k">for</span><span class="w"> </span><span class="o">(</span>UInstancedStaticMeshComponent*<span class="w"> </span>Component<span class="w"> </span>:<span class="w"> </span>oldcomponents<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">(</span>IsValid<span class="o">(</span>Component<span class="o">))</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>Component-&gt;DestroyComponent<span class="o">()</span><span class="p">;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<p>优化点 说明
+消除索引变量  使用范围for循环自动处理迭代
+自动类型推导  使用auto/具体类型避免冗余类型声明
+空指针检查   添加IsValid()安全检查
+更清晰的语义  直接表达"遍历所有元素"的意图</p>
+<h3 id="5-updatemapscale">5. UpdateMapScale</h3>
+<p>void ACityMapMeshHolder::UpdateMapScale()
+比例计算规则
+获取基础网格标签对应的静态网格</p>
+<p>使用网格包围盒X轴尺寸作为地图比例基准</p>
+<p>错误回退机制：比例设为1.0f</p>
+<p>依赖关系
+需要正确配置CityMapMeshTag::GetBaseMeshTag()对应的网格资源</p>
+<p>编辑器集成
+PostEditChangeProperty
+void ACityMapMeshHolder::PostEditChangeProperty(FPropertyChangedEvent&amp;)
+编辑响应流程
+删除现有部件</p>
+<p>重新计算比例尺</p>
+<p>触发地图更新</p>
+<p>条件编译
+仅在WITH_EDITOR宏定义时生效</p>
+<p>坐标系统
+GetTileLocation
+FVector GetTileLocation(uint32 X, uint32 Y) const
+转换公式
+复制
+WorldLocation = (X * MapScale, Y * MapScale, 0.0f)
+设计规范
+Z轴固定为地面层</p>
+<p>使用浮点精度计算避免累积误差</p>
+<p>数据管理
+Tag映射系统
+方法  功能
+SetStaticMesh   建立Mesh-Tag双向映射
+GetTag  通过Mesh反向查询标签
+TagMap  内部维护的映射表
+特性
+支持动态更新映射关系</p>
+<p>自动处理空指针情况</p>
+<p>使用示例</p>
+<p>典型工作流
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>初始化生成器
+ACityMapMeshHolder*<span class="w"> </span><span class="nv">Holder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>...<span class="p">;</span>
+
+//<span class="w"> </span>生成十字路口
+Holder-&gt;AddInstance<span class="o">(</span>RoadIntersection,<span class="w"> </span><span class="m">5</span>,<span class="w"> </span><span class="m">5</span><span class="o">)</span><span class="p">;</span>
+Holder-&gt;AddInstance<span class="o">(</span>RoadTwoLanes,<span class="w"> </span><span class="m">5</span>,<span class="w"> </span><span class="m">6</span>,<span class="w"> </span>PI/2<span class="o">)</span><span class="p">;</span>
+Holder-&gt;AddInstance<span class="o">(</span>RoadTwoLanes,<span class="w"> </span><span class="m">5</span>,<span class="w"> </span><span class="m">4</span>,<span class="w"> </span>PI/2<span class="o">)</span><span class="p">;</span>
+
+//<span class="w"> </span>批量生成道路
+<span class="k">for</span><span class="o">(</span>int<span class="w"> </span><span class="nv">i</span><span class="o">=</span><span class="m">0</span><span class="p">;</span><span class="w"> </span>i&lt;<span class="m">10</span><span class="p">;</span><span class="w"> </span>++i<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span>Holder-&gt;AddInstance<span class="o">(</span>RoadFourLanes,<span class="w"> </span>i,<span class="w"> </span><span class="m">3</span><span class="o">)</span><span class="p">;</span>
+<span class="o">}</span>
+//<span class="w"> </span>编辑器属性更新后自动触发重建
+</code></pre></div></p>
+<p>性能优化建议</p>
+<p>实例合并：替换为InstancedStaticMeshComponent提升渲染效率</p>
+<p>空间分区：实现基于位置的网格加载/卸载</p>
+<p>异步生成：复杂地图采用分帧生成策略</p>
+<p>资源池：复用已生成的静态网格Actor</p>
+<p>调试技巧
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>打印当前地图信息
+UE_LOG<span class="o">(</span>LogCarla,<span class="w"> </span>Display,<span class="w"> </span>TEXT<span class="o">(</span><span class="s2">&quot;MapScale: %.2f&quot;</span><span class="o">)</span>,<span class="w"> </span>MapScale<span class="o">)</span><span class="p">;</span>
+
+//<span class="w"> </span>可视化调试
+DrawDebugBox<span class="o">(</span>GetWorld<span class="o">()</span>,<span class="w"> </span>GetTileLocation<span class="o">(</span>X,Y<span class="o">)</span>,<span class="w"> </span>FVector<span class="o">(</span>MapScale/2<span class="o">)</span>,<span class="w"> </span>FColor::Green<span class="o">)</span><span class="p">;</span>
+自定义标签系统
+继承ECityMapMeshTag扩展新类型
+重写GetNumberOfTags<span class="o">()</span>返回总数
+实现对应的SetStaticMesh配置
+
+坐标系统扩展
+//<span class="w"> </span>支持Z轴高度
+FVector<span class="w"> </span>GetTileLocation3D<span class="o">(</span>uint32<span class="w"> </span>X,<span class="w"> </span>uint32<span class="w"> </span>Y,<span class="w"> </span>float<span class="w"> </span>Z<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">{</span>X*MapScale,<span class="w"> </span>Y*MapScale,<span class="w"> </span>Z<span class="o">}</span><span class="p">;</span>
+<span class="o">}</span>
+</code></pre></div></p>
+<h1 id="citymapmeshtag">CityMapMeshTag 模块说明文档</h1>
+<h2 id="_6">概述</h2>
+<p>本模块为虚幻引擎（Unreal Engine）的Carla项目提供城市道路网格标签处理功能，包含基础标签获取、交叉路口尺寸定义以及枚举标签转字符串功能。所有定义均在 CityMapMeshTag 命名空间下。</p>
+<h2 id="_7">函数说明</h2>
+<h3 id="1-getbasemeshtag">1. GetBaseMeshTag</h3>
+<div class="highlight"><pre><span></span><code>ECityMapMeshTag<span class="w"> </span>CityMapMeshTag::GetBaseMeshTag<span class="o">()</span>
+功能
+获取基础道路网格标签类型
+
+返回值
+ECityMapMeshTag::RoadTwoLanes_LaneLeft<span class="w"> </span>-<span class="w"> </span>表示默认的双车道左车道道路类型
+</code></pre></div>
+<p>典型用途
+初始化道路生成系统时作为默认道路配置</p>
+<p>道路网络生成的基准参考类型</p>
+<h3 id="2-getroadintersectionsize">2. GetRoadIntersectionSize</h3>
+<div class="highlight"><pre><span></span><code>uint32<span class="w"> </span>CityMapMeshTag::GetRoadIntersectionSize<span class="o">()</span>
+功能
+获取道路交叉口的基准尺寸
+
+返回值
+5u<span class="w"> </span><span class="o">(</span>uint32类型<span class="o">)</span><span class="w"> </span>-<span class="w"> </span>表示交叉口的边长尺寸（单位需根据项目约定，通常为米）
+</code></pre></div>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>该值可能对应交叉路口地面网格的边长参数</p>
+<p>用于生成标准十字路口的尺寸计算</p>
+</div>
+<h3 id="3-tostring">3. ToString</h3>
+<div class="highlight"><pre><span></span><code>FString<span class="w"> </span>CityMapMeshTag::ToString<span class="o">(</span>ECityMapMeshTag<span class="w"> </span>Tag<span class="o">)</span>
+功能
+将枚举标签转换为可读字符串
+
+参数
+Tag<span class="w"> </span><span class="o">(</span>ECityMapMeshTag<span class="o">)</span><span class="w"> </span>-<span class="w"> </span>需要转换的道路网格枚举标签
+
+返回值
+对应枚举值的字符串名称
+
+若枚举类型未找到则返回<span class="w"> </span><span class="s2">&quot;Invalid&quot;</span>
+</code></pre></div>
+<p>实现细节</p>
+<ul>
+<li>
+<p>使用 FindObject 在内存中查找 ECityMapMeshTag 枚举类型</p>
+</li>
+<li>
+<p>通过虚幻引擎的反射系统获取枚举值的字符串表示</p>
+</li>
+<li>
+<p>包含错误处理机制，确保非法枚举值的容错性</p>
+</li>
+</ul>
+<p>典型用途</p>
+<ul>
+<li>
+<p>调试时输出可读的标签信息</p>
+</li>
+<li>
+<p>日志记录时保存枚举类型信息</p>
+</li>
+<li>
+<p>可视化界面显示标签类型</p>
+</li>
+</ul>
+<h2 id="_8">使用示例</h2>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>获取基础道路标签
+ECityMapMeshTag<span class="w"> </span><span class="nv">BaseTag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>CityMapMeshTag::GetBaseMeshTag<span class="o">()</span><span class="p">;</span>
+
+//<span class="w"> </span>获取交叉口尺寸参数
+uint32<span class="w"> </span><span class="nv">IntersectionSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>CityMapMeshTag::GetRoadIntersectionSize<span class="o">()</span><span class="p">;</span>
+
+//<span class="w"> </span>枚举值转字符串
+FString<span class="w"> </span><span class="nv">TagName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>CityMapMeshTag::ToString<span class="o">(</span>ECityMapMeshTag::RoadFourLanes_LaneLeft<span class="o">)</span><span class="p">;</span>
+//<span class="w"> </span>输出结果：<span class="s2">&quot;RoadFourLanes_LaneLeft&quot;</span>
+</code></pre></div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>实例分割传感器 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u5b9e\u4f8b\u5206\u5272\u4f20\u611f\u5668";
+        var mkdocs_page_input_path = "tuto_G_instance_segmentation_sensor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">实例分割传感器</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/tuto_G_instance_segmentation_sensor.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">实例分割传感器</h1>
+<p><strong>实例分割(Instance segmentation)</strong> 相机是一种新型相机传感器，可为场景中的每个对象生成唯一的像素值。这与语义分割传感器形成对比，语义分割传感器对于相同对象类的实例（例如车辆）具有相同的 ID。</p>
+<p>要生成语义分割相机，我们需要<code>sensor.camera.instance_segmentation</code>蓝图：</p>
+<div class="highlight"><pre><span></span><code><span class="n">instance_camera_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;sensor.camera.instance_segmentation&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h1 id="_2">示例</h1>
+<p>我们将首先设置一个带有实例分割相机的世界，并在场景中生成大量车辆。</p>
+<p>连接到服务器并设置为同步模式。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">carla</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+
+<span class="c1"># 连接到客户端并将Carla服务器设置为同步模式</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_world</span><span class="p">()</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_settings</span><span class="p">()</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">synchronous_mode</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">world</span><span class="o">.</span><span class="n">apply_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span> 
+</code></pre></div>
+<p>设置实例分割传感器并将其生成在所需的地图位置。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 获得地图的生成点和观察者</span>
+<span class="n">spawn_points</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span><span class="o">.</span><span class="n">get_spawn_points</span><span class="p">()</span>
+<span class="n">spectator</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_spectator</span><span class="p">()</span>
+
+<span class="c1"># 在地图上某些位置设置相机</span>
+<span class="n">cam_location</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mf">46.</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">152</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">cam_rotation</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">pitch</span><span class="o">=-</span><span class="mi">21</span><span class="p">,</span> <span class="n">yaw</span><span class="o">=-</span><span class="mf">93.4</span><span class="p">,</span> <span class="n">roll</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">camera_transform</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">cam_location</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">cam_rotation</span><span class="p">)</span>
+<span class="n">spectator</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">camera_transform</span><span class="p">)</span>
+
+<span class="c1"># 获取语义相机蓝图和生成相机</span>
+<span class="n">instance_camera_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;sensor.camera.instance_segmentation&#39;</span><span class="p">)</span>
+<span class="n">instance_camera</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">try_spawn_actor</span><span class="p">(</span><span class="n">instance_camera_bp</span><span class="p">,</span> <span class="n">camera_transform</span><span class="p">)</span>
+</code></pre></div>
+<p>在摄像机周围生成车辆，用大量对象实例填充场景。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 在相机周围80米内生成车辆</span>
+<span class="n">vehicle_bp_library</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;*vehicle*&#39;</span><span class="p">)</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="k">for</span> <span class="n">spawn_point</span> <span class="ow">in</span> <span class="n">spawn_points</span><span class="p">:</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">spawn_point</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">cam_location</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">spawn_point</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">cam_location</span><span class="o">.</span><span class="n">y</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="o">*</span><span class="n">radius</span><span class="p">:</span>
+        <span class="n">world</span><span class="o">.</span><span class="n">try_spawn_actor</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">vehicle_bp_library</span><span class="p">),</span> <span class="n">spawn_point</span><span class="p">)</span>
+<span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+</code></pre></div>
+<p>现在生成图像。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 将图片保存到磁盘</span>
+<span class="n">instance_image_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">instance_camera</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">instance_image_queue</span><span class="o">.</span><span class="n">put</span><span class="p">)</span>
+<span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="n">instance_image</span><span class="o">=</span><span class="n">instance_image_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="n">instance_image</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="s1">&#39;instance_segmentation.png&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="_3">图像输出</h2>
+<p>保存到磁盘的实例分割图像的实例 ID 编码在 RGB 图像文件的 G 和 B 通道中。R通道包含标准语义ID。</p>
+<p><img alt="instance_segmentation" src="../img/instance_segmentation.png" /></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

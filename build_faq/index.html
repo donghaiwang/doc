@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>常问的问题 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u5e38\u95ee\u7684\u95ee\u9898";
+        var mkdocs_page_input_path = "build_faq.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">常问的问题</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/build_faq.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">常问的问题</h1>
+<p>此处列出了有关 Carla 安装和构建的一些最常见问题。更多信息可以在该项目的 <a href="https://github.com/carla-simulator/carla/issues?utf8=%E2%9C%93&amp;q=label%3Aquestion+">GitHub issues</a> 找到。如果您没有发现此处列出的疑问，请查看论坛并随时提问。</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="跳转至 Carla 论坛">
+Carla 论坛</a>
+</p>
+</div>
+
+<hr />
+<h2 id="_2">专业问题</h2>
+<ul>
+<li><a href="../faq/sensor/">传感器</a></li>
+<li><a href="../faq/dynamics/">动力学</a></li>
+</ul>
+<h2 id="_3">系统要求</h2>
+<ul>
+<li><a href="#expected-disk-space-to-build-carla">构建 Carla 所需的磁盘空间。</a></li>
+<li><a href="#recommended-hardware-to-run-carla">运行 Carla 的推荐硬件。</a></li>
+</ul>
+<hr />
+<h2 id="linux">Linux 构建</h2>
+<ul>
+<li><a href="#carlaue4sh-script-does-not-appear-when-downloading-from-github">从 GitHub 下载时不会出现“CarlaUE4.sh”脚本。</a></li>
+<li><a href="#make-launch-is-not-working-on-linux">“make launch” 在 Linux 上不起作用。</a></li>
+<li><a href="#cloning-the-unreal-engine-repository-shows-an-error">克隆虚幻引擎存储库显示错误。</a></li>
+<li><a href="#attributeerror-module-carla-has-no-attribute-client-when-running-a-script">AttributeError: module 'carla' has no attribute 'Client' when running a script.</a></li>
+<li><a href="#cannot-run-example-scripts-or-runtimeerror-rpcrpc_error-during-call-in-function-version">无法运行示例脚本或 "RuntimeError: rpc::rpc_error during call in function version".</a></li>
+</ul>
+<hr />
+<h2 id="windows">Windows 构建</h2>
+<ul>
+<li><a href="#carlaue4exe-does-not-appear-when-downloading-from-github">从 GitHub 下载时不会出现“CarlaUE4.exe”。</a></li>
+<li><a href="#carlaue4-could-not-be-compiled-try-rebuilding-it-from-source-manually">CarlaUE4 无法编译。尝试从源手动重建它。</a></li>
+<li><a href="#cmake-error-shows-even-though-cmake-is-properly-installed">即使 CMake 已正确安装，也会显示 CMake 错误。</a></li>
+<li><a href="#error-c2440-c2672-compiler-version">Error C2440, C2672：编译器版本。</a></li>
+<li><a href="#make-launch-is-not-working-on-windows">“make launch”在 Windows 上不起作用。</a></li>
+<li><a href="#make-is-missing-libintl3dll-orand-libiconv2dll">Make 缺少 libintl3.dll 或/和 libiconv2.dll。</a></li>
+<li><a href="#modules-are-missing-or-built-with-a-different-engine-version">模块缺失或使用不同的引擎版本构建。</a></li>
+<li><a href="#there-is-no-dist-folder-in-pythonapicarla-despite-a-successful-output-message">在 <code>PythonAPI/carla</code> 中尽管成功输出消息，但没有<code>dist</code>文件夹</a></li>
+<li><a href="#osm2odr_is_null">osm2odr-visualstudio为空，或者拷贝过去的目录不对</a></li>
+<li><a href="#type_conversion_error">类型转换不对</a></li>
+<li><a href="#link_osm2odr_failed">链接不到osm2odr.lib</a></li>
+<li><a href="#heap_lack">编译器的堆空间不足</a></li>
+</ul>
+<hr />
+<h2 id="openhutb">编译 OpenHUTB 分支</h2>
+<h3 id="make-lanunch-args-chrono">make lanunch ARGS="--chrono"报错</h3>
+<div class="highlight"><pre><span></span><code>D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(219): error C2653: “CubemapHelpersFisheye”: 不是类或命名空间名称
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(279): note: 查看对正在编译的函数 模板 实例化“void AFisheyeSensor::SendPixelsInRenderThread&lt;AFisheyeSensor&gt;(TSensor &amp;,float,float,float,float,float,float,float,float,float,float,float)”的引用
+      with
+      [
+          TSensor=AFisheyeSensor
+      ]
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(219): error C2065: “FFisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(219): error C2146: 语法错误: 缺少“;”(在标识符“FisheyeParams”的前面)
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(219): error C2065: “FisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(221): error C2065: “FisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(223): error C2065: “FisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(225): error C2065: “FisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(227): error C2065: “FisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(229): error C2653: “CubemapHelpersFisheye”: 不是类或命名空间名称
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(229): error C2065: “FisheyeParams”: 未声明的标识符
+D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp(229): error C3861: “GenerateLongLatUnwrapFisheye”: 找不到标识符
+</code></pre></div>
+<blockquote>
+<p>因为鱼眼相机需要修改虚幻引擎中的代码，需要同步更新 <a href="https://github.com/OpenHUTB/engine">引擎仓库</a> hutb 分支中的代码。</p>
+</blockquote>
+<hr />
+<h2 id="carla">运行 Carla</h2>
+<ul>
+<li><a href="#load_libraries">运行Carla_0.9.12.sh时候报错：error while loading shared libraries: libomp.so.5</a></li>
+<li><a href="#low-fps-rate-when-running-the-server-in-unreal-editor">在虚幻编辑器中运行服务器时 FPS 速率较低。</a></li>
+<li><a href="#cant-run-a-script">无法运行脚本。</a></li>
+<li><a href="#connect-to-the-simulator-while-running-within-unreal-editor">当在虚幻编辑器中运行时链接到模拟器。</a></li>
+<li><a href="#cant-run-carla-neither-binary-nor-source-build">无法运行 Carla，无论是二进制还是源代码构建。</a></li>
+<li><a href="#importerror-dll-load-failed-the-specified-module-could-not-be-found">ImportError: DLL load failed: The specified module could not be found.</a></li>
+<li><a href="#importerror-dll-load-failed-while-importing-libcarla-1-is-not-a-valid-win32-app">ImportError: DLL load failed while importing libcarla: %1 is not a valid Win32 app.</a></li>
+<li><a href="#importerror-no-module-named-carla">ImportError: No module named 'carla'</a></li>
+<li><a href="#rpc_error">RuntimeError: rpc::rpc_error during call in function apply_batch</a></li>
+<li><a href="#value_error">ValueError: sticky_control: invalid value type</a></li>
+</ul>
+<hr />
+<h2 id="_4">其他</h2>
+<ul>
+<li><a href="#fatal-error-versionh-has-been-modified-since-the-precompiled-header">Fatal error: 'version.h' has been modified since the precompiled header.</a></li>
+<li><a href="#create-a-binary-version-of-carla">创建 Carla 的二进制版本。</a></li>
+<li><a href="#can-i-package-carla-for-windows-on-a-linux-machine-and-vice-versa">我可以在 Linux 计算机上打包适用于 Windows 的 Carla，反之亦然吗？</a></li>
+<li><a href="#how-do-i-uninstall-the-carla-client-library">如何卸载 Carla 客户端库？</a></li>
+</ul>
+<hr />
+<!-- ======================================================================= -->
+<h2 id="_5">系统要求</h2>
+<!-- ======================================================================= -->
+
+<h6 id="carla_1">构建 Carla 所需的磁盘空间。 <span id="expected-disk-space-to-build-carla"></span></h6>
+<blockquote>
+<p>建议至少有 170GB 可用空间。构建 Carla 需要大约 35GB 的磁盘空间，加上虚幻引擎大约需要 95-135GB。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="carla_2">运行 Carla 的推荐硬件。 <span id="recommended-hardware-to-run-carla"></span></h6>
+<blockquote>
+<p>Carla 是一款性能要求较高的软件。它至少需要 6GB GPU，或者更好的是能够运行虚幻引擎的专用 GPU。</p>
+<p>看看 <a href="https://www.ue4community.wiki/recommended-hardware-x1p9qyg0">虚幻引擎推荐的硬件</a> 。</p>
+</blockquote>
+<hr />
+<h2 id="linux_1">Linux 构建</h2>
+<!-- ======================================================================= -->
+<h6 id="github-carlaue4sh">从 GitHub 下载时不会出现“CarlaUE4.sh”脚本。 <span id="carlaue4sh-script-does-not-appear-when-downloading-from-github"></span></h6>
+<blockquote>
+<p>Carla 的源版本中没有 <code>CarlaUE4.sh</code> 脚本。按照 <a href="../build_linux/">构建说明</a> 从源代码构建 Carla。</p>
+<p>要使用 <code>CarlaUE4.sh</code> 运行 Carla，请按照 <a href="../start_quickstart/">快速启动安装</a> 进行操作。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="make-launch-linux">“make launch”在 Linux 上不起作用。 <span id="make-launch-is-not-working-on-linux"></span></h6>
+<blockquote>
+<p>在构建安装过程中可能会拖出许多不同的问题，并会像这样显现出来。以下是最可能的原因列表：</p>
+<ul>
+<li><strong>运行虚幻引擎 4.26。</strong> 构建虚幻引擎时可能出现某些问题。尝试单独运行虚幻编辑器并检查它是否是 4.26 版本。</li>
+<li><strong>下载资产。</strong> 如果没有视觉内容，服务器将无法运行。此步骤是强制性的。</li>
+<li><strong>UE4_ROOT 未定义。</strong> 境变量未设置。请记住通过将其添加到 <code>~/.bashrc</code> 或 <code>~/.profile</code> 来使其在会话范围内持久存在。否则，需要为每个新 shell 进行设置。运行<code>export UE4_ROOT=&lt;path_to_unreal_4-26&gt;</code>设置这次的变量。</li>
+<li><strong>检查依赖。</strong> 确保一切都安装正确。也许其中一个命令被跳过、不成功或者依赖项不适合系统。</li>
+<li><strong>删除 Carla 并再次克隆它。</strong> 以防万一出了问题。删除 Carla 并重新克隆或下载。</li>
+<li><strong>满足系统要求。</strong> Ubuntu 版本应为 16.04 或更高版本。Carla 需要大约 170GB 的磁盘空间和一个专用 GPU（或至少一个 6GB）才能运行。</li>
+</ul>
+<p>系统显示与 Carla 冲突的其他特定原因可能会发生。请将这些内容发布到 <a href="https://github.com/carla-simulator/carla/discussions/">论坛</a> 上，以便团队可以更多地了解它们。 </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="_6">克隆虚幻引擎存储库显示错误。 <span id="cloning-the-unreal-engine-repository-shows-an-error"></span></h6>
+<blockquote>
+<p><strong>1. 虚幻引擎帐号是否已激活？</strong> 虚幻引擎存储库是私有的。为了克隆它，请创建虚 <a href="https://www.unrealengine.com/en-US/">幻引擎帐</a> 户，激活它（检查验证邮件），然后 <a href="https://www.unrealengine.com/en-US/blog/updated-authentication-process-for-connecting-epic-github-accounts">链接您的 GitHub</a>  帐户。</p>
+<p><strong>2. git是否安装正确？</strong> 有时错误表明与 <code>https</code> 协议不兼容。通过卸载并重新安装 git 即可轻松解决。打开终端并运行以下命令：</p>
+<pre><code> sudo apt-get remove git # 卸载 git
+ sudo apt install git-all # 安装 git
+</code></pre>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="attributeerror-module-carla-has-no-attribute-client-when-running-a-script">AttributeError: module 'carla' has no attribute 'Client' when running a script. <span id="attributeerror-module-carla-has-no-attribute-client-when-running-a-script"></span></h6>
+<blockquote>
+<p>运行以下命令。</p>
+<pre><code>  pip3 install -Iv setuptools==47.3.1
+</code></pre>
+<p>并再次构建 PythonAPI。</p>
+<pre><code> make PythonAPI
+</code></pre>
+<p>尝试构建文档来测试一切是否正常运行。应该会显示成功的消息。</p>
+<pre><code> make PythonAPI.docs
+</code></pre>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="runtimeerror-rpcrpc_error-during-call-in-function-version">无法运行示例脚本或 "RuntimeError: rpc::rpc_error during call in function version". <span id="cannot-run-example-scripts-or-runtimeerror-rpcrpc_error-during-call-in-function-version"></span></h6>
+<blockquote>
+<p><img alt="faq_rpc_error" src="../img/faq_rpc_error.jpg" /></p>
+<p>如果运行脚本返回与此类似的输出，则说明 PythonAPI 中的 <code>.egg</code> 文件存在问题。</p>
+</blockquote>
+<div class="admonition 重要">
+<p class="admonition-title">重要</p>
+<p>如果您使用的是 0.9.12+，有多种方法可以使用/安装客户端库。如果您使用客户端库（<code>.whl</code> 或 PyPi 下载）的较新方法之一，本节中的信息将与您无关。</p>
+</div>
+<blockquote>
+<p>首先，打开<code>&lt;root_carla&gt;/PythonAPI/carla/dist</code>。 应该有一个和你正在使用相对应的 Carla 和 Python 响应的 <code>.egg</code> 文件（类似于 <code>carla-0.X.X-pyX.X-linux-x86_64.egg</code>）。确保该文件与您正在使用的 Python 版本匹配。要检查您的 Python 版本，请使用以下命令。 </p>
+<pre><code>  python3 --version
+  # 或者对于 Python 2
+  python --version
+</code></pre>
+<p>如果文件丢失或者您认为它可能已损坏，请尝试再次重建。</p>
+<pre><code> make clean
+ make PythonAPI
+ make launch
+</code></pre>
+<p>现在再次尝试示例脚本之一。 </p>
+<pre><code> cd PythonAPI/examples
+ python3 dynamic_weather.py
+</code></pre>
+<p>如果错误仍然存在，则问题可能与您的 PythonPATH 有关。这些脚本会自动查找<code>.egg</code> 与构建相关的文件，因此，您的 PythonPATH 中可能存在另一个<code>.egg</code> 文件干扰该过程。使用以下命令显示 PythonPATH 的内容。</p>
+<pre><code> echo $PYTHONPATH
+</code></pre>
+<p>在类似于<code>PythonAPI/carla/dist</code>的路径下查找另一个<code>.egg</code>文件，并删除它们。它们可能属于 Carla 安装的其他实例。例如，如果您还通过 <em>apt-get</em> 安装了 Carla ，则可以使用以下命令将其删除，并且 PythonPATH 也会被清理。</p>
+<pre><code> sudo apt-get purge carla-simulator
+</code></pre>
+<p>最终可以选择使用<code>~/.bashrc</code>，将PythonPATH下你构建的<code>.egg</code>文件添加进来。这不是推荐的方式。最好有一个明确的 PythonPATH，只需在脚本中添加必要的<code>.egg</code>文件路径即可。</p>
+<p>首先，打开 <code>~/.bashrc</code>.</p>
+<pre><code> gedit ~/.bashrc
+</code></pre>
+<p>将以下行添加到 <code>~/.bashrc</code>。它们存储构建的<code>.egg</code>文件路径，以便Python可以自动找到它。保存文件，然后重置终端以使更改生效。</p>
+<div class="highlight"><pre><span></span><code>export PYTHONPATH=$PYTHONPATH:&quot;${CARLA_ROOT}/PythonAPI/carla/dist/$(ls ${CARLA_ROOT}/PythonAPI/carla/dist | grep py3.)&quot;
+export PYTHONPATH=$PYTHONPATH:${CARLA_ROOT}/PythonAPI/carla
+</code></pre></div>
+<p>清理 PythonPATH 或添加构建的 <code>.egg</code>文件路径后，所有示例脚本都应该正常工作。</p>
+</blockquote>
+<hr />
+<h2 id="windows_1">Windows 构建</h2>
+<!-- ======================================================================= -->
+
+<h6 id="pip-install-whl">pip install *.whl文件找不到</h6>
+<p>即使在windows平台下，*.whl文件目录中的分割符需要都是<code>/</code>。</p>
+<h6 id="xcopy-s">执行 xcopy 报 /S 无法识别</h6>
+<p>解决：原目录和目的目的不能包含 <code>/</code> ，需要用<code>\</code>替换。</p>
+<h6 id="buildcarlaue4bat-jenkins">BuildCarlaUE4.bat 在jenkins的日志中中文乱码</h6>
+<p>日志乱码开始出现的地方：
+<div class="highlight"><pre><span></span><code>-[BuildCarlaUE4]: Building Unreal Editor...
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code>call<span class="w"> </span><span class="s2">&quot;%UE4_ROOT%Engine\Build\BatchFiles\Build.bat&quot;</span>^
+<span class="w">    </span>CarlaUE4Editor^
+<span class="w">    </span>Win64^
+<span class="w">    </span>Development^
+<span class="w">    </span>-WaitMutex^
+<span class="w">    </span>-FromMsBuild^
+<span class="w">    </span><span class="s2">&quot;%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject&quot;</span>
+</code></pre></div>
+<h6 id="simready-converter-plugins-wheeledvehicleh">添加 SimReady Converter Plugins 后报错：<a href="无法打开包括文件: “WheeledVehicle.h”">无法打开包括文件: “WheeledVehicle.h”</a></h6>
+<p>完整报错信息：<code>C:\workspace\carla\Unreal\CarlaUE4\Plugins\Carla\Source\Carla\Vehicle/CarlaWheeledVehicle.h(9): fatal error C1083: 无法打开包括文件: “WheeledVehicle.h”: No such file or directory</code></p>
+<h6 id="make-pythonapibuildlibwin-amd64-cpython-37carlalibcarlacp37-win_amd64pyd-fatal-error-lnk1169"><a href="https://github.com/carla-simulator/carla/issues/3621">使用make PythonAPI编译报错：build\lib.win-amd64-cpython-37\carla\libcarla.cp37-win_amd64.pyd : fatal error LNK1169: 找到一个或多个多重定义的符号</a></h6>
+<p>出错命令<code>python setup.py bdist_egg bdist_wheel</code>。</p>
+<p>完整报错信息：
+<div class="highlight"><pre><span></span><code>libboost_python37-vc143-mt-x64-1_86.lib(errors.obj) : error LNK2005: &quot;public: static struct boost::python::detail::exception_handler * boost::python::detail::exception_handler::chain&quot; (?chain@exception_handler@detail@python@boost@@2PEAU1234@EA) 已经在 libboost_python37-vc142-mt-x64-1_80.lib(errors.obj) 中定义
+libboost_python37-vc143-mt-x64-1_86.lib(errors.obj) : error LNK2005: &quot;private: static struct boost::python::detail::exception_handler * boost::python::detail::exception_handler::tail&quot; (?tail@exception_handler@detail@python@boost@@0PEAU1234@EA) 已经在 libboost_python37-vc142-mt-x64-1_80.lib(errors.obj) 中定义
+  正在创建库 build\temp.win-amd64-cpython-37\Release\source/libcarla\libcarla.cp37-win_amd64.lib 和对象 build\temp.win-amd64-cpython-37\Release\source/libcarla\libcarla.cp37-win_amd64.exp
+build\lib.win-amd64-cpython-37\carla\libcarla.cp37-win_amd64.pyd : fatal error LNK1169: 找到一个或多个多重定义的符号
+error: command &#39;C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX86\\x64\\link.exe&#39; failed with exit code 1169
+</code></pre></div>
+解决：删除<code>boost-1.86.0-install</code>和<code>boost-1.86.0-source</code>后重新构建，只删除<code>boost-1.86.0-install</code>不行。</p>
+<h6 id="chrono"><a href="">Chrono库找不到</a></h6>
+<p>报错信息：
+<div class="highlight"><pre><span></span><code>UnrealBuildTool: ERROR: Unhandled exception: Source file &#39;C:\ProgramData\Jenkins\.jenkins\workspace\carla\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\dll\ChronoEngine.dll&#39; does not exist
+                        while creating runtime dependencies for module &#39;Carla&#39;
+</code></pre></div>
+编译目录<code>Build/chrono-install</code>目录为空，原因是源代码下载失败。</p>
+<h6 id="cicd-whl">CICD 时找不到.whl文件</h6>
+<p>报错信息：
+<div class="highlight"><pre><span></span><code>(carla_dev) C:\ProgramData\Jenkins\.jenkins\workspace\carla&gt;chcp 65001 
+Active code page: 65001
+-[Check]: [Batch params]: --smoke
+Unreal service is launching with command: start C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\v2.0.0-22-g2f520474d\WindowsNoEditor\CarlaUE4.exe -RenderOffscreen ...
+The syntax of the command is incorrect.
+C:\software\anaconda3\envs\carla_dev\Scripts\pip.exe install --force-reinstall  C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\v2.0.0-22-g2f520474d\WindowsNoEditor\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
+WARNING: Requirement &#39;C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\carla\\Build\\UE4Carla\\v2.0.0-22-g2f520474d\\WindowsNoEditor\\PythonAPI\\carla\\dist\\hutb-1.0.0-cp37-cp37m-win_amd64.whl&#39; looks like a filename, but the file does not exist
+Processing c:\programdata\jenkins\.jenkins\workspace\carla\build\ue4carla\v2.0.0-22-g2f520474d\windowsnoeditor\pythonapi\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
+ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory: &#39;C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\carla\\Build\\UE4Carla\\v2.0.0-22-g2f520474d\\WindowsNoEditor\\PythonAPI\\carla\\dist\\hutb-1.0.0-cp37-cp37m-win_amd64.whl&#39;
+</code></pre></div></p>
+<h6 id="vs2022boost-1800-install_boost-b2-error-an-error-ocurred-while-installing-using-b2exe">升级到vs2022后，编译boost-1.80.0报错：<a href="https://github.com/boostorg/boost/issues/914#issuecomment-2327689539">-[install_boost]: [B2 ERROR] An error ocurred while installing using "b2.exe".</a></h6>
+<p><a href="https://zhuanlan.zhihu.com/p/666616256">解决办法</a> ：</p>
+<p>执行<code>b2 install address-model=64 architecture=x86</code>后删除源代码目录<code>Build/boost-1.84.0-source</code>，然后再执行编译就成功（原因不明）。
+但是jenkins执行时报错信息包含：
+<div class="highlight"><pre><span></span><code>The input line is too long.
+The syntax of the command is incorrect.
+</code></pre></div>
+可能因为节点配置的环境路径中递归包含了PATH路径，导致递归输出信息过多，
+<div class="highlight"><pre><span></span><code>http://127.0.0.1:8080/manage/computer/<span class="o">(</span>built-in<span class="o">)</span>/configure
+<span class="c1"># 键</span>
+PATH
+<span class="c1"># 值</span>
+%PATH%<span class="p">;</span>C:<span class="se">\s</span>oftware<span class="se">\G</span>nuWin32<span class="se">\b</span>in<span class="p">;</span>C:<span class="se">\W</span>indows<span class="se">\s</span>ystem32<span class="p">;</span>C:<span class="se">\W</span>indows<span class="p">;</span>C:<span class="se">\W</span>indows<span class="se">\S</span>ystem32<span class="se">\W</span>bem<span class="p">;</span>C:<span class="se">\W</span>indows<span class="se">\S</span>ystem32<span class="se">\W</span>indowsPowerShell<span class="se">\v</span><span class="m">1</span>.0<span class="se">\;</span>C:<span class="se">\W</span>indows<span class="se">\S</span>ystem32<span class="se">\O</span>penSSH<span class="se">\;</span>C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\M</span>icrosoft<span class="se">\W</span>indowsApps<span class="p">;</span>C:<span class="se">\s</span>oftware<span class="se">\a</span>naconda3<span class="se">\c</span>ondabin<span class="p">;</span>C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\n</span>pm<span class="p">;</span>C:<span class="se">\s</span>oftware<span class="se">\a</span>naconda3<span class="se">\e</span>nvs<span class="se">\c</span>arla_dev<span class="p">;</span>C:<span class="se">\j</span>enkins<span class="se">\s</span>oftware<span class="se">\G</span>it<span class="se">\b</span>in
+</code></pre></div>
+移除<code>%PATH%;</code>即可解决。</p>
+<p>第二次执行b2.exe失败，可能是第一步<code>Build/boost-1.84.0-source</code>因TortoiseGit删除失败。</p>
+<p>1.<a href="https://link.zhihu.com/?target=https%3A//github.com/carla-simulator/carla/discussions/4534">删除build，然后将carla文件夹移动到更靠近根目录的位置</a></p>
+<p>2.在<code>Build/boost-1.84.0-source/libs/context/build/Jamfile.v2</code>里增加以下内容，但并没有修改编译脚本：
+<div class="highlight"><pre><span></span><code><span class="nb">alias</span><span class="w"> </span>asm_sources
+<span class="w">   </span>:<span class="w"> </span>asm/make_arm_aapcs_elf_gas.S
+<span class="w">     </span>asm/jump_arm_aapcs_elf_gas.S
+<span class="w">     </span>asm/ontop_arm_aapcs_elf_gas.S
+<span class="w">   </span>:<span class="w"> </span>&lt;abi&gt;sysv
+<span class="w">     </span>&lt;address-model&gt;32
+<span class="w">     </span>&lt;architecture&gt;arm
+<span class="w">     </span>&lt;binary-format&gt;elf
+<span class="w">     </span>&lt;toolset&gt;gcc
+<span class="w">   </span><span class="p">;</span>
+
+<span class="nb">alias</span><span class="w"> </span>asm_sources
+<span class="w">   </span>:<span class="w"> </span>asm/make_arm64_aapcs_elf_gas.S
+<span class="w">     </span>asm/jump_arm64_aapcs_elf_gas.S
+<span class="w">     </span>asm/ontop_arm64_aapcs_elf_gas.S
+<span class="w">   </span>:<span class="w"> </span>&lt;abi&gt;sysv
+<span class="w">     </span>&lt;address-model&gt;64
+<span class="w">     </span>&lt;architecture&gt;arm
+<span class="w">     </span>&lt;binary-format&gt;elf
+<span class="w">     </span>&lt;toolset&gt;gcc
+<span class="w">   </span><span class="p">;</span>
+</code></pre></div></p>
+<p>3.编译命令增加两个选项<code>address-model=64 architecture=x86</code>
+<div class="highlight"><pre><span></span><code>b2<span class="w"> </span>install<span class="w"> </span>address-model<span class="o">=</span><span class="m">64</span><span class="w"> </span><span class="nv">architecture</span><span class="o">=</span>x86
+</code></pre></div></p>
+<p>升级boost分析：</p>
+<blockquote>
+<p>将 boost 版本从 1.80.0 升级到 1.86.0 可以解决（可以生成lib中的文件）</p>
+<p>分析过程：</p>
+<p><code>.\Util\InstallersWin\install_boost.bat --build-dir "D:\work\workspace\carla\Build" --toolset msvc-14.3 --version 1.80.0 -j 8</code>报错</p>
+<p>进入目录<code>Build\boost-1.80.0-source\</code>，运行<code>Build\boost-1.80.0-source\b2.exe address-model=64 architecture=x86</code>成功</p>
+</blockquote>
+<p>提取出实际运行报错的命令为：
+<div class="highlight"><pre><span></span><code><span class="c1"># 先生成构建文件b2.exe</span>
+call<span class="w"> </span>bootstrap.bat<span class="w"> </span>vc143
+<span class="c1"># 编译和安装</span>
+b2<span class="w"> </span>-j8<span class="w"> </span>headers<span class="w"> </span>--layout<span class="o">=</span>versioned<span class="w"> </span>--build-dir<span class="o">=</span>.<span class="se">\b</span>uild<span class="w">    </span>--with-system<span class="w"> </span>--with-filesystem<span class="w"> </span>--with-python<span class="w"> </span>--with-date_time<span class="w"> </span><span class="nv">architecture</span><span class="o">=</span>x86<span class="w">     </span>address-model<span class="o">=</span><span class="m">64</span><span class="w"> </span><span class="nv">toolset</span><span class="o">=</span>msvc-14.3<span class="w"> </span><span class="nv">variant</span><span class="o">=</span>release<span class="w"> </span><span class="nv">link</span><span class="o">=</span>static<span class="w"> </span>runtime-link<span class="o">=</span>shared<span class="w"> </span><span class="nv">threading</span><span class="o">=</span>multi<span class="w"> </span>--prefix<span class="o">=</span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\boost-1.86.0-install&quot;</span><span class="w"> </span>--libdir<span class="o">=</span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\boost-1.86.0-install\lib&quot;</span><span class="w"> </span>--includedir<span class="o">=</span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\boost-1.86.0-install&quot;</span><span class="w"> </span>install
+</code></pre></div></p>
+<p>开发打包编辑器（使用x64 Native Tools可以，但是<code>call "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"</code> || exit /b 不行）
+<div class="highlight"><pre><span></span><code>%comspec%<span class="w"> </span>/k<span class="w"> </span><span class="s2">&quot;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>D:<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\c</span>arla
+call<span class="w"> </span>bootstrap.bat<span class="w"> </span>vc143
+b2<span class="w"> </span>-j24<span class="w"> </span>headers<span class="w"> </span>--layout<span class="o">=</span>versioned<span class="w">     </span>--build-dir<span class="o">=</span>.<span class="se">\b</span>uild<span class="w">    </span>--with-system<span class="w">     </span>--with-filesystem<span class="w">    </span>--with-python<span class="w">     </span>--with-date_time<span class="w">    </span><span class="nv">architecture</span><span class="o">=</span>x86<span class="w">    </span>address-model<span class="o">=</span><span class="m">64</span><span class="w">    </span><span class="nv">toolset</span><span class="o">=</span>msvc-14.3<span class="w">    </span><span class="nv">variant</span><span class="o">=</span>release<span class="w">    </span><span class="nv">link</span><span class="o">=</span>static<span class="w">    </span>runtime-link<span class="o">=</span>shared<span class="w">    </span><span class="nv">threading</span><span class="o">=</span>multi<span class="w">    </span>--prefix<span class="o">=</span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\boost-1.86.0-install&quot;</span><span class="w">    </span>--libdir<span class="o">=</span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\boost-1.86.0-install\lib&quot;</span><span class="w">    </span>--includedir<span class="o">=</span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\boost-1.86.0-install&quot;</span><span class="w">    </span>install
+</code></pre></div></p>
+<p>检测到报错是返回值<code>%errorlevel%</code>为1，安装的目录中头文件的文件名不对、Lib中的库文件没有生成。</p>
+<p><a href="https://www.bfgroup.xyz/b2/tutorial.html">解读</a> ：b2 headers ： 生成头文件</p>
+<p><code>--layout=&lt;layout&gt;</code>：确定是否选择库名称和头文件位置，以便在同一系统上可以使用多个版本的 Boost 或多个编译器。</p>
+<pre><code>versioned: Boost 二进制文件的名称（libboost_filesystem-vc142-mt-x64-1_80.lib）包含 编译器的名称和版本（vc142）、编码的构建属性（mt：多线程）、Boost 版本号（1_80）。Boost 头文件安装在 &lt;HDRDIR&gt; 的子目录中，该子目录的名称包含 Boost 版本号。
+
+tagged: Boost 二进制文件的名称包含编码的构建属性，例如变体和线程模型，但不包含编译器名称和版本，也不包含 Boost 版本。如果您使用相同的编译器构建多个 Boost 变体，此选项很有用。
+
+system: 二进制文件的名称中不包含 Boost 版本号或编译器的名称及版本号。Boost 头文件会直接安装到 &lt;HDRDIR&gt; 目录下。这个选项是专为系统集成商构建的分发包而设计。
+
+在 Windows 系统中，默认值为“versioned”，而在 Unix 系统中则为“system”。
+</code></pre>
+<p><code>--with-system</code>：需要 system 模块（文件系统操作库）：包括：异常处理、错误码、日志等基础功能；</p>
+<p><code>--with-filesystem</code>：需要 <a href="https://blog.csdn.net/mp553074150/article/details/110734336">filesystem模块</a> ，编译时指定--with-filesystem，包括：类摘要、文件状态、文件属性、文件操作、迭代目录</p>
+<p><code>--with-python</code>: 仅编译 python。<code>b2.exe --show-libraries</code> 查看 Boost 包含的所有库</p>
+<p><code>--with-data_time</code>：处理日期、时间、时间间隔以及与时区相关的操作</p>
+<p><code>address-model=64</code>：生成 16 位、32 位或 64 位代码。（可选值为 16, 32, 64, 32_64）</p>
+<p><code>toolset</code>: 在条件属性中使用此功能，若某些特性取决于工具集则适用。toolset=msvc:指定 Microsoft Visual C++ (MSVC) 作为编译器工具集，b2会自动检测本地可用的msvc构建器</p>
+<p><code>variant=release</code>：variant=debug,release 表示同时编译调试和发布版本</p>
+<p><code>link=shared</code>：生成动态链接库 (DLL) 版本的 Boost 库文件,static生成静态库文件。(这里才表示生成静态库)</p>
+<p><code>runtime-link=shared</code>：链接到单线程或线程安全的运行时库。（shared, static）</p>
+<p><code>threading=multi</code>: 支持多线程的库文件,single生成单线程版本的库文件</p>
+<div class="highlight"><pre><span></span><code>set PYTHON_ROOT=C:\\Users\\Administrator\\.conda\\envs\\carla_dev\\python.exe
+set PYTHON_VERSION=3.7
+</code></pre></div>
+<h6 id="vs2022-xerces"><a href="https://github.com/HARPLab/DReyeVR/issues/86">vs2022 下 xerces 编译报错</a></h6>
+<p>报错信息：<code>error LNK2019: 无法解析的外部符号 u_charType_58，函数 "public: static unsigned short __cdecl xercesc_3_2::XMLUniCharacter::getType(char16_t)"</code></p>
+<p><div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>..<span class="w"> </span>-G<span class="w"> </span><span class="s2">&quot;Visual Studio 17 2022&quot;</span><span class="w"> </span>-A<span class="w"> </span>x64<span class="w">  </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;D:/work/workspace/carla/Build/UE4Carla/hutb_editor/carla1/Build/xerces-c-3.2.3-install/&quot;</span><span class="w">  </span>-DBUILD_SHARED_LIBS<span class="o">=</span>OFF<span class="w">  </span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\xerces-c-3.2.3-source&quot;</span>
+</code></pre></div>
+需要添加<code>-Dtranscoder=windows</code>选项：
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>..<span class="w"> </span>-G<span class="w"> </span>%GENERATOR%<span class="w"> </span>%PLATFORM%^
+<span class="w">  </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;%XERCESC_INSTALL_DIR:\=/%&quot;</span>^
+<span class="w">  </span>-DBUILD_SHARED_LIBS<span class="o">=</span>OFF^
+<span class="w">  </span>-Dtranscoder<span class="o">=</span>windows^
+<span class="w">  </span><span class="s2">&quot;%BUILD_DIR%%XERCESC_BASENAME%-%XERCESC_VERSION%-source&quot;</span>
+</code></pre></div></p>
+<h6 id="osm2odr"><a href="">osm2odr报错</a></h6>
+<p>VS2019升级为2022</p>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>-G<span class="w"> </span><span class="s2">&quot;Visual Studio 16 2022&quot;</span><span class="w"> </span>-A<span class="w"> </span>x64<span class="w">       </span>-DCMAKE_CXX_FLAGS_RELEASE<span class="o">=</span><span class="s2">&quot;/MD /MP&quot;</span><span class="w">         </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;D:/work/workspace/carla/Build/UE4Carla/hutb_editor/carla1/PythonAPI/carla/dependencies/&quot;</span><span class="w">         </span>-DPROJ_INCLUDE_DIR<span class="o">=</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\c</span>arla<span class="se">\B</span>uild<span class="se">\U</span>E4Carla<span class="se">\h</span>utb_editor<span class="se">\c</span>arla1<span class="se">\B</span>uild<span class="se">\\</span>proj-install<span class="se">\i</span>nclude<span class="w">         </span>-DPROJ_LIBRARY<span class="o">=</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\c</span>arla<span class="se">\B</span>uild<span class="se">\U</span>E4Carla<span class="se">\h</span>utb_editor<span class="se">\c</span>arla1<span class="se">\B</span>uild<span class="se">\\</span>proj-install<span class="se">\l</span>ib<span class="se">\p</span>roj.lib<span class="w">         </span>-DXercesC_INCLUDE_DIR<span class="o">=</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\c</span>arla<span class="se">\B</span>uild<span class="se">\U</span>E4Carla<span class="se">\h</span>utb_editor<span class="se">\c</span>arla1<span class="se">\B</span>uild<span class="se">\\</span>xerces-c-3.2.3-install<span class="se">\i</span>nclude<span class="w">         </span>-DXercesC_LIBRARY<span class="o">=</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\c</span>arla<span class="se">\B</span>uild<span class="se">\U</span>E4Carla<span class="se">\h</span>utb_editor<span class="se">\c</span>arla1<span class="se">\B</span>uild<span class="se">\\</span>xerces-c-3.2.3-install<span class="se">\l</span>ib<span class="se">\x</span>erces-c.lib<span class="w">         </span><span class="s2">&quot;D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\Build\osm2odr-source\&quot;</span>
+</code></pre></div>
+<h6 id="boost"><a href="https://github.com/boostorg/log/issues/113">boost报错</a></h6>
+<p>报错信息：<code>carla1\LibCarla\source\carla\FileSystem.cpp(43,14): error C2039: "directory_iterator": 不是 "boost::filesystem" 的成员</code>，英文：<code>error C2039: 'directory_iterator': is not a member of 'boost::filesystem'</code></p>
+<p>解决：<a href="https://github.com/boostorg/log/pull/112">引入丢失的filesystem头文件</a> 。</p>
+<h6 id="make-nothing-to-be-done-for-check"><a href="">make: Nothing to be done for `check'.</a></h6>
+<blockquote>
+<p>Windows.mk中check:标签下一行前面应该是Tab键而不是4个空格。
+check:
+   @"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --all
+</p>
+</blockquote>
+<h6 id="vs2022-make-launch-cesiumforunreal"><a href="https://stackoverflow.com/questions/3121825/error-c2039-string-is-not-a-member-of-std-header-file-problem">使用VS2022 时，make launch 编译 CesiumForUnreal 插件报错</a></h6>
+<blockquote>
+<p>报错信息第一个：<code>D:\work\workspace\carla\Unreal\CarlaUE4\Plugins\Marketplace\CesiumForUnreal\Source\ThirdParty\include\CesiumGeospatial\S2CellID.h(108): error C2039: "string": 不是 "std" 的成员</code></p>
+<p>解决：头文件中加入：</p>
+<p><code>#include &lt;string&gt;</code></p>
+</blockquote>
+<h6 id="vs2022-msi"><a href="https://blog.csdn.net/qq_34988204/article/details/135039621">安装VS2022时出现无法卸载旧版 MSI的错误</a></h6>
+<blockquote>
+<p>完整错误信息：错误代码 1714:无法卸载旧版 MSI你的计算机上安装了旧版 MSl。需要先将其卸载才可安装 Visual Studio。</p>
+<p>快捷键 Win + R 打开运行窗口，输入命令 regedit 并回车，打开注册表编辑器</p>
+<p>在注册表编辑器中，找到并删除以下注册表项（删除整个Products目录）：</p>
+<p><code>HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer\Products</code></p>
+<p>打开 Visual Studio Installer，点击重试，重新安装 Visual Studio。</p>
+</blockquote>
+<h6 id="loginit-display-running-engine-for-game-carlaue4"><a href="https://github.com/carla-simulator/carla/discussions/4644">编译时卡在：<code>LogInit: Display: Running engine for game: CarlaUE4</code></a></h6>
+<blockquote>
+<p>原因：UE找不到GPU spec</p>
+<p>解决：重启机器。</p>
+</blockquote>
+<h6 id="unrealbuildtool-error-unable-to-instantiate-module-carla-systemioioexception"><a href="https://github.com/carla-simulator/carla/discussions/4165">UnrealBuildTool: ERROR: Unable to instantiate module 'Carla': System.IO.IOException</a></h6>
+<blockquote>
+<p>原因：打开依赖项文件夹“carla\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies”，发现“lib”是一个文件而不是文件夹。</p>
+<p>解决：删除CarlaDependencies文件夹内的所有文件，并重新编译。</p>
+</blockquote>
+<h6 id="make-pythonapi-error-failed-to-find-xercesc-missing-xercesc_version"><a href="https://github.com/carla-simulator/carla/issues/5907">make PythonAPI error "Failed to find XercesC (missing: XercesC_VERSION)"</a></h6>
+<blockquote>
+<p>xerces-c-3.2.3-install 中的头文件目录和库目录是空格，需要删除文件夹，重新编译</p>
+</blockquote>
+<h6 id="github-carlaue4exe">从 GitHub 下载时不会出现“CarlaUE4.exe”。 <span id="carlaue4exe-does-not-appear-when-downloading-from-github"></span></h6>
+<blockquote>
+<p>Carla 的源版本中没有<code>CarlaUE4.exe</code>可执行文件。按照构建说明从源代码构建 Carla。要直接获取<code>CarlaUE4.exe</code>，请按照 <a href="../start_quickstart/">快速入门</a> 说明进行操作。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="carlaue4-could-not-be-compiled-try-rebuilding-it-from-source-manually">CarlaUE4 could not be compiled. Try rebuilding it from source manually. <span id="carlaue4-could-not-be-compiled-try-rebuilding-it-from-source-manually"></span></h6>
+<blockquote>
+<p>尝试构建 Carla 时出现问题。使用 Visual Studio 重新构建以发现发生了什么。</p>
+<p><strong>1.</strong> 转到 <code>carla/Unreal/CarlaUE4</code> 并右键单击 <code>CarlaUE4.uproject</code>。</p>
+<p><strong>2.</strong> 单击 <strong>Generate Visual Studio project files</strong>。<br />
+<strong>3.</strong> 使用 Visual Studio 2019 打开生成的文件。</p>
+<p><strong>4.</strong> 使用 Visual Studio 编译项目。快捷键是F7。构建将失败，但发现的问题将显示在下面。</p>
+<p>不同的问题可能会导致出现此特定错误消息。用户<a href="https://github.com/tamakoji">@tamakoji</a> 解决了一个经常出现的情况，即源代码未正确克隆且无法设置 Carla 版本（从 git 将其下载为 .zip 时）。</p>
+<ul>
+<li><strong>检查 <code>Build/CMakeLists.txt.in</code>.</strong> 如果显示： <code>set(CARLA_VERSION )</code>，请执行以下操作： </li>
+</ul>
+<p><strong>1.</strong> 转到 <code>Setup.bat</code> 第 198 行。 </p>
+<p><strong>2.</strong> Update the line from: </p>
+<div class="highlight"><pre><span></span><code>for /f %%i in (&#39;git describe --tags --dirty --always&#39;) do set carla_version=%%i
+</code></pre></div>
+<p>为：</p>
+<div class="highlight"><pre><span></span><code>for /f %%i in (&#39;git describe --tags --dirty --always&#39;) do set carla_version=&quot;0.9.9&quot;
+</code></pre></div>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="cmake-cmake">即使 CMake 已正确安装，也会显示 CMake 错误。 <span id="cmake-error-shows-even-though-cmake-is-properly-installed"></span></h6>
+<blockquote>
+<p>当尝试使用  <em>make</em> 命令构建服务器或客户端时会出现此问题。即使 CMake 已安装、更新并添加到环境路径中。Visual Studio 版本之间可能存在冲突。</p>
+<p>只留下VS2019，其余的彻底删除。 </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="error-c2440-c2672-compiler-version">Error C2440, C2672: compiler version. <span id="error-c2440-c2672-compiler-version"></span></h6>
+<blockquote>
+<p>由于与其他 Visual Studio 或 Microsoft 编译器版本冲突，该构建未使用 2019 编译器。卸载这些并再次重建。  </p>
+<p>Visual Studio 不擅长摆脱自身。要从计算机中彻底清除 Visual Studio，请转到 <code>Program Files (x86)\Microsoft Visual Studio\Installer\resources\app\layout</code> 并运行 <code>.\InstallCleanup.exe -full</code>。这可能需要管理员权限。  </p>
+<p>要保留其他 Visual Studio 版本，请通过添加以下行进行编辑 <code>%appdata%\Unreal Engine\UnrealBuildTool\BuildConfiguration.xml</code> ： </p>
+<div class="highlight"><pre><span></span><code> &lt;VCProjectFileGenerator&gt;
+   &lt;Version&gt;VisualStudio2019&lt;/Version&gt;
+&lt;/VCProjectFileGenerator&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code> &lt;WindowsPlatform&gt;
+   &lt;Compiler&gt;VisualStudio2019&lt;/Compiler&gt;
+&lt;/WindowsPlatform&gt;
+</code></pre></div>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="make-launch-windows">“make launch”在 Windows 上不起作用。 <span id="make-launch-is-not-working-on-windows"></span></h6>
+<blockquote>
+<p>在构建安装过程中可能会拖出许多不同的问题，并像这样显现出来。以下是最可能的原因列表：</p>
+<ul>
+<li><strong>重新启动计算机。</strong> Windows 构建期间发生了很多事情。重新启动并确保所有内容均已正确更新。</li>
+<li><strong>运行虚幻引擎 4.26。</strong> 构建虚幻引擎时可能出现某些问题。运行编辑器并检查是否使用了 4.26 版本。 </li>
+<li><strong>下载资产。</strong> 如果没有视觉内容，服务器将无法运行。此步骤是强制性的。</li>
+<li><strong>Visual Studio 2019.</strong> 如果安装或最近卸载了其他版本的 Visual Studio，可能会出现冲突。要从计算机中彻底清除 Visual Studio，请转到 <code>Program Files (x86)\Microsoft Visual Studio\Installer\resources\app\layout</code> 并运行 <code>.\InstallCleanup.exe -full</code>。  </li>
+<li><strong>删除 Carla 并再次克隆它。</strong> 以防万一出了问题。删除 Carla 并重新克隆或下载。</li>
+<li><strong>满足系统要求。</strong> Carla 需要大约 170GB 的磁盘空间和一个专用 GPU（或至少一个 6GB）才能运行。</li>
+</ul>
+<p>系统显示与 Carla 冲突的其他特定原因可能会发生。请将这些内容发布到 <a href="https://github.com/carla-simulator/carla/discussions/">论坛</a> 上，以便团队可以更多地了解它们。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="make-libintl3dll-libiconv2dll">Make 缺少 libintl3.dll 或/和 libiconv2.dll。 <span id="make-is-missing-libintl3dll-orand-libiconv2dll"></span></h6>
+<blockquote>
+<p>下载 <a href="http://gnuwin32.sourceforge.net/downlinks/make-dep-zip.php">依赖项</a> 并将<code>bin</code>内容解压到<code>make</code>安装路径中。 </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="modules-are-missing-or-built-with-a-different-engine-version">Modules are missing or built with a different engine version. <span id="modules-are-missing-or-built-with-a-different-engine-version"></span></h6>
+<blockquote>
+<p>单击 on <strong>Accept</strong> 以重建它们。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="pythonapicarladist">尽管成功输出消息，但在<code>PythonAPI/carla</code>中没有<code>dist</code>文件夹。  <span id="there-is-no-dist-folder-in-pythonapicarla-despite-a-successful-output-message"></span></h6>
+<blockquote>
+<p>在 Windows 中， <code>make PythonAPI</code> 命令可能会返回一条消息，表明 Python API 安装成功，但实际上并未成功。如果看到此输出后目录 <code>PythonAPI/carla</code> 中没有 <code>dist</code> 文件夹，请查看上面的命令输出。很可能发生了错误，需要在更正错误并运行 <code>make clean</code> 后重试构建。 </p>
+</blockquote>
+<h6 id="osm2odr-visualstudio">osm2odr-visualstudio为空，或者拷贝过去的目录不对 <span id="osm2odr_is_null"></span></h6>
+<p><div class="highlight"><pre><span></span><code>CMake Error: The current CMakeCache.txt directory D:/work/workspace/carla/Build/osm2odr-visualstudio/CMakeCache.txt is different than the directory d:/work/buffer/carla/Build/osm2odr-visualstudio where CMakeCache.txt was created. This may result in binaries being created in the wrong place. If you are not sure, reedit the CMakeCache.txt
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>CMake<span class="w"> </span>Error:<span class="w"> </span>The<span class="w"> </span><span class="nb">source</span><span class="w"> </span>directory<span class="w"> </span><span class="s2">&quot;D:/work/workspace/carla/Build/osm2odr-visualstudio/x64&quot;</span><span class="w"> </span>does<span class="w"> </span>not<span class="w"> </span>appear<span class="w"> </span>to<span class="w"> </span>contain<span class="w"> </span>CMakeLists.txt.
+</code></pre></div></p>
+<blockquote>
+<p>删除<code>carla\Build\osm2odr-visualstudio\CMakeCache.txt</code></p>
+</blockquote>
+<h6 id="_7">类型转换不对 <span id="type_conversion_error"></span></h6>
+<blockquote>
+<div class="highlight"><pre><span></span><code>carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Vehicle/CustomTerrainPhysicsComponent.cpp<span class="o">(</span><span class="m">1161</span><span class="o">)</span>:<span class="w"> </span>error<span class="w"> </span>C2440:<span class="w"> </span>“static_cast”:<span class="w"> </span>无法从“float”转换为“EDefResolutionType”
+</code></pre></div>
+<p>注释掉
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span><span class="nv">ChosenRes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>static_cast&lt;EDefResolutionType&gt;<span class="o">(</span>Value<span class="o">)</span><span class="p">;</span><span class="w">  </span>//<span class="w"> </span>static_cast&lt;EDefResolutionType&gt;<span class="o">(</span>Value<span class="o">)</span>
+</code></pre></div>
+注意：注意vs2019专业版才有这个问题，vs2019社区版没有这个问题。</p>
+</blockquote>
+<h6 id="osm2odrlib">链接不到osm2odr.lib <span id="link_osm2odr_failed"></span></h6>
+<blockquote>
+<p><code>fatal error LNK1181: carla\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\lib\osm2odr.lib</code></p>
+<p>从其他地方拷贝过来。</p>
+</blockquote>
+<h6 id="_8">编译器的堆空间不足 <span id="heap_lack"></span></h6>
+<blockquote>
+<p>编译虚幻引擎4时，出现<code>C1060</code> 编译器的堆空间不足，说明机器的内存不够，可以参考<a href="https://ue5wiki.com/wiki/32770/">链接</a> 限制所使用的核心数（默认是使用所有核心数）。
+修改<code>Engine/Saved/UnrealBuildTool/BuildConfiguration.xml</code>中的<code>MaxProcessorCount</code>：
+<div class="highlight"><pre><span></span><code>&lt;?xml<span class="w"> </span><span class="nv">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="w"> </span><span class="nv">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="w"> </span>?&gt;
+&lt;Configuration<span class="w"> </span><span class="nv">xmlns</span><span class="o">=</span><span class="s2">&quot;https://www.unrealengine.com/BuildConfiguration&quot;</span>&gt;
+<span class="w">  </span>&lt;ParallelExecutor&gt;
+<span class="w">    </span>&lt;ProcessorCountMultiplier&gt;7&lt;/ProcessorCountMultiplier&gt;
+<span class="w">    </span>&lt;MaxProcessorCount&gt;7&lt;/MaxProcessorCount&gt;
+<span class="w">    </span>&lt;bStopCompilationAfterErrors&gt;true&lt;/bStopCompilationAfterErrors&gt;
+<span class="w">  </span>&lt;/ParallelExecutor&gt;
+&lt;/Configuration&gt;
+</code></pre></div></p>
+</blockquote>
+<h6 id="bufferview">编译时显示只接受BufferView类型的错误</h6>
+<div class="highlight"><pre><span></span><code>C:\workspace\carla\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\include\carla/streaming/detail/tcp/ServerSession.h(70): error C2338: static_assert failed: &#39;This function only accepts arguments of type BufferView.&#39;
+</code></pre></div>
+<blockquote>
+<p>拷贝过来的依赖没有更新</p>
+</blockquote>
+<ul>
+<li>执行<code>make PythonAPI</code>后没有<code>PythonAPI/carla/dist/</code>目录</li>
+</ul>
+<blockquote>
+<p>报错信息在前面：<code>CMake Error: Could not create named generator</code>
+可能没真正执行命令：<code>python setup.py bdist_egg bdist_wheel</code>，需要切换到Python虚拟环境，然后进入<code>PythonAPI/carla</code>目录中执行该命令。</p>
+</blockquote>
+<ul>
+<li><code>make PythonAPI</code> 报 boost 链接的错</li>
+</ul>
+<p>报错信息：
+<div class="highlight"><pre><span></span><code>libcarla.obj : error LNK2001: 无法解析的外部符号 &quot;void __cdecl boost::python::throw_error_already_set(void)&quot; (?throw_error_already_set@python@boost@@YAXXZ)
+...
+build\lib.win-amd64-cpython-37\carla\libcarla.cp37-win_amd64.pyd : fatal error LNK1120: 78 个无法解析的外部命令
+</code></pre></div></p>
+<blockquote>
+<p>问题：使用了多个版本的Python。
+当您第一次构建 CARLA 时，当它设置 boost 文件时，它会安装一个 Python 版本（如果您有多个版本，它会选择一个您不想要的版本），然后在编译 PythonAPI 时，链接器使用另一个版本的 Python，因此它无法链接不同的版本。</p>
+<p>因此，请确保默认情况下始终找到相同版本的 Python，并且它是 64 位的。</p>
+<p>您可以通过查看此处的文件来检查 boost 所使用的 python：
+CARLA\Build\boost-1.80.0-install\lib\libboost_python37-vc142-mt-x64-1_80.lib
+其中 ..37.. 是 Python 的版本，在本例中为 3.7</p>
+<p>要重建，只需删除CARLA\Build\boost-1.80.0-install文件夹，然后尝试使用make PythonAPI 再次构建 PythonAPI。
+参考<a href="https://github.com/carla-simulator/carla/issues/3621">链接</a> 。</p>
+</blockquote>
+<hr />
+<h2 id="_9">虚幻引擎</h2>
+<h5 id="error-unable-to-find-installation-of-pdbcopyexe-which-is-required-to-strip-symbols-this-tool-is-included-as-part-of-the-windows-debugging-tools-component-of-the-windows-10-sdk-httpsdevelopermicrosoftcomen-uswindowsdownloadswindows-10-sdk">执行打包时报错：ERROR: Unable to find installation of PDBCOPY.EXE, which is required to strip symbols. This tool is included as part of the 'Windows Debugging Tools' component of the Windows 10 SDK (https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).</h5>
+<blockquote>
+<p>安装 <a href="https://pan.baidu.com/s/1Y0PQeHCMQh7Ln12d_p_Rzw">Windows Debugging Tools</a> 后重新编译
+<a href="https://download.microsoft.com/download/9/D/2/9D228A37-56C0-48D7-B1B4-486090DE7C2A/vs_Community.exe">vs2017</a></p>
+</blockquote>
+<h5 id="unrealengineenginesourceruntimerendercoreprivaterendergraphprivatecpp180-error-c4756">UnrealEngine\Engine\Source\Runtime\RenderCore\Private\RenderGraphPrivate.cpp(180): error C4756: 常量算法中溢出</h5>
+<p>出错代码：<code>return FLinearColor(INFINITY, INFINITY, INFINITY, INFINITY);</code></p>
+<blockquote>
+<p>分析：
+对比新版本SDK的“INFINITY”宏的宏定义：</p>
+<p>原定义（Windows SDK 10.0.19041.0 所使用）：#define INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))</p>
+<p>新定义：#define INFINITY ((float)(_HUGE_ENF))</p>
+<p>“_HUGE_ENUF”宏并没有改变，这一调整导致了常量算法溢出的问题。</p>
+<p>原因：Windows SDK 和 MSVC 的版本对源码编译有所影响。</p>
+<p>添加<code>UnrealEngine\Engine\Saved\UnrealBuildTool\BuildConfiguration.xml</code>中指定windows SDK的配置（通过配置手动选择所需版本，参考 <a href="https://blog.csdn.net/qq_41032419/article/details/148902525">链接</a> ）：
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;WindowsPlatform&gt;</span>
+<span class="w">    </span><span class="nt">&lt;WindowsSdkVersion&gt;</span>10.0.19041.0<span class="nt">&lt;/WindowsSdkVersion&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/WindowsPlatform&gt;</span>
+</code></pre></div></p>
+</blockquote>
+<hr />
+<h2 id="_10">打包</h2>
+<h3 id="make-package">make package 时报错</h3>
+<p>出错信息：
+<div class="highlight"><pre><span></span><code>LogWindows:<span class="w"> </span>Error:<span class="w"> </span>begin:<span class="w"> </span>stack<span class="w"> </span><span class="k">for</span><span class="w"> </span>UAT
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">===</span><span class="w"> </span>Critical<span class="w"> </span>error:<span class="w"> </span><span class="o">===</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span>Fatal<span class="w"> </span>error!
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span>Unhandled<span class="w"> </span>Exception:<span class="w"> </span>EXCEPTION_ACCESS_VIOLATION<span class="w"> </span>reading<span class="w"> </span>address<span class="w"> </span>0x0000000000000038
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffdfaf366c4<span class="w"> </span>UE4Editor-RenderCore.dll!FShaderMapContent::GetOutdatedTypes<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\R</span>enderCore<span class="se">\P</span>rivate<span class="se">\S</span>haderMap.cpp:581<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd2b4fb28a<span class="w"> </span>UE4Editor-Engine.dll!FMaterialShaderMap::GetAllOutdatedTypes<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\E</span>ngine<span class="se">\P</span>rivate<span class="se">\M</span>aterials<span class="se">\M</span>aterialShader.cpp:1043<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd2b983b67<span class="w"> </span>UE4Editor-Engine.dll!GetOutdatedShaderTypes<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\E</span>ngine<span class="se">\P</span>rivate<span class="se">\S</span>haderCompiler<span class="se">\S</span>haderCompiler.cpp:4216<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd2b9a3d03<span class="w"> </span>UE4Editor-Engine.dll!RecompileShadersForRemote<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\E</span>ngine<span class="se">\P</span>rivate<span class="se">\S</span>haderCompiler<span class="se">\S</span>haderCompiler.cpp:5129<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd93651c5d<span class="w"> </span>UE4Editor-UnrealEd.dll!UCookOnTheFlyServer::SaveGlobalShaderMapFiles<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\E</span>ditor<span class="se">\U</span>nrealEd<span class="se">\P</span>rivate<span class="se">\C</span>ookOnTheFlyServer.cpp:5511<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd936559dc<span class="w"> </span>UE4Editor-UnrealEd.dll!UCookOnTheFlyServer::StartCookByTheBook<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\E</span>ditor<span class="se">\U</span>nrealEd<span class="se">\P</span>rivate<span class="se">\C</span>ookOnTheFlyServer.cpp:6865<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd934943b9<span class="w"> </span>UE4Editor-UnrealEd.dll!UCookCommandlet::CookByTheBook<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\E</span>ditor<span class="se">\U</span>nrealEd<span class="se">\P</span>rivate<span class="se">\C</span>ommandlets<span class="se">\C</span>ookCommandlet.cpp:919<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffd934be428<span class="w"> </span>UE4Editor-UnrealEd.dll!UCookCommandlet::Main<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\E</span>ditor<span class="se">\U</span>nrealEd<span class="se">\P</span>rivate<span class="se">\C</span>ommandlets<span class="se">\C</span>ookCommandlet.cpp:624<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ff7177896da<span class="w"> </span>UE4Editor-Cmd.exe!FEngineLoop::PreInitPostStartupScreen<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\L</span>aunch<span class="se">\P</span>rivate<span class="se">\L</span>aunchEngineLoop.cpp:3369<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ff717780e6d<span class="w"> </span>UE4Editor-Cmd.exe!GuardedMain<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\L</span>aunch<span class="se">\P</span>rivate<span class="se">\L</span>aunch.cpp:127<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ff7177811ca<span class="w"> </span>UE4Editor-Cmd.exe!GuardedMainWrapper<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\L</span>aunch<span class="se">\P</span>rivate<span class="se">\W</span>indows<span class="se">\L</span>aunchWindows.cpp:137<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ff717794e5d<span class="w"> </span>UE4Editor-Cmd.exe!WinMain<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\R</span>untime<span class="se">\L</span>aunch<span class="se">\P</span>rivate<span class="se">\W</span>indows<span class="se">\L</span>aunchWindows.cpp:268<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ff717796f02<span class="w"> </span>UE4Editor-Cmd.exe!__scrt_common_main_seh<span class="o">()</span><span class="w"> </span><span class="o">[</span>D:<span class="se">\a\_</span>work<span class="se">\1\s\s</span>rc<span class="se">\v</span>ctools<span class="se">\c</span>rt<span class="se">\v</span>cstartup<span class="se">\s</span>rc<span class="se">\s</span>tartup<span class="se">\e</span>xe_common.inl:288<span class="o">]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffe53647374<span class="w"> </span>KERNEL32.DLL!UnknownFunction<span class="w"> </span><span class="o">[]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span><span class="o">[</span>Callstack<span class="o">]</span><span class="w"> </span>0x00007ffe5417cc91<span class="w"> </span>ntdll.dll!UnknownFunction<span class="w"> </span><span class="o">[]</span>
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:
+<span class="w">  </span>LogWindows:<span class="w"> </span>Error:<span class="w"> </span>end:<span class="w"> </span>stack<span class="w"> </span><span class="k">for</span><span class="w"> </span>UAT
+Took<span class="w"> </span><span class="m">232</span>.8404432s<span class="w"> </span>to<span class="w"> </span>run<span class="w"> </span>UE4Editor-Cmd.exe,<span class="w"> </span><span class="nv">ExitCode</span><span class="o">=</span><span class="m">3</span>
+ERROR:<span class="w"> </span>Cook<span class="w"> </span>failed.
+<span class="w">       </span><span class="o">(</span>see<span class="w"> </span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\P</span>rograms<span class="se">\A</span>utomationTool<span class="se">\S</span>aved<span class="se">\L</span>ogs<span class="se">\L</span>og.txt<span class="w"> </span><span class="k">for</span><span class="w"> </span>full<span class="w"> </span>exception<span class="w"> </span>trace<span class="o">)</span>
+AutomationTool<span class="w"> </span>exiting<span class="w"> </span>with<span class="w"> </span><span class="nv">ExitCode</span><span class="o">=</span><span class="m">25</span><span class="w"> </span><span class="o">(</span>Error_UnknownCookFailure<span class="o">)</span>
+卸载<span class="w"> </span>Appdomain<span class="w"> </span>时出错。<span class="w"> </span><span class="o">(</span>异常来自<span class="w"> </span>HRESULT:0x80131015<span class="o">)</span>
+<span class="w">   </span>在<span class="w"> </span>System.AppDomain.Unload<span class="o">(</span>AppDomain<span class="w"> </span>domain<span class="o">)</span>
+<span class="w">   </span>在<span class="w"> </span>AutomationToolLauncher.Launcher.RunInAppDomain<span class="o">(</span>String<span class="o">[]</span><span class="w"> </span>Arguments<span class="o">)</span><span class="w"> </span>位置<span class="w"> </span>D:<span class="se">\w</span>ork<span class="se">\w</span>orkspace<span class="se">\U</span>nrealEngine<span class="se">\E</span>ngine<span class="se">\S</span>ource<span class="se">\P</span>rograms<span class="se">\A</span>utomationToolLauncher<span class="se">\L</span>auncher.cs:行号<span class="w"> </span><span class="m">42</span>
+BUILD<span class="w"> </span>FAILED
+
+-<span class="o">[</span>Package<span class="o">]</span>:<span class="w"> </span><span class="o">[</span>ERROR<span class="o">]</span><span class="w"> </span>There<span class="w"> </span>was<span class="w"> </span>a<span class="w"> </span>problem<span class="w"> </span><span class="k">while</span><span class="w"> </span>packaging<span class="w"> </span>Unreal<span class="w"> </span>project.
+<span class="w">          </span><span class="o">[</span>ERROR<span class="o">]</span><span class="w"> </span>Please<span class="w"> </span><span class="nb">read</span><span class="w"> </span>the<span class="w"> </span>screen<span class="w"> </span>log<span class="w"> </span><span class="k">for</span><span class="w"> </span>more<span class="w"> </span>information.
+make:<span class="w"> </span>***<span class="w"> </span><span class="o">[</span>package<span class="o">]</span><span class="w"> </span>错误<span class="w"> </span><span class="m">1</span>
+</code></pre></div></p>
+<blockquote>
+<p><a href="../build/make_package/">打包分析过程</a></p>
+</blockquote>
+<hr />
+<h2 id="carla_3">运行 Carla</h2>
+<!-- ======================================================================= -->
+
+<h6 id="carla_0912sherror-while-loading-shared-libraries-libompso5">运行Carla_0.9.12.sh时候报错：error while loading shared libraries: libomp.so.5。 <span id="load_libraries"></span></h6>
+<blockquote>
+<p>sudo apt-get install libomp5</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="fps">在虚幻编辑器中运行服务器时 FPS 速率较低。 <span id="low-fps-rate-when-running-the-server-in-unreal-editor"></span></h6>
+<blockquote>
+<p>虚幻4编辑器在失焦时会进入低性能模式。  </p>
+<p>转到“编辑-&gt;编辑器偏好设置-&gt;性能” （<code>Edit/Editor Preferences/Performance</code>），然后禁用“处于背景中时占用较少 CPU”选项。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="_11">无法运行脚本。 <span id="cant-run-a-script"></span></h6>
+<blockquote>
+<p>有些脚本有要求。这些列在名为 <strong>Requirements.txt</strong> 的文件中，与脚本本身位于同一路径中。请务必检查这些以便运行脚本。其中大多数可以通过简单的<code>pip</code>命令进行安装。</p>
+<p>有时在 Windows 上，脚本无法仅使用 <code>&gt; script_name.py</code> 运行。尝试添加. Try adding <code>&gt; python3 script_name.py</code>，并确保位于正确的目录中。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="_12">在虚幻编辑器中运行时连接到模拟器。 <span id="connect-to-the-simulator-while-running-within-unreal-editor"></span></h6>
+<blockquote>
+<p>单击“运行”（ <strong>Play</strong> ）并等待场景加载。此时，Python 客户端可以像独立模拟器一样连接到模拟器。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="carla_4">无法运行 Carla，无论是二进制还是源代码构建。 <span id="cant-run-carla-neither-binary-nor-source-build"></span></h6>
+<blockquote>
+<p>NVIDIA 驱动程序可能已过时。确保情况并非如此。如果问题仍未解决，请查看 <a href="https://github.com/carla-simulator/carla/discussions/">论坛</a> 并发布具体问题。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="importerror-dll-load-failed-the-specified-module-could-not-be-found">ImportError: DLL load failed: The specified module could not be found. <span id="importerror-dll-load-failed-the-specified-module-could-not-be-found"></span></h6>
+<blockquote>
+<p>所需的库之一尚未正确安装。作为解决方法，请转至 <code>carla\Build\zlib-source\build</code>并在脚本的路径中复制名为 <code>zlib.dll</code> 的文件。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="importerror-dll-load-failed-while-importing-libcarla-1-is-not-a-valid-win32-app">ImportError: DLL load failed while importing libcarla: %1 is not a valid Win32 app. <span id="importerror-dll-load-failed-while-importing-libcarla-1-is-not-a-valid-win32-app"></span></h6>
+<blockquote>
+<p>32 位 Python 版本在尝试运行脚本时会产生冲突。卸载它并仅保留所需的 Python3 x64。</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="importerror-no-module-named-carla">ImportError: No module named 'carla' <span id="importerror-no-module-named-carla"></span></h6>
+<blockquote>
+<p>出现此错误的原因是 Python 找不到 Carla 库。Carla 库包含在位于<code>PythonAPI/carla/dist</code>目录中的一个<code>.egg</code>文件中，所有示例脚本都将在此目录中查找它。该<code>.egg</code>文件遵循carla-<carla-version>-py<python-version>-<operating-system>.egg 命名法。
+</p>
+</blockquote>
+<div class="admonition 重要">
+<p class="admonition-title">重要</p>
+<p>Carla 仅在 0.9.12 之前的版本中使用客户端库文件 <code>.egg</code>。如果您使用的是 0.9.12+，有多种方法可以使用/安装客户端库。如果您使用客户端库（<code>.whl</code> 或 PyPi 下载）的较新方法之一，本节中的信息将与您无关。</p>
+<p>在 <a href="../start_quickstart/#carla-0912"><strong>快速入门教程</strong></a> 中阅读有关使用/安装客户端库的新方法的更多信息。</p>
+</div>
+<blockquote>
+<p>如果您使用的是打包版本的 Carla，则会有多个 <code>.egg</code> 文件，对应不同版本的 Python，具体取决于 Carla 的版本。确保您正在使用这些 Python 版本之一运行脚本。要检查默认的 Python 版本，请在命令行中键入以下内容：</p>
+<pre><code>  python3 --version
+  # 或者
+  python --version
+</code></pre>
+<p>如果您从源代码构建 Python，则该<code>.egg</code> 文件将根据系统上的默认 Python 版本构建。在 Linux 中，这将是返回的默认 Python 版本：</p>
+<pre><code>  /usr/bin/env python3 --version
+  # 或者如果你指定 ARGS="--python-version=2"
+  /usr/bin/env python2 --version
+</code></pre>
+<p>在 Windows 中，它将成为以下功能的默认 Python 版本：</p>
+<pre><code>  py -3 --version
+</code></pre>
+<p>确保您使用与您的 <code>.egg</code> 文件对应的 Python 版本运行脚本.egg。在 Linux 中，您可能还需要将 Python 路径设置为指向 Carla。为此，请运行以下命令：</p>
+<pre><code>  export PYTHONPATH=$PYTHONPATH:&lt;path/to/carla/&gt;/PythonAPI/carla/dist/&lt;your_egg_file&gt;
+  # 检查现在 Carla 是否能发现
+  python3 -c 'import carla;print("Success")'
+</code></pre>
+<p>请注意，虚拟环境或 Conda 等其他 Python 环境可能会使 Carla 的安装变得复杂。确保您已相应地设置 Python 默认值和路径。</p>
+</blockquote>
+<h6 id="runtimeerror-rpcrpc_error-during-call-in-function-apply_batch">RuntimeError: rpc::rpc_error during call in function apply_batch <span id="rpc_error"></span></h6>
+<blockquote>
+<p>PythonAPI的版本要和Carla服务的版本一致，比如dev分支的代码编译得到的虚幻编辑器运行的场景也要用dev分支代码编译的PythonAPI进行连接。</p>
+</blockquote>
+<h6 id="valueerror-sticky_control-invalid-value-type">ValueError: sticky_control: invalid value type <span id="value_error"></span></h6>
+<blockquote>
+<p>客户端和服务端的PythonAPI版本不一致，在dev分支开发时会出现。</p>
+<p>解决：服务端是dev分支，PythonAPI也要使用在dev分支上编译的客户端。
+解决2：如果确认Simulator端和客户端版本一致，但是仍然报两者版本不一致的话，先卸载客户端，然后通过<code>pip install carla</code>安装官方版本，然后再卸载安装编译版本的*.whl文件即可。</p>
+</blockquote>
+<hr />
+<h2 id="_13">其他</h2>
+<!-- ======================================================================= -->
+
+<h6 id="hutb">每次打开后都需要进入hutb目录，比较麻烦</h6>
+<blockquote>
+<p>通过搜索找到<code>x64 Native Tools Command Prompt for VS 2022</code>的快捷方式，右键，在<code>目标(T)</code>中添加进入目录的参数，成为：</p>
+<p><code>%comspec% /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" &amp;&amp; D: &amp;&amp; cd D:\work\workspace\carla</code></p>
+</blockquote>
+<h6 id="fatal-error-versionh-has-been-modified-since-the-precompiled-header">Fatal error: 'version.h' has been modified since the precompiled header. <span id="fatal-error-versionh-has-been-modified-since-the-precompiled-header"></span></h6>
+<blockquote>
+<p>由于 Linux 更新，这种情况时常发生。Makefile 中有一个针对此问题的特殊目标。虽然花了很长时间，但解决了问题： </p>
+<pre><code> make hard-clean
+ make CarlaUE4Editor
+</code></pre>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="carla_5">创建 Carla 的二进制版本。 <span id="create-a-binary-version-of-carla"></span></h6>
+<blockquote>
+<p>在 Linux 中，在项目文件夹中运行 <code>make package</code>。该包将包括项目和 Python API 模块。 </p>
+<p>或者，可以在虚幻编辑器中编译 Carla 的二进制版本。打开 CarlaUE4 项目，转到菜单 <code>File/Package Project</code>，然后选择一个平台。可能还要等一下。 </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="linux-windows-carla">我可以在 Linux 计算机上打包适用于 Windows 的 Carla，反之亦然吗？ <span id="can-i-package-carla-for-windows-on-a-linux-machine-and-vice-versa"></span></h6>
+<blockquote>
+<p>虽然此功能适用于虚幻引擎，但在 Carla 中不可用。我们有许多不支持交叉编译的依赖项。</p>
+</blockquote>
+<!-- ======================================================================= -->
+<h6 id="carla_6">如何卸载 Carla 客户端库？ <span id="how-do-i-uninstall-the-carla-client-library"></span></h6>
+<blockquote>
+<p>如果您使用 <strong>pip/pip3</strong> 安装了客户端库，则应通过运行以下命令将其卸载： </p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="c1"># Python 3</span>
+pip3<span class="w"> </span>uninstall<span class="w"> </span>carla
+
+<span class="c1"># Python 2</span>
+pip<span class="w"> </span>uninstall<span class="w"> </span>carla
+</code></pre></div>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>通过 API 获取行人真实骨骼 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u901a\u8fc7 API \u83b7\u53d6\u884c\u4eba\u771f\u5b9e\u9aa8\u9abc";
+        var mkdocs_page_input_path = "tuto_G_pedestrian_navigation.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">通过 API 获取行人真实骨骼</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/tuto_G_pedestrian_navigation.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="api">通过 API 获取行人真实骨骼</h1>
+<p>为了训练自动驾驶车辆，必须确保它们不仅能够识别建筑物、道路和汽车，还能够识别人行道和过马路的行人，以确保所有道路使用者的安全。Carla 模拟器提供人工智能控制的行人，以人体形态填充您的模拟和训练数据。在许多计算机视觉应用中，人体姿态估计是一个重要因素，包括自动驾驶、安全、人群控制和多个机器人应用。</p>
+<p>Carla 的 API 提供了从模拟中的行人获取真实骨架的功能。骨架由一组骨骼组成，每个骨骼都有一个根节点或顶点以及一个定义骨骼姿势（或方向）的向量。这些骨骼控制模拟行人的四肢和身体的运动。通过将各个骨骼的集合收集在一起，可以构建虚拟人姿势的模型，该模型可用于与神经网络估计的姿势模型进行比较，甚至用于训练神经网络进行姿势估计。</p>
+<p>在本教程中，我们将完成在地图中生成行人、设置 AI 控制器来移动行人、然后获取真实骨架并将骨骼投影到 2D 相机捕获上的步骤。</p>
+<ul>
+<li><a href="#setting_simulator"><strong>设置模拟器</strong></a> </li>
+<li><a href="#spaw_pedestrian"><strong>在 Carla 模拟器中生成行人</strong></a> </li>
+<li><a href="#go_to_location"><strong>AI 控制器引导行人在地图上行走</strong></a> </li>
+<li><a href="#camera_projection_matrix"><strong>相机几何</strong></a></li>
+<li><a href="#build_skeleton"><strong>构建骨架</strong></a></li>
+<li><a href="#conclusion"><strong>总结</strong></a></li>
+</ul>
+<h2 id="_1">设置模拟器 <span id="setting_simulator"></span></h2>
+<p>首先，按照您的标准工作流程启动 Carla 模拟器，无论是在独立模式下还是在虚幻编辑器中。我们将导入几个实用程序库以用于数学和绘图。为了让我们更好地控制模拟，我们将在本教程中使用 <a href="../adv_synchrony_timestep/"><strong>同步模式</strong></a> 。这意味着我们的 Python 客户端控制模拟器的时间进程。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">carla</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+<span class="kn">import</span> <span class="nn">cv2</span> <span class="c1">#OpenCV to manipulate and save the images</span>
+
+<span class="c1"># 客户端连接并获取世界对象</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_world</span><span class="p">()</span>
+
+<span class="c1"># 以同步模式启动模拟</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_settings</span><span class="p">()</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">synchronous_mode</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># 启用同步模式</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">fixed_delta_seconds</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">world</span><span class="o">.</span><span class="n">apply_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+
+<span class="c1"># 我们也会设置观察者以便我们能看到我们所做的</span>
+<span class="n">spectator</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_spectator</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="carla">在 Carla 模拟器中生成行人 <span id="spaw_pedestrian"></span></h2>
+<p>首先，我们想在模拟中生成一个行人。这可以使用 <code>world.get_random_location_from_navigation()</code> 在随机位置完成，也可以使用从虚幻编辑器收集的坐标来选择。在虚幻编辑器中，将一个空参与者添加到要生成行人的位置，然后使用右侧的检查器查询坐标。</p>
+<p><img alt="actor_location" src="../img/tuto_G_pedestrian_bones/actor_location.png" /></p>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>虚幻编辑器以厘米为单位，而 Carla 以米为单位，因此必须转换单位。在 Carla 模拟器中使用之前，请确保将虚幻编辑器坐标除以 100。</p>
+</div>
+<p>一旦你选择了坐标，你就可以生成行人。我们还将生成一个相机来收集图像。我们还需要一个队列 <a href="#https://docs.python.org/3/library/queue.html"><code>Queue</code></a> 对象来允许我们轻松访问来自相机的数据（因为相机传感器在其自己的线程上运行，与运行脚本的主 Python 线程分开）。</p>
+<p>为了看到我们的行人，我们需要变换相机，使其指向我们生成的行人。为此，我们将使用一个函数来计算使相机居中所需的平移和旋转：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">center_camera</span><span class="p">(</span><span class="n">ped</span><span class="p">,</span> <span class="n">rot_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># 旋转相机以面向行人并应用偏移</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">ped</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span>
+    <span class="n">offset_radians</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rot_offset</span><span class="o">/</span><span class="mi">360</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">offset_radians</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">offset_radians</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">x</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">y</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">pitch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">16</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">roll</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">yaw</span> <span class="o">=</span> <span class="o">-</span><span class="n">rot_offset</span>
+    <span class="n">spectator</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">trans</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trans</span>
+</code></pre></div>
+<p>现在我们将生成行人、摄像机、控制器并移动观察者，以便我们可以看到我们所做的事情：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 获取行人蓝图并生成它</span>
+<span class="n">pedestrian_bp</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;*walker.pedestrian*&#39;</span><span class="p">))</span>
+<span class="n">transform</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">134</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">78.1</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mf">1.18</span><span class="p">))</span>
+<span class="n">pedestrian</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">try_spawn_actor</span><span class="p">(</span><span class="n">pedestrian_bp</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+<span class="c1"># 生成一个 RGB 相机</span>
+<span class="n">camera_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;sensor.camera.rgb&#39;</span><span class="p">)</span>
+<span class="n">camera</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">camera_bp</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+<span class="c1"># 创建一个队列来存储并获取传感器数据</span>
+<span class="n">image_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">image_queue</span><span class="o">.</span><span class="n">put</span><span class="p">)</span>
+
+<span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="n">image_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="c1"># 每次调用 world.tick() 时，我们必须调用 image_queue.get() 以确保时间步长和传感器数据保持同步</span>
+
+<span class="c1"># 现在，我们将旋转相机以面向行人</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">center_camera</span><span class="p">(</span><span class="n">pedestrian</span><span class="p">))</span>
+<span class="c1"># 移动观察者以查看结果</span>
+<span class="n">spectator</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">get_transform</span><span class="p">())</span>
+
+<span class="c1"># 为行人设置AI控制器</span>
+<span class="n">controller_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;controller.ai.walker&#39;</span><span class="p">)</span>
+<span class="n">controller</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">controller_bp</span><span class="p">,</span> <span class="n">pedestrian</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(),</span> <span class="n">pedestrian</span><span class="p">)</span>
+
+<span class="c1"># 启动控制器并给它一个随机位置</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">go_to_location</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">get_random_location_from_navigation</span><span class="p">())</span>
+
+<span class="c1"># 将世界移动几帧，让行人生成</span>
+<span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+    <span class="n">trash</span> <span class="o">=</span> <span class="n">image_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="ai">AI 控制器引导行人在地图上行走 <span id="go_to_location"></span></h2>
+<p>上一步我们还初始化了一个 AI 控制器来帮助行人在地图上智能移动，代码如下（无需重复）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">controller_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;controller.ai.walker&#39;</span><span class="p">)</span>
+<span class="n">controller</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">controller_bp</span><span class="p">,</span> <span class="n">pedestrian</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(),</span> <span class="n">pedestrian</span><span class="p">)</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">go_to_location</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">get_random_location_from_navigation</span><span class="p">())</span>
+</code></pre></div>
+<p>现在，行人将随着模拟的每次推进 (<code>world.tick()</code>) 自主移动。</p>
+<h2 id="_2">相机几何 <span id="camera_projection_matrix"></span></h2>
+<p>现在我们需要执行一些几何计算。首先，我们想要将骨骼的世界坐标转换为相机坐标，我们使用相机变换的逆变换来实现这一点。这意味着坐标将转换为相对于位于原点、面向 x 正方向的相机。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 获取4x4矩阵以将点从世界坐标转换为相机坐标</span>
+<span class="n">world_2_camera</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">get_inverse_matrix</span><span class="p">())</span>
+</code></pre></div>
+<p>然后，我们需要使用相机矩阵或投影矩阵将三维点投影到相机的二维视场 (FOV, field of view) 上，将它们叠加在输出图像上。以下函数生成此三维到二维转换所需的 <a href="#https://en.wikipedia.org/wiki/Camera_matrix"><strong>相机矩阵</strong></a> 。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">build_projection_matrix</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fov</span><span class="p">):</span>
+    <span class="n">focal</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">fov</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">360.0</span><span class="p">))</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">focal</span>
+    <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">return</span> <span class="n">K</span>
+</code></pre></div>
+<h2 id="_3">构建骨架 <span id="build_skeleton"></span></h2>
+<p>现在我们可以将活动部件组装在一起。首先，使用 <code>pedestrian.get_bones()</code> 从模拟中收集骨骼坐标，然后将骨骼组合在一起并将其投影到相机传感器的二维成像平面上。使用skeletal.txt中定义的对将骨骼连接成完整的骨架，您可以在 <a href="https://carla-assets.s3.eu-west-3.amazonaws.com/fbx/skeleton.txt"><strong>此处</strong></a> 下载该文件。</p>
+<p>我们需要一个函数来迭代 <strong>sculpture.txt</strong> 中定义的骨骼对，并将骨骼坐标连接到可以覆盖到相机传感器图像上的线中。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_image_point</span><span class="p">(</span><span class="n">bone_trans</span><span class="p">):</span>
+    <span class="c1"># 计算骨骼坐标的二维投影</span>
+
+    <span class="c1"># 获取骨根的世界位置</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="n">bone_trans</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">location</span>
+    <span class="n">bone</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">loc</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># 转换为相机坐标</span>
+    <span class="n">point_camera</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">world_2_camera</span><span class="p">,</span> <span class="n">bone</span><span class="p">)</span>
+
+    <span class="c1">#  我们必须从UE4的坐标系更改为“标准”坐标系</span>
+    <span class="c1"># (x, y ,z) -&gt; (y, -z, x)</span>
+    <span class="c1"># 我们还删除了第四个组件</span>
+    <span class="n">point_camera</span> <span class="o">=</span> <span class="p">[</span><span class="n">point_camera</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">point_camera</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">point_camera</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="c1"># 现在使用摄影机矩阵投影3D-&gt;2D</span>
+    <span class="n">point_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">point_camera</span><span class="p">)</span>
+    <span class="c1"># 正则化</span>
+    <span class="n">point_img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="n">point_img</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">point_img</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">point_img</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">point_img</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">build_skeleton</span><span class="p">(</span><span class="n">ped</span><span class="p">,</span> <span class="n">sk_links</span><span class="p">,</span> <span class="n">K</span><span class="p">):</span>
+
+    <span class="c1">######## 获取行人骨架 #########</span>
+    <span class="n">bones</span> <span class="o">=</span> <span class="n">ped</span><span class="o">.</span><span class="n">get_bones</span><span class="p">()</span>
+
+    <span class="c1"># 列出将投影到相机输出上行的存储位置</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># 在 skeleton.txt 中遍历骨骼对并获取关节位置</span>
+    <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">sk_links</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+
+        <span class="c1"># 将两块骨头的根部连接起来</span>
+        <span class="n">bone_transform_1</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">link</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bones</span><span class="o">.</span><span class="n">bone_transforms</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">bone_transform_2</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">link</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bones</span><span class="o">.</span><span class="n">bone_transforms</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># 某些骨骼名称不匹配</span>
+        <span class="k">if</span> <span class="n">bone_transform_1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bone_transform_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># 计算三维骨骼坐标的二维投影</span>
+            <span class="n">point_image</span> <span class="o">=</span> <span class="n">get_image_point</span><span class="p">(</span><span class="n">bone_transform_1</span><span class="p">)</span>
+
+            <span class="c1"># 将行开始附加到行列表</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">point_image</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point_image</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+            <span class="c1"># 计算三维骨骼坐标的二维投影</span>
+            <span class="n">point_image</span> <span class="o">=</span> <span class="n">get_image_point</span><span class="p">(</span><span class="n">bone_transform_2</span><span class="p">)</span>
+
+            <span class="c1"># 将行尾附加到行列表</span>
+            <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_image</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">lines</span>
+</code></pre></div>
+<p>接下来，让我们从 <strong>sculpture.txt</strong> 中读取骨骼对：</p>
+<div class="highlight"><pre><span></span><code><span class="n">skeleton_links</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;skeleton.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">stripped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)))</span>
+        <span class="n">skeleton_links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stripped</span><span class="p">)</span>
+
+
+<span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="n">trash</span> <span class="o">=</span> <span class="n">image_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</code></pre></div>
+<p>现在我们可以迭代几帧，在每帧中构建骨架，并将骨架投影到相机传感器输出上。我们使用 OpenCV 将骨架绘制到传感器输出上并保存图像：</p>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>确保已在工作目录中创建名为 <strong>out/</strong> 的文件夹来存储图像</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">360</span><span class="p">):</span>
+    <span class="c1"># 在行人周围移动摄像头</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">center_camera</span><span class="p">(</span><span class="n">pedestrian</span><span class="p">,</span> <span class="n">frame</span> <span class="o">+</span> <span class="mi">200</span><span class="p">))</span>
+
+    <span class="c1"># 推进帧并获取图像</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+    <span class="c1"># 从队列中获取帧</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="c1"># 获取4x4矩阵以将点从世界坐标转换为相机坐标</span>
+    <span class="n">world_2_camera</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">get_inverse_matrix</span><span class="p">())</span>
+
+    <span class="c1"># 从相机获取一些属性</span>
+    <span class="n">image_w</span> <span class="o">=</span> <span class="n">camera_bp</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;image_size_x&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_int</span><span class="p">()</span>
+    <span class="n">image_h</span> <span class="o">=</span> <span class="n">camera_bp</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;image_size_y&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_int</span><span class="p">()</span>
+    <span class="n">fov</span> <span class="o">=</span> <span class="n">camera_bp</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;fov&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
+
+    <span class="c1"># 计算要从3D-&gt;2D投影的相机矩阵</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">build_projection_matrix</span><span class="p">(</span><span class="n">image_w</span><span class="p">,</span> <span class="n">image_h</span><span class="p">,</span> <span class="n">fov</span><span class="p">)</span>
+
+    <span class="c1"># 构建将显示骨架的线列表</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">build_skeleton</span><span class="p">(</span><span class="n">pedestrian</span><span class="p">,</span> <span class="n">skeleton_links</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+
+    <span class="c1"># 将数据重塑为2D RBGA 矩阵</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">raw_data</span><span class="p">),</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> 
+
+    <span class="c1"># 使用 OpenCV 将线条绘制到图像中</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">l</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># 保存图像</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">&#39;out/skeleton</span><span class="si">%04d</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">frame</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+</code></pre></div>
+<p>在 <strong>out/</strong> 文件夹中，您现在应该有一系列帧，其中骨架覆盖在相机传感器输出上。可以通过将帧加入视频来重建以下动画：</p>
+<p><img alt="pedestrian_skeleton" src="../img/tuto_G_pedestrian_bones/pedestrian_skeleton.gif" /></p>
+<h2 id="_4">总结 <span id="conclusion"></span></h2>
+<p>在本教程中，您学习了如何使用 AI 控制器生成行人，恢复行人骨骼的真实三维坐标，并将这些骨骼投影到相机传感器捕获的二维图像上。您可以使用本教程中学到的技术，使用 Carla 模拟器为人体姿势估计框架设置训练和验证，完整代码<a href="https://github.com/OpenHUTB/doc/blob/master/src/tuto_G_pedestrian_navigation.py">链接</a>。</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

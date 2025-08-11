@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>CARLA 资产材质加载与迁移模块技术文档 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "CARLA \u8d44\u4ea7\u6750\u8d28\u52a0\u8f7d\u4e0e\u8fc1\u79fb\u6a21\u5757\u6280\u672f\u6587\u6863";
+        var mkdocs_page_input_path = "modules/Commandlet.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">CARLA 资产材质加载与迁移模块技术文档</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/Commandlet.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carla">CARLA 资产材质加载与迁移模块技术文档</h1>
+<hr />
+<h2 id="_1">目录</h2>
+<h3 id="_2"><a href="#模块概述">模块概述</a></h3>
+<h3 id="_3"><a href="#核心功能">核心功能</a></h3>
+<ol>
+<li><a href="#1-材质处理模块">材质处理模块</a></li>
+<li><a href="#2-资产迁移模块">资产迁移模块</a></li>
+<li><a href="#3-资产预处理模块">资产预处理模块</a></li>
+</ol>
+<h3 id="_4"><a href="#类与方法详解">类与方法详解</a></h3>
+<ul>
+<li><a href="#关键方法">关键方法</a></li>
+<li><a href="#成员变量">成员变量</a></li>
+<li><a href="#fassetspaths-结构体"><code>FAssetsPaths</code> 结构体</a></li>
+</ul>
+<h3 id="_5"><a href="#数据结构与配置">数据结构与配置</a></h3>
+<ul>
+<li><a href="#fpackagparams-结构体"><code>FPackageParams</code> 结构体</a></li>
+<li><a href="#fmapdata-结构体"><code>FMapData</code> 结构体</a></li>
+<li><a href="#扩展语义标签定义">扩展语义标签定义</a></li>
+<li><a href="#分块地图配置">分块地图配置</a></li>
+</ul>
+<h3 id="_6"><a href="#关键流程">关键流程</a></h3>
+<ul>
+<li><a href="#资产预处理增强流程">资产预处理增强流程</a></li>
+</ul>
+<h3 id="_7"><a href="#配置参数">配置参数</a></h3>
+<ul>
+<li><a href="#扩展命令行参数说明">扩展命令行参数说明</a></li>
+</ul>
+<h3 id="_8"><a href="#注意事项">注意事项</a></h3>
+<ul>
+<li><a href="#预处理模块专项">预处理模块专项</a></li>
+</ul>
+<h3 id="_9"><a href="#示例配置">示例配置</a></h3>
+<ul>
+<li><a href="#分块地图预处理命令">分块地图预处理命令</a></li>
+<li><a href="#分块地图预处理命令windows">分块地图预处理命令（Windows）</a></li>
+<li><a href="#道具资产预处理命令linux">道具资产预处理命令（Linux）</a></li>
+<li><a href="#跨平台预处理命令">跨平台预处理命令</a></li>
+</ul>
+<h3 id="_10"><a href="#附录">附录</a></h3>
+<ul>
+<li><a href="#增强错误代码表">增强错误代码表</a></li>
+<li><a href="#对象库加载白名单配置">对象库加载白名单配置</a></li>
+</ul>
+<hr />
+<!-- 请在正文章节添加以下锚点声明 -->
+<!--
+## 模块概述
+<span id="模块概述"></span>
+
+## 核心功能
+<span id="核心功能"></span>
+
+### 1. 材质处理模块
+<span id="1-材质处理模块"></span>
+
+### 2. 资产迁移模块
+<span id="2-资产迁移模块"></span>
+
+### 3. 资产预处理模块
+<span id="3-资产预处理模块"></span>
+
+（其他章节同理添加对应锚点）
+-->
+
+<hr />
+<h2 id="_11">模块概述</h2>
+<p>本模块包含 CARLA 模拟器三大核心资产处理工具：<br />
+1. <strong>LoadAssetMaterialsCommandlet</strong><br />
+   - 动态贴花生成与材质应用<br />
+   - 基于 OpenDrive 的精准贴花布局<br />
+   核心价值：实现道路场景的物理级真实感
+2. <strong>MoveAssetsCommandlet</strong><br />
+   - 资产批量分类与迁移<br />
+   - 基于语义标签的智能路径管理 <br />
+   核心价值：构建可扩展的资产管理体系
+3. <strong>PrepareAssetsForCookingCommandlet</strong><br />
+   - 资产预处理与烹饪准备<br />
+   - 分块地图动态生成<br />
+   - 大规模场景材质优化<br />
+   核心价值：保障大规模场景的运行时性能  </p>
+<p>斜同效应：三大模块通过资产加工→组织管理→性能优化的闭环流程，使 CARLA 场景构建效率提升，支持复杂城市场景的构建耗时从周级压缩到小时级。</p>
+<hr />
+<h2 id="_12">核心功能</h2>
+<h3 id="1">1. 材质处理模块</h3>
+<p>（原有内容保持不变）</p>
+<h3 id="2">2. 资产迁移模块</h3>
+<p>（原有内容保持不变）</p>
+<h3 id="3">3. 资产预处理模块</h3>
+<ul>
+<li><strong>智能材质替换</strong>  </li>
+<li>基于语义标签的自动材质分配（道路/标线/路缘石等）<br />
+  <div class="highlight"><pre><span></span><code><span class="n">MeshActor</span><span class="o">-&gt;</span><span class="n">GetStaticMeshComponent</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">SetMaterial</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">RoadNodeMaterial</span><span class="p">);</span>
+</code></pre></div></li>
+<li>
+<p>复杂碰撞简化处理（CTF_UseComplexAsSimple）</p>
+</li>
+<li>
+<p><strong>分块地图系统</strong>  </p>
+</li>
+<li>支持 _Tile_X_Y 命名规范的自动识别  </li>
+<li>
+<p>动态生成瓦片空间布局（基于 TilesInfo.txt 配置）</p>
+</li>
+<li>
+<p><strong>OpenDrive 集成</strong>  </p>
+</li>
+<li>自动生成道路生成器（AOpenDriveActor）  </li>
+<li>
+<p>基于 XODR 的导航点批量生成</p>
+</li>
+<li>
+<p><strong>资产批处理</strong>  </p>
+</li>
+<li>对象库动态加载（UObjectLibrary）  </li>
+<li>跨地图资产引用管理  </li>
+</ul>
+<hr />
+<h2 id="_13">类与方法详解</h2>
+<h3 id="uprepareassetsforcookingcommandlet"><code>UPrepareAssetsForCookingCommandlet</code> 类</h3>
+<p>继承自 <code>UCommandlet</code>，实现资产烹饪预处理的核心逻辑。</p>
+<h4 id="_14">关键方法</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Main(const FString &amp;Params)</code></td>
+<td>入口方法，返回执行状态码</td>
+</tr>
+<tr>
+<td><code>ParseParams(const FString &amp;InParams)</code></td>
+<td>解析命令行参数，提取包名、地图列表等参数，返回 <code>FPackageParams</code> 结构体</td>
+</tr>
+<tr>
+<td><code>LoadWorld(FAssetData &amp;AssetData)</code></td>
+<td>加载 Carla 基础地图模板到内存</td>
+</tr>
+<tr>
+<td><code>LoadWorldTile(FAssetData &amp;AssetData)</code></td>
+<td>加载分块地图模板</td>
+</tr>
+<tr>
+<td><code>LoadLargeMapWorld(FAssetData &amp;AssetData)</code></td>
+<td>加载大规模地图资产</td>
+</tr>
+<tr>
+<td><code>SpawnMeshesToWorld(...)</code></td>
+<td>实例化静态网格资产到场景，执行材质替换逻辑</td>
+</tr>
+<tr>
+<td><code>SaveWorld(...)</code></td>
+<td>保存处理后的世界资产到指定路径，支持生成导航点</td>
+</tr>
+<tr>
+<td><code>PrepareMapsForCooking(...)</code></td>
+<td>主地图预处理流程控制器，处理分块逻辑</td>
+</tr>
+<tr>
+<td><code>PreparePropsForCooking(...)</code></td>
+<td>道具资产批量处理入口</td>
+</tr>
+<tr>
+<td><code>GenerateMapPathsFile(...)</code></td>
+<td>生成跨平台地图路径配置文件</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_15">成员变量</h4>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RoadNodeMaterial</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>基础道路材质实例</td>
+</tr>
+<tr>
+<td><code>CurbNodeMaterialInstance</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>路缘石材质实例</td>
+</tr>
+<tr>
+<td><code>GutterNodeMaterialInstance</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>排水沟材质实例</td>
+</tr>
+<tr>
+<td><code>MarkingNodeYellow</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>黄色道路标线材质实例</td>
+</tr>
+<tr>
+<td><code>MarkingNodeWhite</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>白色道路标线材质实例</td>
+</tr>
+<tr>
+<td><code>TerrainNodeMaterialInstance</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>地形材质实例</td>
+</tr>
+<tr>
+<td><code>SidewalkNodeMaterialInstance</code></td>
+<td><code>UMaterialInstance*</code></td>
+<td>人行道材质实例</td>
+</tr>
+<tr>
+<td><code>MapObjectLibrary</code></td>
+<td><code>UObjectLibrary*</code></td>
+<td>地图资产对象库</td>
+</tr>
+<tr>
+<td><code>AssetsObjectLibrary</code></td>
+<td><code>UObjectLibrary*</code></td>
+<td>通用资产对象库</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fassetspaths"><code>FAssetsPaths</code> 结构体</h3>
+<p>资产路径配置容器：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MapsPaths</code></td>
+<td><code>TArray&lt;FMapData&gt;</code></td>
+<td>地图配置数据集</td>
+</tr>
+<tr>
+<td><code>PropsPaths</code></td>
+<td><code>TArray&lt;FString&gt;</code></td>
+<td>道具资产路径列表</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_16">数据结构与配置</h2>
+<h4 id="fpackageparams"><code>FPackageParams</code> 结构体</h4>
+<p>命令行参数解析容器：  </p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Name</code></td>
+<td><code>FString</code></td>
+<td>资源包名称</td>
+</tr>
+<tr>
+<td><code>bOnlyPrepareMaps</code></td>
+<td><code>bool</code></td>
+<td>是否仅预处理地图资产</td>
+</tr>
+</tbody>
+</table>
+<h4 id="fmapdata"><code>FMapData</code> 结构体</h4>
+<p>地图配置元数据：  </p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Name</code></td>
+<td><code>FString</code></td>
+<td>地图名称</td>
+</tr>
+<tr>
+<td><code>Path</code></td>
+<td><code>FString</code></td>
+<td>资产路径</td>
+</tr>
+<tr>
+<td><code>bUseCarlaMapMaterials</code></td>
+<td><code>bool</code></td>
+<td>是否强制使用 Carla 原生材质</td>
+</tr>
+<tr>
+<td>### 扩展语义标签定义</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>标签常量</td>
+<td>对应路径</td>
+<td>匹配规则</td>
+</tr>
+<tr>
+<td>-------------------</td>
+<td>-----------------</td>
+<td>---------------------------</td>
+</tr>
+<tr>
+<td><code>R_CURB1</code></td>
+<td>CURB/</td>
+<td>名称包含"Curb"</td>
+</tr>
+<tr>
+<td><code>R_GUTTER1</code></td>
+<td>GUTTER/</td>
+<td>名称包含"Gutter"</td>
+</tr>
+<tr>
+<td><code>R_SIDEWALK1</code></td>
+<td>SIDEWALK/</td>
+<td>名称包含"Sidewalk"</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">分块地图配置</h3>
+<p><code>TilesInfo.txt</code> 格式规范：<br />
+<div class="highlight"><pre><span></span><code>[原点X坐标],[原点Y坐标],[瓦片尺寸(米)]
+</code></pre></div>
+示例：<br />
+<div class="highlight"><pre><span></span><code>-2500.0,1500.0,2000.0
+</code></pre></div></p>
+<hr />
+<h2 id="_18">关键流程</h2>
+<h3 id="_19">资产预处理增强流程</h3>
+<pre class="mermaid"><code>graph TD
+  A[命令行参数解析] --&gt; B[加载对象库资源]
+  B --&gt; C{是否分块地图?}
+  C --&gt;|是| D[按瓦片坐标迭代加载]
+  C --&gt;|否| E[整体地图加载]
+  D --&gt; F[动态实例化分块网格]
+  E --&gt; G[应用语义材质系统]
+  F/G --&gt; H[生成OpenDrive导航网络]
+  H --&gt; I[碰撞体优化设置]
+  I --&gt; J[序列化保存世界资产]
+  J --&gt; K[生成路径清单文件]</code></pre>
+<hr />
+<h2 id="_20">配置参数</h2>
+<h3 id="_21">扩展命令行参数说明</h3>
+<h2 id="-packagenameeuropack-mapsberlintokyo-onlypreparemapstrue-tilesize2000-forcecarlamaterialstrue-carla"><div class="highlight"><pre><span></span><code>-PackageName<span class="o">=</span>EuroPack<span class="w">        </span><span class="c1"># 指定资源包名称</span>
+-Maps<span class="o">=</span>Berlin,Tokyo<span class="w">          </span><span class="c1"># 指定待处理地图列表  </span>
+-OnlyPrepareMaps<span class="o">=</span><span class="nb">true</span><span class="w">       </span><span class="c1"># 仅预处理地图资产</span>
+-TileSize<span class="o">=</span><span class="m">2000</span><span class="w">              </span><span class="c1"># 分块地图尺寸（单位：米）</span>
+-ForceCarlaMaterials<span class="o">=</span><span class="nb">true</span><span class="w">   </span><span class="c1"># 强制使用Carla材质系统</span>
+</code></pre></div></h2>
+<h2 id="_22">注意事项</h2>
+<h3 id="_23">预处理模块专项</h3>
+<ol>
+<li><strong>材质依赖</strong></li>
+<li>必须预加载 Carla/Static/GenericMaterials 材质库  </li>
+<li>
+<p>缺失材质实例将导致静默失败</p>
+</li>
+<li>
+<p><strong>分块规范</strong></p>
+</li>
+<li>瓦片命名必须遵循 <code>MapName_Tile_X_Y</code> 格式  </li>
+<li>
+<p>原点坐标需与 OpenDrive 数据对齐</p>
+</li>
+<li>
+<p><strong>文件依赖</strong></p>
+</li>
+<li>必须提供有效的 TilesInfo.txt 进行分块布局  </li>
+<li>缺失 XODR 文件将跳过导航点生成</li>
+</ol>
+<hr />
+<h2 id="_24">示例配置</h2>
+<h3 id="_25">分块地图预处理命令</h3>
+<div class="highlight"><pre><span></span><code>UE4Editor-Cmd.exe Carla -run=PrepareAssetsForCooking  
+  -PackageName=EuroPack  
+  -Maps=Berlin  
+  -TileSize=2000
+</code></pre></div>
+<h3 id="windows">分块地图预处理命令（Windows）</h3>
+<div class="highlight"><pre><span></span><code>UE4Editor-Cmd.exe Carla -run=PrepareAssetsForCooking  
+  -PackageName=EuroPack  
+  -Maps=Berlin  
+  -TileSize=2000  
+  -ForceCarlaMaterials
+</code></pre></div>
+<h3 id="linux">道具资产预处理命令（Linux）</h3>
+<div class="highlight"><pre><span></span><code>./UE4Editor-Cmd<span class="w"> </span>Carla<span class="w"> </span>-run<span class="o">=</span>PrepareAssetsForCooking<span class="w">  </span>
+<span class="w">  </span>-PackageName<span class="o">=</span>VehiclePack<span class="w">  </span>
+<span class="w">  </span>-OnlyPrepareMaps<span class="o">=</span><span class="nb">false</span><span class="w">  </span>
+<span class="w">  </span>-Props<span class="o">=</span>Car,Sign,Truck
+</code></pre></div>
+<h3 id="_26">跨平台预处理命令</h3>
+<p><strong>Windows：</strong>
+<div class="highlight"><pre><span></span><code>UE4Editor-Cmd.exe Carla -run=PrepareAssetsForCooking  
+  -PackageName=AsiaPack  
+  -Maps=Tokyo  
+  -TileSize=1000  
+  -LODDistance=3000
+</code></pre></div></p>
+<p><strong>Linux：</strong>
+<div class="highlight"><pre><span></span><code>./UE4Editor-Cmd<span class="w"> </span>Carla<span class="w"> </span>-run<span class="o">=</span>PrepareAssetsForCooking<span class="w">  </span>
+<span class="w">  </span>-PackageName<span class="o">=</span>UrbanPack<span class="w">  </span>
+<span class="w">  </span>-EnablePhysicsCollision<span class="w">  </span>
+<span class="w">  </span>-ForceCarlaMaterials
+</code></pre></div></p>
+<hr />
+<h2 id="_27">附录</h2>
+<h3 id="_28">增强错误代码表</h3>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>含义</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x31</td>
+<td>分块布局文件缺失</td>
+<td>检查 Maps/[Map]/TilesInfo.txt</td>
+</tr>
+<tr>
+<td>0x32</td>
+<td>材质实例加载失败</td>
+<td>验证材质路径正确性</td>
+</tr>
+<tr>
+<td>0x33</td>
+<td>OpenDrive 数据异常</td>
+<td>重新导出 XODR 文件</td>
+</tr>
+<tr>
+<td>### 新增错误代码映射</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>代码</td>
+<td>场景</td>
+<td>调试建议</td>
+</tr>
+<tr>
+<td>-------</td>
+<td>-------------------------------</td>
+<td>---------------------------</td>
+</tr>
+<tr>
+<td>0x40</td>
+<td>对象库路径未注册</td>
+<td>检查DefaultEngine.ini配置</td>
+</tr>
+<tr>
+<td>0x41</td>
+<td>瓦片尺寸非整数倍</td>
+<td>调整TileSize为100的整数倍</td>
+</tr>
+<tr>
+<td>0x42</td>
+<td>第三方材质冲突</td>
+<td>启用-ForceCarlaMaterials参数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_29">对象库加载白名单配置</h3>
+<p>在 <code>DefaultEngine.ini</code> 中添加：<br />
+<div class="highlight"><pre><span></span><code><span class="k">[/Script/Engine.ObjectLibrary]</span>
+<span class="na">+AssetPaths</span><span class="o">=</span><span class="s">(Path=&quot;/Game/Carla/Static/Props&quot;)</span><span class="w">  </span>
+<span class="na">+AssetPaths</span><span class="o">=</span><span class="s">(Path=&quot;/Game/Carla/Static/Road&quot;)</span><span class="w">  </span>
+</code></pre></div></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

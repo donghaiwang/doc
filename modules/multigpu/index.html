@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>HUTB 多 GPU 模块技术文档（multigpu） - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "HUTB \u591a GPU \u6a21\u5757\u6280\u672f\u6587\u6863\uff08multigpu\uff09";
+        var mkdocs_page_input_path = "modules/multigpu.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">HUTB 多 GPU 模块技术文档（multigpu）</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/multigpu.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="hutb-gpu-multigpu">HUTB 多 GPU 模块技术文档（multigpu）</h1>
+<h1 id="_1">目录</h1>
+<ul>
+<li><a href="#1-模块概述">1. 模块概述</a></li>
+<li><a href="#2-核心功能">2. 核心功能</a></li>
+<li><a href="#3-类与方法详解">3. 类与方法详解</a></li>
+<li><a href="#4-通信机制">4. 通信机制</a></li>
+<li><a href="#5-关键流程">5. 关键流程</a></li>
+<li><a href="#6-配置参数">6. 配置参数</a></li>
+<li><a href="#7-注意事项">7. 注意事项 </a></li>
+<li><a href="#8-示例代码">8. 示例代码 </a></li>
+</ul>
+<hr />
+<h2 id="1">1. 模块概述</h2>
+<p><code>multigpu</code> 模块用于支持 HUTB 模拟器在多 GPU 环境下进行分布式渲染和任务计算。模块采用主从架构：主节点负责调度与控制，从节点承担实际渲染任务，从而提升模拟器的可扩展性与运行效率。</p>
+<p>主要组件包括：</p>
+<ul>
+<li><strong>Primary</strong>：主节点，调度中心，分发任务与监控从节点状态  </li>
+<li><strong>Secondary</strong>：从节点，执行渲染与计算任务  </li>
+<li><strong>Router</strong>：路由器，管理消息转发和节点通信  </li>
+<li><strong>Listener</strong>：监听器，接收控制命令并分发  </li>
+</ul>
+<hr />
+<h2 id="2">2. 核心功能</h2>
+<ul>
+<li>多 GPU 分布式渲染任务协同执行  </li>
+<li>高效稳定的节点间通信机制  </li>
+<li>支持从节点的动态注册与任务重分配  </li>
+<li>灵活的任务协议与自定义消息结构  </li>
+</ul>
+<hr />
+<h2 id="3">3. 类与方法详解</h2>
+<h3 id="primary">Primary</h3>
+<p>主节点类，调度与管理核心。</p>
+<ul>
+<li><code>Initialize()</code>：初始化主节点资源<br />
+实例：系统启动时，主节点调用 Initialize() 加载配置文件、启动内部服务（如任务队列和心跳检测），并绑定到 TCP 端口 8000。 
+场景：主节点启动后完成资源准备，等待从节点连接。</li>
+<li><code>RegisterSecondary(SecondaryInfo info)</code>：注册从节点信息<br />
+实例：当从节点 Secondary-01 上线时，调用此方法将其 IP 192.168.1.101 和可用 GPU 资源信息注册到主节点的节点池中。 
+场景：主节点维护可用从节点列表，后续任务将基于此列表分发。</li>
+<li><code>DistributeTask(Task task)</code>：任务分发接口<br />
+实例：收到一个图像渲染任务 Task-123 后，主节点通过负载均衡策略选择空闲的从节点 Secondary-02，调用此方法将任务发送到该节点。 
+场景：任务分发的核心逻辑，确保任务高效执行。</li>
+</ul>
+<h3 id="secondary">Secondary</h3>
+<p>从节点类，执行接收到的任务。</p>
+<ul>
+<li><code>ConnectToPrimary(string address)</code>：连接主节点<br />
+实例：从节点启动后，调用 <code>ConnectToPrimary("tcp://master-node:8000")</code>，与主节点建立长连接并发送注册请求。<br />
+场景：从节点加入集群的第一步。</li>
+<li><code>ReceiveTask()</code>：等待任务接收<br />
+实例：从节点在后台运行 <code>ReceiveTask()</code>，阻塞等待主节点推送任务，收到任务后触发<code>ExecuteTask</code>。 
+场景：持续监听任务的核心循环。</li>
+<li><code>ExecuteTask(Task task)</code>：执行并返回结果<br />
+实例：接收到数据处理任务 Task-456 后，从节点调用此方法运行 Python 脚本，完成后将结果文件路径返回给主节点。<br />
+场景：实际执行任务的入口，支持自定义业务逻辑。</li>
+</ul>
+<h3 id="router">Router</h3>
+<ul>
+<li><code>RouteMessage(Message msg)</code>：解析并路由不同类型的消息<br />
+实例：收到一条类型为 TaskResult 的消息，路由解析后将其转发到主节点的 TaskManager 模块；若为 Heartbeat 类型，则转交给 HealthMonitor。<br />
+场景：消息分类处理，确保系统模块解耦。</li>
+</ul>
+<h3 id="listener">Listener</h3>
+<ul>
+<li><code>StartListening()</code>：开启监听端口<br />
+实例：监听器启动时调用此方法，在端口 8080 上监听 HTTP 请求，接收外部用户提交的任务或管理指令。 <br />
+场景：系统对外服务的入口。</li>
+<li><code>HandleIncomingMessage(Message msg)</code>：处理并响应外部指令<br />
+实例：收到一条 RestartNode 指令后，验证权限并触发主节点重启流程，最终返回 {"status": "success"} 的 JSON 响应。<br />
+场景：处理用户或管理员的操作请求</li>
+</ul>
+<hr />
+<h2 id="4">4. 通信机制</h2>
+<p>模块通信使用 TCP 或 UDP（可配置），支持命令、状态与数据三类消息。消息格式包括：</p>
+<ul>
+<li><strong>MessageType</strong>：标识类型（命令 / 数据 / 心跳等）  </li>
+<li><strong>Payload</strong>：消息数据体  </li>
+<li><strong>Checksum</strong>：可选字段，校验完整性  </li>
+</ul>
+<p>所有消息通过 Router 进行解包、路由和转发。</p>
+<hr />
+<h2 id="5">5. 关键流程</h2>
+<h3 id="_2">从节点注册</h3>
+<ol>
+<li>从节点调用 <code>ConnectToPrimary()</code>  </li>
+<li>主节点执行 <code>RegisterSecondary()</code>  </li>
+<li>主节点更新从节点列表，准备任务分发  </li>
+</ol>
+<h3 id="_3">任务调度与处理</h3>
+<ol>
+<li>主节点调用 <code>DistributeTask()</code> 分配任务  </li>
+<li>从节点通过 <code>ReceiveTask()</code> 接收任务  </li>
+<li>从节点执行 <code>ExecuteTask()</code>，并返回结果  </li>
+</ol>
+<hr />
+<h2 id="6">6. 配置参数</h2>
+<h3 id="_4">主节点配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ListenPort</td>
+<td>主节点监听端口</td>
+</tr>
+<tr>
+<td>MaxSecondaries</td>
+<td>支持的最大从节点数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">从节点配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PrimaryAddress</td>
+<td>主节点 IP 地址</td>
+</tr>
+<tr>
+<td>ReconnectInterval</td>
+<td>断线重连时间间隔（秒）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7">7. 注意事项</h2>
+<ul>
+<li>网络通信必须具备稳定的端口与带宽保障  </li>
+<li>主节点内部数据结构需线程安全管理  </li>
+<li>多线程执行任务时，确保 GPU 不冲突访问  </li>
+<li>从节点应具备异常重连与任务重试机制  </li>
+</ul>
+<hr />
+<h2 id="8">8. 示例代码</h2>
+<p>```cpp
+// 主节点初始化
+Primary primary;
+primary.Initialize();</p>
+<p>// 从节点连接主节点
+Secondary secondary;
+secondary.ConnectToPrimary("127.0.0.1");</p>
+<p>// 主节点任务分发
+Task task = CreateRenderTask();
+primary.DistributeTask(task);</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

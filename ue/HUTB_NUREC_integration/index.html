@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>HUTB - NUREC 集成 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "HUTB - NUREC \u96c6\u6210";
+        var mkdocs_page_input_path = "ue/HUTB_NUREC_integration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">HUTB - NUREC 集成</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/ue/HUTB_NUREC_integration.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="hutb-nurec">HUTB - NUREC 集成</h1>
+<p>该模块集成了 HUTB 与 NVIDIA 的 NUREC（NVIDIA 神经重建引擎）。它允许您通过基于 NUREC 数据重建交通场景，在 HUTB 中重放真实世界的记录。</p>
+<h2 id="_1">概述</h2>
+<p>NUREC（NVIDIA 神经重建引擎）是一个利用传感器数据重建真实交通场景的框架。这种集成允许这些重建结果在 HUTB 模拟器中重现，从而在真实数据和模拟之间架起一座桥梁。</p>
+<p>主要特性：
+- 在 HUTB 中加载和回放 NUREC 场景
+- 可视化车辆及其他交通参与者
+- 支持摄像头视图，包括旁观者摄像头
+- 坐标系转换</p>
+<h2 id="_2">要求</h2>
+<p>要使用此集成，您需要：</p>
+<ul>
+<li>CARLA 0.9.16 或者更新</li>
+<li>Python 3.10</li>
+<li>以下 Python 包：</li>
+<li>pygame</li>
+<li>numpy</li>
+<li>scipy</li>
+<li>grpc</li>
+<li>carla</li>
+<li>nvidia-nvimgcodec-cu12</li>
+</ul>
+<h2 id="_3">安装</h2>
+<p>有关详细的安装说明，请参阅 <a href="../nvidia-nurec.md">NUREC 安装指南</a> 。</p>
+<p>有关详细的安装说明，请参阅。</p>
+<h2 id="nurec-hutb">使用 NUREC 运行 HUTB</h2>
+<h3 id="1-hutb">步骤 1：启动 HUTB</h3>
+<p>按照标准流程启动 HUTB。</p>
+<h3 id="2-nurec">第 2 步：重放 NUREC 场景</h3>
+<p>请务必通过设置 NUREC_IMAGE 环境变量来指定要使用的 nurec 镜像。详情请参阅 <a href="../nvidia-nurec.md">文档</a>。</p>
+<p>一旦 HUTB 运行，您就可以使用<code>example_replay_recording.py</code>脚本重播 NUREC 场景：</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>example_replay_recording.py<span class="w"> </span>--usdz-filename<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/maps/clipgt-9e849eeb-073f-424c-838c-493b56c806fb.usdz<span class="w"> </span>--move-spectator
+</code></pre></div>
+<h2 id="example_replay_recordingpy">example_replay_recording.py 的命令行参数</h2>
+<p>下表解释了<code>example_replay_recording.py</code>脚本可用的命令行参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>长格式</th>
+<th>默认</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-h</td>
+<td>--host</td>
+<td>127.0.0.1</td>
+<td>HUTB 主机服务器的 IP 地址</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>--port</td>
+<td>2000</td>
+<td>HUTB 服务器的 TCP 端口</td>
+</tr>
+<tr>
+<td>-np</td>
+<td>--nurec-port</td>
+<td>46435</td>
+<td>NUREC 服务器的端口</td>
+</tr>
+<tr>
+<td>-u</td>
+<td>--usdz-filename</td>
+<td>(必需的)</td>
+<td>包含 NUREC 场景的 USDZ 文件的路径</td>
+</tr>
+<tr>
+<td>--move-spectator</td>
+<td></td>
+<td>False</td>
+<td>移动观察者摄像机来跟随自主车辆</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">模块结构</h2>
+<ul>
+<li><code>nurec_integration.py</code>: 处理 NUREC 服务管理和场景重放的主要集成类</li>
+<li><code>scenario.py</code>: 用于加载和管理 NUREC 场景的核心类</li>
+<li><code>track.py</code>: 车辆轨迹的轨迹段表示和插值函数</li>
+<li><code>constants.py</code>: 整个模块中使用的常量</li>
+<li><code>projection_functions.py</code>: 坐标系变换函数</li>
+<li><code>pygame_display.py</code>: 使用 Pygame 实现摄像头图像的可视化</li>
+<li><code>example_*.py</code>: 演示不同用例的示例脚本：</li>
+<li><code>example_replay_recording.py</code>: 使用多台摄像机进行基本场景重放</li>
+<li><code>example_save_images.py</code>: 将相机图像保存到磁盘</li>
+<li><code>example_custom_camera.py</code>: 配置自定义相机参数</li>
+<li><code>grpc_proto/</code>: 用于 NUREC 服务通信的协议缓冲区定义和生成的代码</li>
+<li><code>tools/</code>: 用于蓝图尺寸提取和其他任务的附加实用工具</li>
+</ul>
+<h2 id="_5">附加信息</h2>
+<ul>
+<li>蓝图大小 JSON 文件用于将 NUREC 对象尺寸与 HUTB 蓝图进行匹配</li>
+<li>使用 <code>extract_blueprint_sizes.py</code> 工具生成自定义 CARLA 蓝图的尺寸信息</li>
+</ul>
+<h2 id="nurec">启动 NUREC 服务</h2>
+<p>创建 <code>NurecScenario</code> 实例时，NUREC 服务会自动启动。该服务提供以下主要功能：
+- 从场景渲染 RGB 图像
+- 获取版本信息
+- 列出可用的场景、摄像机和轨迹</p>
+<p>该服务默认运行在 46435 端口，可以使用 <code>--nurec-port</code> 参数进行配置。当 <code>NurecScenario</code> 实例被销毁时，该服务将自动关闭。</p>
+<p>您可以在创建 <code>NurecScenario</code> 实例时使用 <code>reuse_container</code> 参数控制服务容器行为：
+- 当 <code>reuse_container=True</code> （默认）时：如果服务容器已经存在，则会重复使用，防止多个实例同时运行
+- 当 <code>reuse_container=False</code> 时：每次都会创建一个新的服务容器，这对于测试或需要确保干净状态时很有用</p>
+<p>使用示例：
+<div class="highlight"><pre><span></span><code><span class="c1"># 重复使用现有容器（默认）</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">NurecScenario</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">usdz_filename</span><span class="p">)</span>
+
+<span class="c1"># 强制新建容器</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">NurecScenario</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">usdz_filename</span><span class="p">,</span> <span class="n">reuse_container</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div></p>
+<h2 id="_6">工具</h2>
+<h3 id="_7">提取蓝图尺寸工具</h3>
+<p>有关蓝图提取工具的文档，请参阅 <a href="../tools/">tools.md</a> 。</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

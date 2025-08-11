@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>从源代码构建 Carla - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u4ece\u6e90\u4ee3\u7801\u6784\u5efa Carla";
+        var mkdocs_page_input_path = "build_carla.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">从源代码构建 Carla</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/build_carla.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carla">从源代码构建 Carla</h1>
+<p>用户可以从源代码构建 Carla 以用于开发目的。如果您想要向 Carla 添加额外的特性或功能，或者想要使用虚幻编辑器创建资源或操作地图，则建议您这样做。</p>
+<p>构建说明适用于 Linux 和 Windows。您还可以在 Docker 容器中构建 Carla，以便部署在 AWS、Azure 或 Google 云服务中。访问 <a href="https://github.com/OpenHUTB/carla"><strong>Carla GitHub</strong></a> 并克隆存储库。</p>
+<ul>
+<li><a href="../build_linux/"><strong>Linux 构建</strong></a>  </li>
+<li><a href="../build_windows/"><strong>Windows 构建</strong></a></li>
+<li><a href="../build_docker/"><strong>Docker</strong></a></li>
+<li><a href="../build_docker_unreal/"><strong>带虚幻引擎的 Docker</strong></a>  </li>
+<li><a href="../build_update/"><strong>更新 Carla</strong></a>  </li>
+<li><a href="../build_system/"><strong>构建系统</strong></a></li>
+<li><a href="../build_linux_ue5/"><strong>在 Linux 上使用虚幻引擎 5.3 构建</strong></a>  </li>
+<li>
+<p><a href="../build_windows_ue5/"><strong>在 Windows 使用虚幻引擎 5.3 构建</strong></a></p>
+</li>
+<li>
+<p><a href="../build_faq/"><strong>常见问题</strong></a>  </p>
+</li>
+</ul>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>这些构建指南都是针对 Carla 的虚幻引擎4.26版，如果想要构建 Carla 的虚幻引擎5.5版，请访问 <a href="https://carla-ue5.readthedocs.io/en/latest/build_carla/">该版本的正确构建指南</a> 。</p>
+</div>
+<h2 id="_1">其他特性</h2>
+<h3 id="github">Github 访问加速</h3>
+<p>有时候 Github 访问不了，可以下载并运行 <a href="https://gitee.com/OpenHUTB/software/releases/tag/speed_up_github">链接</a> 中对应平台的软件（比如 Windows 平台中下载 <a href="https://gitee.com/OpenHUTB/software/releases/download/speed_up_github/fastgithub-win-x64.zip">fastgithub-win-x64.zip</a> 解压后运行<code>FastGithub.UI.exe</code>即可正常访问Github）。</p>
+<h3 id="_2">科学上网 <span id="internet"></span></h3>
+<p>参考其中的一个链接进行科学上网的订阅和环境配置：<a href="https://www.starlinkcloud.cc/#/register?code=Ob4iMh8u">链接1</a> 、<a href="https://portal.shadowsocks.au/">链接2</a> 、<a href="https://mk.mikadonet.xyz/#/login">链接3</a> 、<a href="https://711jsq.club/#/login">链接4</a> 。
+比如使用Clash，首先在<code>配置</code>页面下根据订阅链接进行下载，然后在<code>常规</code>页面开启<code>系统代理</code>，最后测试是否可以正常科学上网。</p>
+<h4 id="ubuntu">Ubuntu 下的配置</h4>
+<p>Linux 科学上网配置<a href="https://opclash.com/article/302.html">教程</a> 。下载<a href="https://github.com/zhongfly/Clash-premium-backup/releases/download/2023-09-05-gdcc8d87/clash-linux-amd64-n2023-09-05-gdcc8d87.gz">clash</a> 。</p>
+<p>首次启动<code>clash</code>，会新建文件<code>~/.config/clash/config.yaml</code>：
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$HOME</span>/.config/clash/
+</code></pre></div>
+<img alt="ImageDepth" src="../img/build/agent_config.jpg" />
+将Clash中的订阅地址写入<code>config.yaml</code>文件。</p>
+<p>打开 Ubuntu 的“设置”管理，在“网络”内将“网络代理”的“自动”改为“手动”，根据以下内容进行填写 HTTP、HTTPS 和 Socks 地址
+<div class="highlight"><pre><span></span><code><span class="c1"># HTTP 代理</span>
+<span class="m">127</span>.0.0.1:7890
+
+<span class="c1"># HTTPS 代理</span>
+<span class="m">127</span>.0.0.1:7890
+
+<span class="c1"># Socks 主机</span>
+<span class="m">127</span>.0.0.1:7891
+</code></pre></div></p>
+<h4 id="tortoisegit">TortoiseGit 网络代理配置</h4>
+<p>如果使用TortoiseGit作为git的图形化界面软件，首页在文件资源管理器空白位置右键，选择<code>TortoiseGit-&gt;Setting</code>，然后在弹出的界面进行如下配置：
+<img alt="ImageDepth" src="../img/build/internet.jpg" /></p>
+<h3 id="vscode-c"><a href="https://zhuanlan.zhihu.com/p/679355387">VScode C++开发调式环境配置</a></h3>
+<p>1.下载<code>software/gcc/x86_64-8.1.0-release-win32-seh-rt_v6-rev0.7z</code>文件到本地并解压</p>
+<p>2.将<code>mingw64/bin/</code>路径添加到PATH路径，使用命令<code>gcc -v</code>验证配置已生效；</p>
+<h3 id="carla_1">带Carla插件的虚幻编辑器可执行版本</h3>
+<p>根据 <a href="https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb">链接</a> ，CarlaUE4 下载 <code>software/car/carla_unreal_v1.1.zip</code>，CarlaUE5 下载 <code>software/car/CarlaUE5_v1.0.zip</code>，解压后运行 <code>launch_*.bat</code> 就可以启动带Carla插件的虚幻编辑器。</p>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>CarlaUE5编辑器正常运行至少需要 8GB 显存。</p>
+</div>
+<h2 id="cicd">CI/CD</h2>
+<ul>
+<li>
+<p><a href="../dev/cicd/">CI/CD环境部署</a></p>
+</li>
+<li>
+<p><a href="https://www.appliedintuition.com/blog/carla-orbis-basis">Applied Intuition的解决方案</a> </p>
+</li>
+</ul>
+<!--
+- 官方CI/CD [链接](http://158.109.8.172:8080/login?from=%2F) （西班牙 加泰罗尼亚的IP）。
+-->
+
+<h2 id="_3">构建流程</h2>
+<p><img alt="" src="../img/tuto_D_windows_debug/file_specification_build_tools.png" /></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

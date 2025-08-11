@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>NVIDIA 神经重建引擎 gRPC 协议缓冲区 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "NVIDIA \u795e\u7ecf\u91cd\u5efa\u5f15\u64ce gRPC \u534f\u8bae\u7f13\u51b2\u533a";
+        var mkdocs_page_input_path = "ue/grpc_proto.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">NVIDIA 神经重建引擎 gRPC 协议缓冲区</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/ue/grpc_proto.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="nvidia-grpc">NVIDIA 神经重建引擎 gRPC 协议缓冲区</h1>
+<p>该软件包包含 NVIDIA 神经重建引擎 (NuRec) gRPC API 的协议缓冲区定义和 Python 生成工具。</p>
+<h2 id="_1">内容</h2>
+<ul>
+<li><code>protos/</code>: 协议缓冲区定义（.proto 文件）</li>
+<li><code>common.proto</code>: 常见数据类型和结构</li>
+<li><code>sensorsim.proto</code>: 传感器模拟服务定义</li>
+<li><code>update_generated.py</code>: Python 脚本从 proto 文件生成 Python 代码</li>
+<li><code>requirements.txt</code>: 所需的 Python 依赖项</li>
+</ul>
+<h2 id="_2">快速入门</h2>
+<h3 id="1">1. 安装依赖项</h3>
+<p>使用 pip：
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div></p>
+<h3 id="2-python">2. 生成 Python 代码</h3>
+<p>运行生成脚本以从 proto 定义创建 Python 文件：</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>PythonAPI/examples/nvidia/grpc/update_generated.py
+</code></pre></div>
+<p>这将在 <code>PythonAPI/examples/nvidia/grpc/protos/</code> 中生成以下 Python 文件：
+- <code>common_pb2.py</code> 和 <code>common_pb2.pyi</code>: common.proto 的 Python 代码
+- <code>sensorsim_pb2.py</code> 和 <code>sensorsim_pb2.pyi</code>: sensorsim.proto 的 Python 代码
+- <code>common_pb2_grpc.py</code> 和 <code>sensorsim_pb2_grpc.py</code>: gRPC 服务代码</p>
+<h3 id="3">3. 在您的代码中使用</h3>
+<p>生成 Python 文件后，您可以在 Python 代码中导入并使用它们：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 导入生成的模块</span>
+<span class="kn">import</span> <span class="nn">grpc_proto.common_pb2</span> <span class="k">as</span> <span class="nn">common_pb2</span>
+<span class="kn">import</span> <span class="nn">grpc_proto.sensorsim_pb2</span> <span class="k">as</span> <span class="nn">sensorsim_pb2</span>
+<span class="kn">import</span> <span class="nn">grpc_proto.sensorsim_pb2_grpc</span> <span class="k">as</span> <span class="nn">sensorsim_pb2_grpc</span>
+
+<span class="c1"># 创建 gRPC 通道和存根</span>
+<span class="kn">import</span> <span class="nn">grpc</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s1">&#39;localhost:50051&#39;</span><span class="p">)</span>
+<span class="n">stub</span> <span class="o">=</span> <span class="n">sensorsim_pb2_grpc</span><span class="o">.</span><span class="n">SensorsimServiceStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+
+<span class="c1"># 使用服务</span>
+<span class="n">request</span> <span class="o">=</span> <span class="n">sensorsim_pb2</span><span class="o">.</span><span class="n">RGBRenderRequest</span><span class="p">()</span>
+<span class="c1"># ... 配置您的请求</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">render_rgb</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="_3">服务概述</h2>
+<p>NuRec gRPC API 提供以下主要服务：</p>
+<h3 id="sensorsimservice">SensorsimService</h3>
+<ul>
+<li><code>render_rgb</code>: 从场景渲染 RGB 图像</li>
+<li><code>render_lidar</code>: 渲染激光雷达点云 </li>
+<li><code>get_version</code>: 获取版本信息</li>
+<li><code>get_available_scenes</code>: 列出可用场景</li>
+<li><code>get_available_cameras</code>: 列出场景可用的相机</li>
+<li><code>get_available_trajectories</code>: 列出场景的可用轨迹</li>
+<li><code>get_available_ego_masks</code>: 列出可用的自我掩膜</li>
+<li><code>shut_down</code>: 正常关闭服务</li>
+</ul>
+<h2 id="_4">部署</h2>
+<p>修改 .proto 文件时，始终重新生成 Python 代码：</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>PythonAPI/examples/nvidia/grpc/update_generated.py
+</code></pre></div>
+<h2 id="_5">支持</h2>
+<p>如果对此 API 有疑问，请联系 NVIDIA 支持或参阅官方文档。</p>
+<h2 id="_6">许可证</h2>
+<p>Copyright (c) 2025 NVIDIA CORPORATION &amp; AFFILIATES. All rights reserved.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

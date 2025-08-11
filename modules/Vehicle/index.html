@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>载具 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u8f7d\u5177";
+        var mkdocs_page_input_path = "modules/Vehicle.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">载具</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/Vehicle.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">载具</h1>
+<p>VehicleControl 结构中的值直接传递给 PhysX Vehicle 插件（请参阅 <a href="https://github.com/carla-simulator/carla/blob/422d0de1c4ba34238d960a5405ab227044199e13/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Vehicle/CarlaWheeledVehicle.cpp#L78-L102">CarlaWheeledVehicle.cpp</a> ）。</p>
+<h1 id="fackermanncontroller">&lt;一&gt;、FAckermannController</h1>
+<h2 id="fackermanncontroller_1">一、<code>FAckermannController</code> 类</h2>
+<p><code>FAckermannController</code> 类是一个用于实现阿克曼转向控制的控制器类，主要用于控制轮式车辆的行驶，包括速度、加速度、转向等方面的控制。该类使用了 PID 控制器来对速度和加速度进行调节，以实现对车辆的精确控制。</p>
+<h2 id="_2">二、文件信息</h2>
+<h3 id="_3">包含头文件</h3>
+<ul>
+<li><code>AckermannController.h</code>：定义了 <code>FAckermannController</code> 类和相关结构体。</li>
+<li><code>CarlaWheeledVehicle.h</code>：定义了 <code>ACarlaWheeledVehicle</code> 类，用于表示轮式车辆。</li>
+<li>使用 <code>#pragma once</code> 指令，确保头文件仅被编译一次，避免因重复包含导致的编译错误，提升编译效率。</li>
+</ul>
+<h2 id="_4">三、功能</h2>
+<h3 id="31">3.1构造函数和析构函数</h3>
+<ul>
+<li><code>FAckermannController::~FAckermannController()</code>：析构函数，用于释放 <code>FAckermannController</code> 对象所占用的资源。</li>
+</ul>
+<h3 id="32">3.2获取和应用设置</h3>
+<ul>
+<li><code>FAckermannControllerSettings FAckermannController::GetSettings() const</code>：获取当前控制器的设置，包括速度和加速度 PID 控制器的参数。</li>
+<li><code>void FAckermannController::ApplySettings(const FAckermannControllerSettings&amp; Settings)</code>：应用传入的控制器设置，更新速度和加速度 PID 控制器的参数。</li>
+</ul>
+<h3 id="33">3.3设置目标点</h3>
+<ul>
+<li><code>void FAckermannController::SetTargetPoint(const FVehicleAckermannControl&amp; AckermannControl)</code>：设置目标控制参数，包括转向角、转向速度、速度、加速度和 jerk 等，并对这些参数进行裁剪。</li>
+</ul>
+<h3 id="34">3.4重置控制器</h3>
+<ul>
+<li><code>void FAckermannController::Reset()</code>：重置控制器的状态，包括速度和加速度 PID 控制器的状态，以及车辆的控制参数和状态。</li>
+</ul>
+<h3 id="35">3.5运行控制循环</h3>
+<ul>
+<li><code>void FAckermannController::RunLoop(FVehicleControl&amp; Control)</code>：运行控制循环，包括横向控制和纵向控制，最后更新车辆的控制命令。</li>
+</ul>
+<h3 id="36">3.6横向控制</h3>
+<ul>
+<li><code>void FAckermannController::RunControlSteering()</code>：根据目标转向角和转向速度，计算当前的转向角。</li>
+</ul>
+<h3 id="37">3.7纵向控制</h3>
+<ol>
+<li>完全停止控制</li>
+<li><code>bool FAckermannController::RunControlFullStop()</code>：判断车辆是否需要完全停止，如果需要则将刹车设置为最大值，油门设置为零。</li>
+<li>倒车控制</li>
+<li><code>void FAckermannController::RunControlReverse()</code>：根据车辆的当前速度和目标速度，判断是否可以切换到倒车模式。</li>
+<li>速度控制</li>
+<li><code>void FAckermannController::RunControlSpeed()</code>：使用速度 PID 控制器计算目标加速度，并对其进行裁剪。</li>
+<li>加速度控制</li>
+<li><code>void FAckermannController::RunControlAcceleration()</code>：使用加速度 PID 控制器计算目标油门或刹车值，并对其进行裁剪。</li>
+<li>更新车辆控制命令</li>
+<li><code>void FAckermannController::UpdateVehicleControlCommand()</code>：根据目标油门或刹车值，更新车辆的油门和刹车控制命令。</li>
+</ol>
+<h3 id="38">3.8更新车辆状态和物理参数</h3>
+<ol>
+<li>
+<p>更新车辆状态</p>
+</li>
+<li>
+<p><code>void FAckermannController::UpdateVehicleState(const ACarlaWheeledVehicle* Vehicle)</code>：更新车辆的状态，包括转向角、速度和加速度等。</p>
+</li>
+<li>
+<p>更新车辆物理参数</p>
+</li>
+<li>
+<p><code>void FAckermannController::UpdateVehiclePhysics(const ACarlaWheeledVehicle* Vehicle)</code>：更新车辆的最大转向角。</p>
+</li>
+</ol>
+<p>3.转向控制</p>
+<div class="highlight"><pre><span></span><code>USTRUCT(BlueprintType)
+struct CARLA_API FVehicleAckermannControl
+{
+  GENERATED_BODY()
+
+  UPROPERTY(Category = &quot;Vehicle Ackermann Control&quot;, EditAnywhere, BlueprintReadWrite)
+  float Steer = 0.0f;
+
+  UPROPERTY(Category = &quot;Vehicle Ackermann Control&quot;, EditAnywhere, BlueprintReadWrite)
+  float SteerSpeed = 0.0f;
+
+  UPROPERTY(Category = &quot;Vehicle Ackermann Control&quot;, EditAnywhere, BlueprintReadWrite)
+  float Speed = 0.0f;
+
+  UPROPERTY(Category = &quot;Vehicle Ackermann Control&quot;, EditAnywhere, BlueprintReadWrite)
+  float Acceleration = 0.0f;
+
+  UPROPERTY(Category = &quot;Vehicle Ackermann Control&quot;, EditAnywhere, BlueprintReadWrite)
+  float Jerk = 0.0f;
+};
+</code></pre></div>
+<p>该代码定义了一个用于车辆阿克曼转向控制的结构体，能够在虚幻引擎的蓝图系统中使用。通过这个结构体，开发者可以对车辆的转向角度、转向速度、行驶速度、加速度和加加速度等参数进行方便的管理和调整，进而实现车辆的阿克曼转向控制模拟。</p>
+<h3 id="39">3.9车辆灯光状态</h3>
+<p>​   此结构体运用了 Unreal Engine 的反射系统，具备在蓝图里进行读写操作的能力。它的每个属性都代表着一种特定的灯光状态，并且默认情况下这些灯光都是关闭的。</p>
+<p>​   新添加的 <code>Hazard</code> 属性用于表示车辆危险警示灯的状态，默认值为 <code>false</code>，即初始状态下危险警示灯是关闭的。和其他属性一样，它也可以在编辑器中编辑，并且能在蓝图里进行读写操作。</p>
+<div class="highlight"><pre><span></span><code>// 新增的危险警示灯状态属性
+  UPROPERTY(Category = &quot;Vehicle Lights&quot;, EditAnywhere, BlueprintReadWrite)
+  bool Hazard = false;
+</code></pre></div>
+<p>3.10车辆的阿克曼转向控制参数</p>
+<h3 id="311">3.11功能补充</h3>
+<p>在Vehicle/VehiclePhysicsControl.h**文件中添加新的设置</p>
+<div class="highlight"><pre><span></span><code>// 刹车设置
+UPROPERTY(Category = &quot;Vehicle Brake Physics Control&quot;, EditAnywhere, BlueprintReadWrite)
+ float BrakeForce = 0.0f;
+
+UPROPERTY(Category = &quot;Vehicle Brake Physics Control&quot;, EditAnywhere, BlueprintReadWrite)
+ float HandbrakeForce = 0.0f;
+</code></pre></div>
+<ul>
+<li><code>BrakeForce</code>：代表车辆刹车时的制动力，默认值为 0.0f。</li>
+<li><code>HandbrakeForce</code>：表示手刹的制动力，默认值为 0.0f。</li>
+</ul>
+<h2 id="_5">四、类型</h2>
+<h3 id="41">4.1枚举类型</h3>
+<p>1.定义：使用 <code>UENUM(BlueprintType)</code> 宏定义一个可在蓝图系统中使用的枚举类型 <code>ECarlaWheeledVehicleState</code>。其底层类型为 <code>uint8</code>，属于强类型枚举，可避免枚举值命名冲突。</p>
+<p>2.代码使用场景：</p>
+<ul>
+<li><strong>调试</strong>：开发人员在调试 CARLA 轮式车辆相关功能时，可借助该枚举类型清晰地表示车辆的不同状态，便于定位和解决问题。</li>
+<li><strong>可视化</strong>：在 Unreal Engine 编辑器中，可通过显示名称直观地查看车辆状态，方便开发和测试。</li>
+<li><strong>蓝图开发</strong>：该枚举类型可在蓝图系统中使用，方便非编程人员通过蓝图可视化编程的方式使用车辆状态信息。</li>
+</ul>
+<p>3.注意事项</p>
+<ul>
+<li>若对代码进行修改，需注意生成文件 <code>CarlaWheeledVehicleState.generated.h</code> 可能需要重新生成，以确保反射信息和蓝图绑定的正确性。</li>
+<li>由于枚举类型为强类型，在使用时需明确指定枚举类型，避免类型不匹配问题。</li>
+</ul>
+<p>4.功能补充</p>
+<p>新增枚举成员：
+Turning：表示车辆正在转弯的状态。
+Parking：表示车辆正在停车的状态。</p>
+<div class="highlight"><pre><span></span><code>case ECarlaWheeledVehicleState::Turning:
+   return TEXT(&quot;Turning&quot;);
+case ECarlaWheeledVehicleState::Parking:
+   return TEXT(&quot;Parking&quot;);
+</code></pre></div>
+<p>注：该代码补充对应文档<strong>CarlaWheeledVehicleState.h</strong></p>
+<h1 id="wheeledvehicleaicontroller">&lt;二&gt;WheeledVehicleAIController 类代码文档</h1>
+<h2 id="_6">一、概述</h2>
+<p><code>WheeledVehicleAIController</code>类是用于控制轮式车辆的人工智能控制器，主要服务于车辆模拟场景。该类通过实现自动驾驶、障碍物检测、路线规划等功能，管理车辆在虚拟环境中的行为。它依赖<code>ACarlaWheeledVehicle</code>、<code>ARoutePlanner</code>等多个类，协同完成车辆控制逻辑。</p>
+<h2 id="_7">二、代码结构与功能模块</h2>
+<h3 id="21">2.1 静态局部方法</h3>
+<ol>
+<li>RayCast 方法</li>
+<li><strong>功能</strong>：通过光线投射，判断从起点<code>Start</code>到终点<code>End</code>之间是否存在阻挡物。该方法使用<code>LineTraceSingleByObjectType</code>执行光线投射，忽略发起投射的<code>Actor</code>本身，并依据投射结果判断是否击中阻挡物。</li>
+<li>参数<ul>
+<li><code>Actor</code>：发起光线投射的<code>AActor</code>对象。</li>
+<li><code>Start</code>：光线投射起始位置向量。</li>
+<li><code>End</code>：光线投射结束位置向量。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：若光线投射击中阻挡物，返回<code>true</code>；否则返回<code>false</code>。</li>
+<li>IsThereAnObstacleAhead 方法</li>
+<li><strong>功能</strong>：判断车辆前方是否存在障碍物。通过获取车辆前向向量、边界框大小等信息，结合速度计算光线投射距离，分别在车辆中心、右侧、左侧三个方向执行光线投射，只要有一个方向检测到障碍物即返回<code>true</code>。</li>
+<li>参数<ul>
+<li><code>Vehicle</code>：被检测的<code>ACarlaWheeledVehicle</code>对象。</li>
+<li><code>Speed</code>：车辆当前速度。</li>
+<li><code>Direction</code>：车辆行驶方向向量。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：若车辆前方存在障碍物，返回<code>true</code>；否则返回<code>false</code>。</li>
+<li>ClearQueue 方法</li>
+<li><strong>功能</strong>：清空指定类型的队列<code>Queue</code>。通过创建一个空队列并与原队列交换，实现清空操作。</li>
+<li>参数<ul>
+<li><code>Queue</code>：待清空的<code>std::queue&lt;T&gt;</code>类型队列。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：无。</li>
+</ol>
+<h3 id="22">2.2 构造函数与析构函数</h3>
+<ol>
+<li>构造函数 AWheeledVehicleAIController</li>
+<li><strong>功能</strong>：初始化<code>AWheeledVehicleAIController</code>对象，创建随机数引擎<code>RandomEngine</code>并设置随机种子，同时配置该控制器可参与<code>Tick</code>更新，且<code>Tick</code>优先级设定在物理计算之前。</li>
+<li>参数<ul>
+<li><code>ObjectInitializer</code>：用于初始化对象的参数。</li>
+</ul>
+</li>
+<li>析构函数～AWheeledVehicleAIController</li>
+<li><strong>功能</strong>：释放<code>AWheeledVehicleAIController</code>对象占用的资源，当前为空实现，后续若有资源分配需补充释放逻辑。</li>
+</ol>
+<h3 id="23-acontroller">2.3 AController 相关方法</h3>
+<ol>
+<li>OnPossess 方法</li>
+<li><strong>功能</strong>：当控制器接管<code>pawn</code>时触发，首先调用父类<code>OnPossess</code>方法，接着判断是否已控制车辆，若已控制则输出错误日志并返回；然后将传入的<code>pawn</code>转换为<code>ACarlaWheeledVehicle</code>类型，获取车辆最大转向角度，配置自动驾驶参数，并在未设置路线图时尝试从世界中获取。</li>
+<li>参数<ul>
+<li><code>aPawn</code>：被接管的<code>APawn</code>对象。</li>
+</ul>
+</li>
+<li>OnUnPossess 方法</li>
+<li><strong>功能</strong>：当控制器失去对<code>pawn</code>的控制时调用，调用父类对应方法，并将车辆指针<code>Vehicle</code>置空。</li>
+<li><strong>参数</strong>：无。</li>
+<li>Tick 方法</li>
+<li><strong>功能</strong>：每帧调用，先标记性能分析事件范围，调用父类<code>Tick</code>方法；若未控制车辆则直接返回；若未启用自动驾驶且控制不具粘性，放松车辆控制；最后刷新车辆控制。</li>
+<li>参数<ul>
+<li><code>DeltaTime</code>：距上一帧的时间间隔。</li>
+</ul>
+</li>
+</ol>
+<h3 id="24">2.4 自动驾驶相关方法</h3>
+<ol>
+<li>ConfigureAutopilot 方法</li>
+<li><strong>功能</strong>：根据传入参数配置自动驾驶状态。设置自动驾驶启用标志<code>bAutopilotEnabled</code>，若不保留当前状态，则重置车辆转向、油门、刹车等控制输入，清空目标位置队列，设置车辆自动驾驶状态，并将交通灯状态设为绿灯。</li>
+<li>参数<ul>
+<li><code>Enable</code>：是否启用自动驾驶。</li>
+<li><code>KeepState</code>：是否保留当前状态。</li>
+</ul>
+</li>
+</ol>
+<h3 id="25">2.5 交通相关方法</h3>
+<ol>
+<li>SetFixedRoute 方法</li>
+<li><strong>功能</strong>：设置车辆固定行驶路线。若<code>bOverwriteCurrent</code>为<code>true</code>，清空当前目标位置队列，再将新的位置依次添加到队列中。</li>
+<li>参数<ul>
+<li><code>Locations</code>：包含目标位置的<code>TArray&lt;FVector&gt;</code>数组。</li>
+<li><code>bOverwriteCurrent</code>：是否覆盖当前路线。</li>
+</ul>
+</li>
+</ol>
+<h2 id="_8">三、流程图展示</h2>
+<div class="highlight"><pre><span></span><code>初始化流程（蓝色）：
+
+OnPossess：控制器接管车辆时的初始化过程
+
+ConfigureAutopilot：自动驾驶配置过程
+
+SetFixedRoute：设置固定路线流程
+
+持续运行流程（橙色）：
+
+Tick：每帧执行的主逻辑流程
+
+决策节点（红色）：
+
+各种条件判断（是否控制车辆、自动驾驶是否启用等）
+
+执行动作（绿色）：
+
+车辆控制相关操作
+
+数据清理操作
+
+状态更新操作
+
+特殊节点：
+
+绿色开始节点
+
+橙色时钟样式的Tick循环节点
+
+流程展示了从控制器初始化、持续运行到车辆控制的全过程，包括异常处理、自动驾驶逻辑、障碍物检测、路线跟随等重要功能模块的交互关系。
+</code></pre></div>
+<h1 id="uwheeledvehiclemovementcomponentnw">&lt;三&gt;<code>UWheeledVehicleMovementComponentNW</code> 类文档</h1>
+<h2 id="_9">一、类的概述</h2>
+<p><code>UWheeledVehicleMovementComponentNW</code> 类继承自某个基类（<code>Super</code>），主要用于处理轮式车辆的运动相关设置和操作，包括车辆的发动机设置、变速器设置、车轮设置等，同时负责与物理引擎（PhysX）进行交互，以实现车辆的模拟和运动更新。</p>
+<h2 id="_10">二、成员变量</h2>
+<ol>
+<li><strong><code>EngineSetup</code></strong>：存储车辆发动机相关的数据，包括转动惯量（<code>MOI</code>）、最大转速（<code>MaxRPM</code>）、不同工况下的阻尼率等，这些数据用于配置发动机的行为。</li>
+<li><strong><code>TransmissionSetup</code></strong>：包含车辆变速器的设置信息，如离合器强度（<code>ClutchStrength</code>）、换挡时间（<code>GearSwitchTime</code>）、倒档齿轮比（<code>ReverseGearRatio</code>）、最终传动比（<code>FinalRatio</code>）以及前进档的相关数据（<code>ForwardGears</code>）等，用于控制车辆的换挡逻辑和传动系统。</li>
+<li><strong><code>WheelSetups</code></strong>：一个数组，用于存储车轮的设置信息，每个元素对应一个车轮的设置，包括车轮的骨骼名称等。</li>
+<li><strong><code>DifferentialSetup</code></strong>：存储车辆差速器的设置数据，用于配置差速器的行为。</li>
+<li><strong><code>IdleBrakeInput</code></strong>：表示车辆的闲置刹车输入值。</li>
+<li><strong><code>SteeringCurve</code></strong>：一个富曲线（<code>FRichCurve</code>），用于描述车辆转向速度与转向角度之间的关系，通过添加不同速度下的转向比例关键帧来定义。</li>
+</ol>
+<h2 id="uwheeledvehiclemovementcomponentnwconst-fobjectinitializer-objectinitializer">三、构造函数 <code>UWheeledVehicleMovementComponentNW(const FObjectInitializer&amp; ObjectInitializer)</code></h2>
+<ol>
+<li><strong>功能</strong>：初始化车辆运动组件的默认设置，从 PhysX 获取默认的发动机数据，并设置发动机的相关参数，如转动惯量、最大转速、阻尼率等。同时初始化变速器的一些默认值，以及设置转向速度曲线的初始关键帧，并初始化车轮设置数组和差速器设置数组。</li>
+<li><strong>参数</strong>：<code>ObjectInitializer</code> 用于初始化对象的参数。</li>
+</ol>
+<h2 id="posteditchangepropertystruct-fpropertychangedevent-propertychangedevent">四、编辑器相关函数 <code>PostEditChangeProperty(struct FPropertyChangedEvent&amp; PropertyChangedEvent)</code></h2>
+<ol>
+<li>
+<p><strong>功能</strong>：当在编辑器中修改组件的属性时被调用，根据修改的属性（<code>DownRatio</code>、<code>UpRatio</code>、<code>SteeringCurve</code>）对相关设置进行调整。例如，当修改 <code>DownRatio</code> 时，确保每个前进档的 <code>DownRatio</code> 不大于 <code>UpRatio</code>；当修改 <code>UpRatio</code> 时，确保 <code>UpRatio</code> 不小于 <code>DownRatio</code>；当修改 <code>SteeringCurve</code> 时，确保曲线上的值在 0 到 1 之间。</p>
+</li>
+<li>
+<p><strong>参数</strong>：<code>PropertyChangedEvent</code> 包含了属性变化的相关信息，如修改的属性名称等。</p>
+</li>
+</ol>
+<p>## 五、静态函数</p>
+<ol>
+<li>
+<p>1<code>GetVehicleDifferentialNWSetup(const TArray&lt;FVehicleNWWheelDifferentialData&gt;&amp; Setup, PxVehicleDifferentialNWData&amp; PxSetup)</code></p>
+</li>
+<li>
+<p><strong>功能</strong>：根据给定的车轮差速器设置数组，设置 PhysX 车辆差速器的数据，将每个车轮的驱动状态设置到 <code>PxSetup</code> 中。</p>
+</li>
+<li>参数：<ul>
+<li><code>Setup</code>：一个包含车辆车轮差速器数据的数组。</li>
+<li><code>PxSetup</code>：PhysX 车辆差速器数据对象，用于存储设置后的差速器数据。</li>
+</ul>
+</li>
+</ol>
+<p>5.2、静态函数 <code>GetVehicleEngineSetup(const FVehicleNWEngineData&amp; Setup, PxVehicleEngineData&amp; PxSetup)</code></p>
+<ol>
+<li><strong>功能</strong>：根据给定的车辆发动机数据，设置 PhysX 车辆发动机的数据。包括将发动机的转动惯量、最大转速、阻尼率等从自定义单位转换为 PhysX 所需的单位，并设置扭矩曲线数据，将自定义的扭矩曲线转换为 PhysX 格式的扭矩曲线。</li>
+<li>参数：<ul>
+<li><code>Setup</code>：包含车辆发动机数据的对象。</li>
+<li><code>PxSetup</code>：PhysX 车辆发动机数据对象，用于存储设置后的发动机数据。</li>
+</ul>
+</li>
+</ol>
+<p>5.3、静态函数 <code>GetVehicleGearSetup(const FVehicleNWTransmissionData&amp; Setup, PxVehicleGearsData&amp; PxSetup)</code></p>
+<ol>
+<li><strong>功能</strong>：根据给定的车辆变速器数据，设置 PhysX 车辆齿轮的数据。包括设置换挡时间、倒档齿轮比、前进档齿轮比以及最终传动比等。</li>
+<li>参数：<ul>
+<li><code>Setup</code>：包含车辆变速器数据的对象。</li>
+<li><code>PxSetup</code>：PhysX 车辆齿轮数据对象，用于存储设置后的齿轮数据。</li>
+</ul>
+</li>
+</ol>
+<p>5.4、静态函数 <code>GetVehicleAutoBoxSetup(const FVehicleNWTransmissionData&amp; Setup, PxVehicleAutoBoxData&amp; PxSetup)</code></p>
+<ol>
+<li><strong>功能</strong>：根据给定的车辆变速器数据，设置 PhysX 车辆自动变速器的数据。包括设置每个前进档的升档比和降档比，以及空档的升档比和自动变速器的延迟时间。</li>
+<li>
+<p>参数：</p>
+<ul>
+<li><code>Setup</code>：包含车辆变速器数据的对象。</li>
+<li><code>PxSetup</code>：PhysX 车辆自动变速器数据对象，用于存储设置后的自动变速器数据。</li>
+</ul>
+</li>
+<li>
+<h2 id="_11">五、成员函数</h2>
+</li>
+</ol>
+<p><code>（1）FindPeakTorque()</code></p>
+<ol>
+<li><strong>功能</strong>：在发动机扭矩曲线中查找最大扭矩值，通过遍历扭矩曲线的关键帧，找出扭矩值的最大值。</li>
+<li><strong>返回值</strong>：返回找到的最大扭矩值。</li>
+</ol>
+<p>（2）<code>GetCustomGearBoxNumForwardGears() const</code></p>
+<ol>
+<li><strong>功能</strong>：获取自定义变速箱的前进档数量，返回存储前进档数据的数组的数量。</li>
+<li><strong>返回值</strong>：返回前进档的数量。</li>
+</ol>
+<p>（3）、成员函数 <code>SetupVehicle()</code></p>
+<ol>
+<li><strong>功能</strong>：设置车辆的相关属性和物理模拟数据。首先检查更新的基元（<code>UpdatedPrimitive</code>），如果车轮设置数量小于 2 则不进行设置。然后设置车辆的形状、质量属性，分配并设置车轮数据，根据车辆数据和车轮模拟数据设置驱动数据，创建车辆驱动对象，将驱动数据应用到物理引擎中的车辆对象上，并缓存车辆和车辆驱动对象。</li>
+<li><strong>注意事项</strong>：在设置过程中，对物理引擎的操作是通过 <code>FPhysicsCommand::ExecuteWrite</code> 进行的，确保在正确的上下文中调用。</li>
+</ol>
+<p>（4）成员函数 <code>UpdateSimulation(float DeltaTime)</code></p>
+<ol>
+<li><strong>功能</strong>：更新车辆的模拟数据。如果车辆驱动对象为空则不进行更新。设置原始输入数据，包括油门、转向、刹车和手刹的输入值。根据自动变速器的使用情况设置升档和降档的输入。将转向曲线转换为 PhysX 格式的固定大小查找表，设置平滑数据，并使用这些数据更新车辆的驱动模拟数据。</li>
+<li><strong>参数</strong>：<code>DeltaTime</code> 表示时间间隔，用于模拟的时间步长。</li>
+</ol>
+<p>（5）成员函数 <code>UpdateEngineSetup(const FVehicleNWEngineData&amp; NewEngineSetup)</code></p>
+<ol>
+<li>
+<p><strong>功能</strong>：更新车辆的发动机设置。如果车辆驱动对象不为空，根据新的发动机设置数据，设置 PhysX 车辆发动机的数据。</p>
+</li>
+<li>
+<p><strong>参数</strong>：<code>NewEngineSetup</code> 包含新的发动机设置数据的对象。</p>
+<p>（6）、成员函数 <code>UpdateDifferentialSetup(const TArray&lt;FVehicleNWWheelDifferentialData&gt;&amp; NewDifferentialSetup)</code></p>
+<ol>
+<li><strong>功能</strong>：更新车辆的差速器设置。如果车辆驱动对象不为空，根据新的差速器设置数组，设置 PhysX 车辆差速器的数据。</li>
+<li><strong>参数</strong>：<code>NewDifferentialSetup</code> 包含新的差速器设置数据的数组。</li>
+</ol>
+</li>
+</ol>
+<p>（7）、成员函数 <code>UpdateTransmissionSetup(const FVehicleNWTransmissionData&amp; NewTransmissionSetup)</code></p>
+<pre><code>  1. **功能**：更新车辆的变速器设置。如果车辆驱动对象不为空，根据新的变速器设置数据，设置 PhysX 车辆的齿轮数据和自动变速器数据。
+</code></pre>
+<ol>
+<li>
+<p><strong>参数</strong>：<code>NewTransmissionSetup</code> 包含新的变速器设置数据的对象。</p>
+<p>（8）、成员函数 <code>BackwardsConvertCm2ToM2NW(float&amp; val, float defaultValue)</code></p>
+<ol>
+<li><strong>功能</strong>：将从厘米平方到米平方的单位进行转换，如果 <code>val</code> 的值不等于默认值，则进行转换。</li>
+<li>参数：</li>
+<li><code>val</code>：需要转换的数值。<ul>
+<li><code>defaultValue</code>：默认值，用于判断是否进行转换。</li>
+</ul>
+</li>
+</ol>
+<p>（9）、成员函数 <code>Serialize(FArchive&amp; Ar)</code></p>
+<ol>
+<li><strong>功能</strong>：对组件进行序列化和反序列化操作。在反序列化时（加载时），根据不同的 UE4 版本进行单位转换，将发动机和变速器的一些设置从旧单位转换为新单位，确保兼容性。</li>
+<li><strong>参数</strong>：<code>Ar</code> 用于进行序列化和反序列化的存档对象。</li>
+</ol>
+<p>（10）、成员函数 <code>ComputeConstants()</code></p>
+<ol>
+<li><strong>功能</strong>：计算一些常量，调用基类的 <code>ComputeConstants</code> 函数，并将发动机的最大转速（<code>MaxEngineRPM</code>）设置为发动机设置中的最大转速（<code>EngineSetup.MaxRPM</code>）。</li>
+</ol>
+</li>
+</ol>
+<p>（11）、成员函数 <code>GetTireData(physx::PxVehicleWheels* InWheels, UVehicleWheel* InWheel)</code></p>
+<ol>
+<li><strong>功能</strong>：获取轮胎数据，根据给定的 PhysX 车辆车轮对象和车辆车轮对象，返回对应的轮胎数据指针。</li>
+<li>参数：</li>
+<li><code>InWheels</code>：PhysX 车辆车轮对象。</li>
+<li><code>InWheel</code>：车辆车轮对象。</li>
+<li><strong>返回值</strong>：返回轮胎数据的指针。</li>
+</ol>
+<p>（12）、成员函数 <code>GetWheelShapeMapping(physx::PxVehicleWheels* InWheels, uint32 InWheel)</code></p>
+<ol>
+<li><strong>功能</strong>：获取车轮形状映射，根据给定的 PhysX 车辆车轮对象和车轮索引，返回对应的车轮形状索引。</li>
+<li>参数：</li>
+<li><code>InWheels</code>：PhysX 车辆车轮对象。</li>
+<li><code>InWheel</code>：车轮索引。</li>
+<li><strong>返回值</strong>：返回车轮形状索引。</li>
+</ol>
+<p>（13）、成员函数 <code>GetWheelData(physx::PxVehicleWheels* InWheels, uint32 InWheel)</code></p>
+<ol>
+<li><strong>功能</strong>：获取车轮数据，根据给定的 PhysX 车辆车轮对象和车轮索引，返回对应的车轮数据。</li>
+<li>参数：</li>
+<li><code>InWheels</code>：PhysX 车辆车轮对象。</li>
+<li><code>InWheel</code>：车轮索引。</li>
+<li><strong>返回值</strong>：返回车轮数据对象。</li>
+</ol>
+<h2 id="_12">参考</h2>
+<ul>
+<li><a href="https://github.com/carla-simulator/carla/issues/1427">函数vehile.apply_control实际上如何工作的？</a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

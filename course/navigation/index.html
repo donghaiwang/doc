@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>自定义车辆运行轨迹 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u81ea\u5b9a\u4e49\u8f66\u8f86\u8fd0\u884c\u8f68\u8ff9";
+        var mkdocs_page_input_path = "course/navigation.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">自定义车辆运行轨迹</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/course/navigation.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">自定义车辆运行轨迹</h1>
+<p>​   车辆运动支持定义车辆运动起点和目标位置，为每辆车指定随机速度值，使其沿轨迹移动时不会发生碰撞或模拟碰撞，看到车辆沿指定轨迹行驶以到达其目标位置。</p>
+<p>​   本示例设计了一个  <a href="https://github.com/OpenHUTB/doc/blob/master/src/course/navigation/automatic_control_revised.py"><strong>automatic_control_revised.py</strong></a>  脚本进行实现</p>
+<p><img alt="" src="../../img/traffic_course_img/4.gif" /></p>
+<p><strong>注意</strong>  需要将 <a href="https://github.com/OpenHUTB/doc/tree/master/src/carla_agent"><strong>agents</strong></a> 文件夹位置添加到代码环境变量中，或者复制该文件夹使其与本示例脚本同级。</p>
+<p><a href="https://pan.baidu.com/s/15T1hGoWJ70tVmsTX7-zcSw?pwd=hutb"><strong>湖工商场景</strong></a><strong>(WindowsNoEditor)</strong></p>
+<p>自定义一些生成位置的起始点坐标<span id="definePoint"></span></p>
+<div class="highlight"><pre><span></span><code><span class="n">diming</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;北门&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">224.2</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">1.7</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s2">&quot;西门&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">146</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">161</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+    <span class="s2">&quot;楚枫桥&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">1.8</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">15.9</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+    <span class="s2">&quot;楚枫轩&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">14.8</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">64.7</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span>
+    <span class="s2">&quot;日新楼&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">75</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+    <span class="s2">&quot;体育馆&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">160</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">265</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">},</span>
+    <span class="s2">&quot;湘江楼&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+    <span class="s2">&quot;科技楼&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">97.4</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">217</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>定义命令行参数</p>
+<div class="highlight"><pre><span></span><code> <span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--s&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;北门&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--e&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;西门&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--speed&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</code></pre></div>
+<p>获取模拟时间对象及设置</p>
+<div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">set_timeout</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_world</span><span class="p">()</span>
+<span class="n">origin_settings</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_settings</span><span class="p">()</span>
+
+<span class="c1"># 设置</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_settings</span><span class="p">()</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">synchronous_mode</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">fixed_delta_seconds</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">world</span><span class="o">.</span><span class="n">apply_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</code></pre></div>
+<p>从车辆蓝图中自定义车辆对象，并获取车辆起点坐标</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 生成车辆和代理</span>
+<span class="n">blueprint_library</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span>
+<span class="c1"># 将diming字典中的每个键值对转换为一个carla.Location对象</span>
+<span class="c1"># 获取生成点</span>
+<span class="n">locations</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">diming</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="n">spawn_location</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">locations</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">s</span><span class="p">])</span>
+<span class="n">spawn_rotation</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">yaw</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+<span class="n">spawn_point</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="n">spawn_location</span><span class="p">,</span> <span class="n">spawn_rotation</span><span class="p">)</span> <span class="c1">#车辆起点</span>
+<span class="c1"># 生成车辆</span>
+<span class="n">ego_vehicle_bp</span> <span class="o">=</span> <span class="n">blueprint_library</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;vehicle.audi.tt&#39;</span><span class="p">)</span>
+<span class="n">ego_vehicle_bp</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="s1">&#39;100, 250, 250&#39;</span><span class="p">)</span>
+<span class="n">vehicle</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">ego_vehicle_bp</span><span class="p">,</span> <span class="n">spawn_point</span><span class="p">)</span>
+<span class="c1">#推进模拟环境时间</span>
+<span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+</code></pre></div>
+<p>生成终点，给起点和终点生成一个车辆运行轨迹，定义初始速度<span id="initSpeed"></span></p>
+<div class="highlight"><pre><span></span><code> <span class="c1"># 设置初始速度</span>
+ <span class="n">vehicle</span><span class="o">.</span><span class="n">set_target_velocity</span><span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">Vector3D</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="c1"># 创建代理</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">BehaviorAgent</span><span class="p">(</span><span class="n">vehicle</span><span class="p">,</span> <span class="n">behavior</span><span class="o">=</span><span class="s1">&#39;normal&#39;</span><span class="p">)</span>
+<span class="n">destination</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">locations</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">e</span><span class="p">])</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">get_location</span><span class="p">()</span>
+<span class="c1"># 生成轨迹</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">set_destination</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+</code></pre></div>
+<p>给目标车辆设置多个相机传感器。这些相机可以提供不同的视角,用于观察和记录车辆在模拟环境中的行为。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查找相机蓝图</span>
+<span class="n">camera_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;sensor.camera.rgb&#39;</span><span class="p">)</span>
+
+<span class="c1"># 设置Camera的附加类型Camera跟随车辆</span>
+<span class="n">Atment_SpringArmGhost</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">AttachmentType</span><span class="o">.</span><span class="n">SpringArmGhost</span>
+<span class="n">Atment_Rigid</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">AttachmentType</span><span class="o">.</span><span class="n">Rigid</span>
+<span class="c1"># 设置相对车辆的安装位置，配置上帝视图(Camera无法实现上帝视图，画面会抖动)</span>
+<span class="n">Vehicle_transform_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mi">35</span><span class="p">),</span> <span class="n">carla</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">pitch</span><span class="o">=-</span><span class="mi">90</span><span class="p">))</span>
+<span class="p">]</span>
+<span class="c1"># 设置camera的安装位置，配置后往前视图以及前后左右视图</span>
+<span class="n">Camera_transform_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">8</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                     <span class="n">carla</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">yaw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">roll</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span> <span class="n">Atment_SpringArmGhost</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># 拼接两个transform_list</span>
+<span class="n">spectator_transform_list</span> <span class="o">=</span> <span class="n">Vehicle_transform_list</span> <span class="o">+</span> <span class="n">Camera_transform_list</span>
+
+<span class="c1"># 上帝视图坐标系以及所有camera对象填入spectator_obj_list；</span>
+<span class="k">for</span> <span class="n">spectator_transform_index</span> <span class="ow">in</span> <span class="n">spectator_transform_list</span><span class="p">:</span>
+
+    <span class="c1"># spectator_transform_list第0个元素为上帝视图坐标系</span>
+    <span class="k">if</span> <span class="n">spectator_transform_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">spectator_transform_index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">spectator_obj_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spectator_transform_index</span><span class="p">)</span>
+
+    <span class="c1"># spectator_transform_list其余元素为Camera安装参数，下面生成Camera对象</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">camera</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">camera_bp</span><span class="p">,</span> <span class="n">spectator_transform_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                   <span class="n">attach_to</span><span class="o">=</span><span class="n">vehicle</span><span class="p">,</span> <span class="n">attachment_type</span><span class="o">=</span><span class="n">spectator_transform_index</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">spectator_obj_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">camera</span><span class="p">)</span>
+</code></pre></div>
+<p>更新代理、切换视角、处理代理局部规划器中的路径点。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 设置Vehicle_transform_list[0]为初始视图(上帝视图)；</span>
+<span class="n">spectator_obj</span> <span class="o">=</span> <span class="n">Vehicle_transform_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">_update_information</span><span class="p">()</span>
+
+    <span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">_local_planner</span><span class="o">.</span><span class="n">_waypoints_queue</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;======== Success=============&#39;</span><span class="p">)</span>
+        <span class="k">break</span>
+
+    <span class="c1"># top view</span>
+    <span class="n">spectator</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_spectator</span><span class="p">()</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">c</span><span class="p">:</span>
+        <span class="c1"># 上一个spectator的索引号；</span>
+        <span class="n">last_spectator_obj_index</span> <span class="o">=</span> <span class="n">spectator_obj_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">spectator_obj</span><span class="p">)</span>
+        <span class="c1"># 计算下一个spectator的索引，如果列表索引超限则重新拿第0个spectator；</span>
+        <span class="n">spectator_obj_index</span> <span class="o">=</span> <span class="n">last_spectator_obj_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">spectator_obj_list</span><span class="p">)</span> <span class="o">-</span> <span class="n">last_spectator_obj_index</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">spectator_obj</span> <span class="o">=</span> <span class="n">spectator_obj_list</span><span class="p">[</span><span class="n">spectator_obj_index</span><span class="p">]</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+        <span class="c1"># 更新视图</span>
+    <span class="k">if</span> <span class="n">spectator_obj_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">spectator_obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># 设置上帝视图</span>
+        <span class="n">Vehicle_transform</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="n">vehicle</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">location</span> <span class="o">+</span> <span class="n">spectator_obj_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                            <span class="n">spectator_obj_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">world</span><span class="o">.</span><span class="n">get_spectator</span><span class="p">()</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">Vehicle_transform</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 设置其他Camera视图</span>
+        <span class="n">world</span><span class="o">.</span><span class="n">get_spectator</span><span class="p">()</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">spectator_obj</span><span class="o">.</span><span class="n">get_transform</span><span class="p">())</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># speed_limit = vehicle.get_speed_limit()</span>
+    <span class="c1"># agent.get_local_planner().set_speed(50)</span>
+    <span class="n">control</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_step</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">vehicle</span><span class="o">.</span><span class="n">apply_control</span><span class="p">(</span><span class="n">control</span><span class="p">)</span>
+</code></pre></div>
+<h6 id="_2">轨迹生成<span id="generateTrajectory"></span></h6>
+<p><img alt="" src="../../img/traffic_course_img/5.png" /></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

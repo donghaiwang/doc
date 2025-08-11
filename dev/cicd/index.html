@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>持续集成 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u6301\u7eed\u96c6\u6210";
+        var mkdocs_page_input_path = "dev/cicd.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">持续集成</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/dev/cicd.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">持续集成</h1>
+<h2 id="jenkins"><a href="https://sdpro.top/blog/html/article/1051.html">Jenkins安装</a></h2>
+<p>1.安装 <a href="https://java.com/java/technologies/downloads/#jdk21-windows">JDK21</a></p>
+<p>2.<a href="https://blog.csdn.net/qq_36746815/article/details/127393076">安装 Jenkins 2.492.3 </a></p>
+<p>作为本地服务；端口 8080</p>
+<p>3.打开 <a href="http://172.21.108.56:8080">http://172.21.108.56:8080</a></p>
+<p>b00acffa035946e18bb20924c6f77181</p>
+<div class="highlight"><pre><span></span><code>用户名：cc
+密码：a5300066
+</code></pre></div>
+<p>重启服务：
+在地址栏中输入：<code>http://172.21.108.56:8080/restart/</code></p>
+<p>配置所使用的节点：<code>http://172.21.108.56:8080/manage/computer/</code></p>
+<p>需要配置jenkins代理，否则会出现各种连接不到github的错误。
+Manager Jenkins -&gt; System Configuration -&gt; System -&gt; 
+Http Proxy Configuration：
+<div class="highlight"><pre><span></span><code><span class="c1"># 服务器</span>
+<span class="m">127</span>.0.0.1
+<span class="c1"># 端口</span>
+<span class="m">7890</span>
+</code></pre></div></p>
+<h2 id="_2">亚马逊云配置</h2>
+<p>进入 <a href="https://signin.aws.amazon.com/">登录页面</a> ，使用<code>Sign in using root user email</code>，然后依次输入邮箱和密码。</p>
+<p>安装 <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">亚马逊云的命令行工具</a> ，
+<a href="https://us-east-1.console.aws.amazon.com/iam/home?region=ap-southeast-2#/security_credentials">创建访问密钥</a> ：
+<div class="highlight"><pre><span></span><code><span class="c1"># 配置ID和访问密钥</span>
+aws<span class="w"> </span>configure
+<span class="c1"># 查看配置（可选）</span>
+aws<span class="w"> </span>configure<span class="w"> </span>list
+<span class="c1"># 下载文件</span>
+aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://hutb/hutb.png<span class="w"> </span>.
+<span class="c1"># 上传文件</span>
+aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>Jenkinsfile<span class="w"> </span>s3://hutb/
+</code></pre></div></p>
+<p>（可能非必需）安装 AWS Credentials 插件，然后在设置中添加AWS Credentials。</p>
+<p>在脚本中直接指定key_id和secret_access_key：
+<div class="highlight"><pre><span></span><code>aws<span class="w"> </span>configure<span class="w"> </span><span class="nb">set</span><span class="w"> </span>aws_access_key_id<span class="w"> </span>XXX
+aws<span class="w"> </span>configure<span class="w"> </span><span class="nb">set</span><span class="w"> </span>aws_secret_access_key<span class="w"> </span>XXX
+</code></pre></div></p>
+<h2 id="jenkins_1">Jenkins配置</h2>
+<p>这个是因为我使用的本地的git用来测试，所以需要配置一下，在 jenkins安装目录（默认是C:\Program Files\Jenkins）找到 jenkins.xml</p>
+<p>1.在配置页面的<code>流水线</code>下的<code>定义</code>下拉菜单中选择<code>Pipeline script from SCM</code> (Software Configuration Management) 。
+仓库配置为<code>C:\ProgramData\Jenkins\.jenkins\workspace</code>，并制定分支。</p>
+<p>2.开始构建</p>
+<p>默认克隆在<code>C:\ProgramData\Jenkins\.jenkins\workspace</code>目录下。</p>
+<h2 id="gitlab"><a href="https://hub.docker.com/r/twang2218/gitlab-ce-zh">Gitlab 安装</a></h2>
+<p>Gitlab镜像拉取和安装
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:80<span class="w"> </span>twang2218/gitlab-ce-zh:11.1.4
+</code></pre></div>
+配置(不适合中文版)
+<div class="highlight"><pre><span></span><code><span class="c1"># 进入容器</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>gitlab<span class="w"> </span>bash
+
+vi<span class="w"> </span>/etc/gitlab/gitlab.rb
+<span class="c1">#gitlab访问地址，可以写域名。如果端口不写的话默认为80端口</span>
+external_url<span class="w"> </span><span class="s1">&#39;http://172.21.108.56:9980&#39;</span><span class="w"> </span>
+<span class="c1">#ssh主机ip</span>
+gitlab_rails<span class="o">[</span><span class="s1">&#39;gitlab_ssh_host&#39;</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;172.21.108.56&#39;</span>
+<span class="c1">#ssh连接端口</span>
+gitlab_rails<span class="o">[</span><span class="s1">&#39;gitlab_shell_ssh_port&#39;</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">9922</span>
+
+<span class="c1"># 重新编译gitlab配置文件</span>
+gitlab-ctl<span class="w"> </span>reconfigure
+<span class="c1"># 重启gitlab服务</span>
+gitlab-ctl<span class="w"> </span>restart
+
+<span class="c1">#退出容器</span>
+<span class="nb">exit</span>
+<span class="c1"># 重启gitlab容器</span>
+docker<span class="w"> </span>restart<span class="w"> </span>gitlab
+
+<span class="c1"># 查看初始密码</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>gitlab<span class="w"> </span>cat<span class="w"> </span>/etc/gitlab/initial_root_password
+</code></pre></div></p>
+<p>访问：<a href="http://172.21.108.56:9980/">http://172.21.108.56:9980/</a></p>
+<p>数据持久化参考 <a href="https://blog.csdn.net/qq934235475/article/details/112864332">链接</a> 。</p>
+<p>问题：<code>HTTP 502: Waiting for GitLab to boot</code></p>
+<p>错误排查：
+<div class="highlight"><pre><span></span><code>gitlab-ctl<span class="w"> </span>tail
+</code></pre></div></p>
+<h2 id="_3">虚幻引擎</h2>
+<p>根据UE4.sln找到对应的vs工程文件为<code>Engine\Intermediate\ProjectFiles\UE4.vcxproj</code>，得到构建虚幻引擎的命令为：
+<div class="highlight"><pre><span></span><code><span class="s2">&quot;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe&quot;</span><span class="w"> </span>Engine<span class="se">\I</span>ntermediate<span class="se">\P</span>rojectFiles<span class="se">\U</span>E4.vcxproj
+</code></pre></div></p>
+<p>步骤同上，但是由于UnrealEngine是私有项目，在填写<code>Repository URL</code>时，需要带上github账户的Token，比如： <code>https://{token}@github.com/OpenHUTB/UnrealEngine.git</code>。</p>
+<p>拉取 <a href="https://hub.docker.com/r/twang2218/gitlab-ce-zh">中文版gitlab</a> 镜像
+<div class="highlight"><pre><span></span><code>https://hub.docker.com/r/twang2218/gitlab-ce-zh
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>hutb<span class="w"> </span>http://172.21.108.56:3000/root/UnrealEngine
+</code></pre></div>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>虚幻引擎编译命令参考 <a href="https://www.cnblogs.com/kekec/p/8684068.html">链接</a></p>
+</div>
+<h2 id="gitlabjenkins"><a href="https://blog.csdn.net/Habo_/article/details/123379435">gitlab提交代码触发Jenkins构建</a></h2>
+<p>1.Jenkins页面中，系统管理 -&gt; 插件管理 -&gt; 可选插件 -&gt; 搜索要<strong>安装的插件</strong>(<code>gitlab-plugin</code> 和　<code>Generic Webhook Trigger</code>)</p>
+<p>2.在 Jenkins 的项目（<strong>接收方</strong>）配置中勾选<code>Generic Webhook Trigger</code> （按 <a href="https://blog.csdn.net/qq_31594665/article/details/136995439">链接1</a> 和 <a href="https://www.cnblogs.com/jiaxzeng/p/17104250.html">链接2</a> 中的说明进行设置）：</p>
+<p>2.1 在 Post content parameters 中定义 post 请求的变量。Variable 中的 Name of variable 设置为：<code>ref</code>(在构建过程中需要使用到的变量名；将匹配到的值，复制给 ref 变量)，<code>Expression</code>设置为 <code>$.ref</code>(获取变量的值，匹配 gitlab 请求的参数)，勾选 <code>JSONPath</code>；</p>
+<p>2.2 输入 Token（比如<code>hutb-admin-dev</code>），这个 token 在第 3 步中填写到 gitlab 的 webhook 链接的最后（防止其他人触发CICD），要保证在 Jenkins 中唯一；</p>
+<p>2.3 Optional filter 中的 Expression为：<code>^(refs/heads/dev)$</code> （匹配构建条件的正则表达式，这里的hutb是匹配的分支名，可根据实际的分支名情况修改），<code>Text</code>为：<code>$ref</code> （匹配的值，可使用上面配置的任意变量或组合，构建只有在此处的值与给定的正则匹配时才会触发）。</p>
+<p>3.在Gitlab（<strong>请求方</strong>）的项目页面：设置-&gt;导入所有仓库-&gt;链接(URL) 中填入<code>http://172.21.108.56:8080/generic-webhook-trigger/invoke?token=TOKEN</code> （该token和上面第2.2步Jenkins-&gt;UnrealEngine-&gt;Configuration-&gt;Triggers-&gt;Token里一致），取消<code>开启SSL证书验证</code>，点击 Test-&gt; Push events 来触发 Jeinkins 的构建。</p>
+<h5 id="urlis-blocked-requests-to-the-local-network-are-not-allowed">添加钩子时报错：<code>Urlis blocked: Requests to the local network are not allowed</code></h5>
+<blockquote>
+<p>原因：向同一台机器的IP发送请求不允许</p>
+<p>解决：Gitlab主页中的工具栏中的扳手-&gt;设置-&gt;外发请求，勾选<code>允许钩子和服务访问本地网络</code>（注意不是项目的设置）</p>
+</blockquote>
+<p>参考：</p>
+<h2 id="_4">高级配置</h2>
+<h5 id="_5">轮询设置</h5>
+<p>默认不是东八区时间。
+每隔2分钟执行一次查询，有更新就执行构建。
+<div class="highlight"><pre><span></span><code>TZ=Asia/Shanghai
+H/2 * * * *
+</code></pre></div></p>
+<h5 id="jenkins_2">Jenkins关闭静默期</h5>
+<p>提交通常会以突发的方式出现。这主要有两个原因：一是人们有时会忘记提交某些文件；二是人们在等待 SCM 完成提交的过程中，有时会意识到提交中的问题，并迅速进行后续修改。传统观点认为，CI 服务器应该等待突发提交完成后再尝试构建。据说这可以降低构建失败的风险，有时也有助于缩短构建时间较长的平均周转时间。</p>
+<p>关闭静默期可以实现提交代码后立即开始编译：Manage Jenkins -&gt; System -&gt; 静默期 设置为0。</p>
+<h5 id="_6">清除历史的构建的包</h5>
+<p>每次所构建的包位于<code>存放的路径是jobs/JOB_NAME/builds/BUILD_NUMBER/archive</code>，比如：<code>C:\ProgramData\Jenkins\.jenkins\jobs\carla\builds</code>，可能非常大，需要定时清除。</p>
+<h5 id="gitlab_1">将运行中的gitlab容器打包为镜像</h5>
+<p>1.将运行中的Docker容器保存为镜像
+<div class="highlight"><pre><span></span><code><span class="c1"># 容器ID使用 docker ps 查看</span>
+docker<span class="w"> </span>commit<span class="w"> </span>&lt;容器ID或名称&gt;<span class="w"> </span>&lt;镜像名称&gt;:&lt;标签&gt;<span class="w"> </span>
+</code></pre></div></p>
+<p>2.将镜像保存为tar文件
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>save<span class="w"> </span>-o<span class="w"> </span>&lt;tar文件名&gt;.tar<span class="w"> </span>&lt;镜像名称&gt;:&lt;标签&gt;
+</code></pre></div></p>
+<p>3.将镜像tar文件复制到本地
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>&lt;tar文件名&gt;.tar
+</code></pre></div></p>
+<h5 id="_7"><a href="https://juejin.cn/post/6844904119707123719">配置构建失败时发送邮件</a></h5>
+<p>下载两个插件：Email Extension, Email Extension Template， 这两个插件可以帮助我们进行邮件的编写以及格式化。</p>
+<p>在Jenkins的“设置-&gt;Account”中设置邮件地址，如“123456@qq.com”</p>
+<p>在Jenkins的“Manage Jenkins -&gt; System” 中的 <code>Extended E-mail Notification</code>：</p>
+<p>问题: <code>org.eclipse.angus.mail.smtp.SMTPSenderFailedException: 501 Mail from address must be same as authorization user.</code></p>
+<blockquote>
+<p>需要将<code>Manage Jenkins —&gt; System</code> 中的 <code>系统管理员邮件地址</code> 要和<code>邮件通知</code>中的地址一致（<code>123456@qq.com</code>）。</p>
+</blockquote>
+<p>问题：<code>HTTP ERROR 403 No valid crumb was included in the request</code></p>
+<blockquote>
+<p>将<code>Manage Jenkins -&gt; Security</code>中的<code>跨站请求伪造保护</code>中的<code>启用代理兼容</code>勾选。</p>
+</blockquote>
+<p>其中的<code>Test e-mail recipient</code>为接收方邮箱地址（QQ邮箱为发送方）。<a href="../../../carla/PythonAPI/examples/open3d_lidar.py">open3d_lidar.py</a></p>
+<h5 id="jenkins_3">修改Jenkins主目录</h5>
+<p>修改配置文件<code>C:\ProgramData\Jenkins\.jenkins\config.xml</code>中的
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;workspaceDir&gt;</span>${JENKINS_HOME}/workspace/${ITEM_FULL_NAME}<span class="nt">&lt;/workspaceDir&gt;</span>
+</code></pre></div>
+然后重启。</p>
+<h5 id="_8">日志太大</h5>
+<p>点开页面报错：<code>处理当前请求时发生了错误。</code> </p>
+<h2 id="github-action">Github Action 配置</h2>
+<p>UE4 发布工作流程需要手动触发，并且必须按照命名约定<code>ue4/x.y.z</code>在分支上执行。</p>
+<h2 id="faq">FAQ</h2>
+<h6 id="make">make 等系统命令无法识别</h6>
+<p>报错信息：
+<div class="highlight"><pre><span></span><code>&#39;make&#39; is not recognized as an internal or external command,
+operable program or batch file.
+&#39;make&#39; is not recognized as an internal or external command,
+operable program or batch file.
+</code></pre></div></p>
+<p><a href="https://blog.csdn.net/sugar_shu/article/details/116301813">解决办法</a> ：在 jenkins 上相应 node 的设定中（Dashboard -&gt; Manage Jenkins -&gt; Nodes -&gt; Built-In Nodes，点击设置的齿轮按钮），在<code>节点属性</code>下，勾选<code>Environment variables</code>，<code>新增</code> make 的环境变量：PATH</p>
+<div class="highlight"><pre><span></span><code>%PATH%<span class="p">;</span>C:<span class="se">\s</span>oftware<span class="se">\G</span>nuWin32<span class="se">\b</span>in<span class="p">;</span>C:<span class="se">\W</span>indows<span class="se">\s</span>ystem32<span class="p">;</span>C:<span class="se">\W</span>indows<span class="p">;</span>C:<span class="se">\W</span>indows<span class="se">\S</span>ystem32<span class="se">\W</span>bem<span class="p">;</span>C:<span class="se">\W</span>indows<span class="se">\S</span>ystem32<span class="se">\W</span>indowsPowerShell<span class="se">\v</span><span class="m">1</span>.0<span class="se">\;</span>C:<span class="se">\W</span>indows<span class="se">\S</span>ystem32<span class="se">\O</span>penSSH<span class="se">\;</span>C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\M</span>icrosoft<span class="se">\W</span>indowsApps<span class="p">;</span>C:<span class="se">\s</span>oftware<span class="se">\a</span>naconda3<span class="se">\c</span>ondabin<span class="p">;</span>C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\n</span>pm<span class="p">;</span>C:<span class="se">\s</span>oftware<span class="se">\a</span>naconda3<span class="se">\e</span>nvs<span class="se">\c</span>arla_dev<span class="p">;</span>C:<span class="se">\j</span>enkins<span class="se">\s</span>oftware<span class="se">\G</span>it<span class="se">\b</span>in
+</code></pre></div>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>除了 make 相关的要添加进去，其他的 PATH 均需要复制，不然使用jenkins调用其他命令可能出错，且需要把其他环境变量中的%SYSTEMROOT%替换为C:\Windows。已有的 PATH 路径通过<code>echo %PATH%</code>来进行查看（后缀<code>%PATH%</code>？）。</p>
+</div>
+<h5 id="tgitcacheexe">后台的 TGitCache.exe 导致文件不能正常删除</h5>
+<p>原因：TortoiseGit默认启动了状态缓存</p>
+<p>解决：打开TortoiseGit设置&gt;图标缓存部分的"Status Overlays
+In“选择”None“单击OK。
+TGitCache.exe将从进程列表中消失。</p>
+<h2 id="_9">参考</h2>
+<ul>
+<li><a href="http://158.109.8.172:8080">社区的持续集成地址</a></li>
+<li><a href="https://juejin.cn/post/6844904119707123719">Jenkins之Email配置与任务邮件发送实践与踩坑</a></li>
+<li><a href="">QQ邮箱：什么是授权码，它又是如何设置？</a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

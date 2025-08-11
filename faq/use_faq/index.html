@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Use faq - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Use faq";
+        var mkdocs_page_input_path = "faq/use_faq.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Use faq</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/faq/use_faq.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="_1">入门示例</h2>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>当机器性能一般时启动<code>CarlaUE4.exe</code>报错：<code>Out of video memory...</code>，可以通过命令来降低画质启动：<code>CarlaUE4.exe -quality-level=Low</code>，以获得更流畅的效果；甚至使用<code>CarlaUE4.exe -nullrhi</code>禁用所有渲染（无需 GPU）。如果运行CarlaUE4.exe时候报错：缺少Microsoft Visual C++ Runtime、DirectX Runtime，则需要安装 <a href="https://visualstudio.microsoft.com/zh-hans/vs/older-downloads/">vs_community__2019.exe</a> （勾选<code>.NET桌面开发</code>和<code>使用C++的桌面开发</code>）和 <a href="https://www.microsoft.com/zh-CN/download/details.aspx?id=8109">directx_Jun2010_redist.zip</a>  （解压后运行<code>DXSETUP.bat</code>）。如果发现手动控制车按前进键不能移动，可能是输入法默认是中文，按<code>Shift</code>切换成英文输入法即可解决。</p>
+</div>
+<h2 id="python">Python 调用</h2>
+<ul>
+<li>运行<code>world.get_blueprint_library()</code>报错：ValueError: role_name: colors must have 3 channels (R,G,B)</li>
+</ul>
+<blockquote>
+<p>服务端和客户端版本不一致，比如服务端是ue4-dev的最新代码，而客户端为0.9.15的代码。</p>
+</blockquote>
+<h2 id="_2">库的问题</h2>
+<ul>
+<li>matplotlib 调用<code>plt.plot()</code>报错：<code>TypeError: int() argument must be a string, a bytes-like object or a number, not 'KeyboardModifier'</code></li>
+</ul>
+<blockquote>
+<p>将您 Python 升级到 3.8 或者更高、Matplotlib 升级到 3.6.2 或更高版本
+</p>
+</blockquote>
+<h2 id="_3">虚幻编辑器</h2>
+<ul>
+<li>RuntimeError: internal error: unable to find spectator</li>
+</ul>
+<blockquote>
+<p>运行 UE4 编辑器的模式下，调用 world.get_spectator() 出现这个问题，是因为播放按钮有多种模式，一种是无观察者模式，另一种是有观察者模式。从您发送的截图来看，您运行 UE4 时使用的是 <a href="https://github.com/carla-simulator/carla/discussions/4782">无观察者模式</a> 。请尝试点击“运行”按钮右边的下拉三角形，选择“独立进程游戏”进行运行（使用另一种模式）。</p>
+</blockquote>
+<ul>
+<li>运行场景时弹出<code>Locate main RenderDoc executable...</code>选择程序对话框</li>
+</ul>
+<h2 id="_4">场景</h2>
+<blockquote>
+<p>解决：下载并安装 图形调试工具 <a href="https://renderdoc.org/">renderdoc</a> ，然后在选择程序对话框中选择<code>C:\Program Files\RenderDoc\qrenderdoc.exe</code>。</p>
+</blockquote>
+<h1 id="_5">崩溃</h1>
+<p>运行CarlaUE4.exe报错：
+<div class="highlight"><pre><span></span><code>The<span class="w"> </span>UE4-CarlaUE4<span class="w"> </span>Game<span class="w"> </span>has<span class="w"> </span>crashed<span class="w"> </span>and<span class="w"> </span>will<span class="w"> </span>close
+LowLevelFatalError<span class="w"> </span><span class="o">[</span>File:Unknown<span class="o">]</span><span class="w"> </span><span class="o">[</span>Line:<span class="w"> </span><span class="m">136</span><span class="o">]</span>Exception<span class="w"> </span>thrown:<span class="w"> </span>bind:<span class="w"> </span>??h????E???????k?<span class="s2">&quot;????h???????-????m? [system 10013 atD:/carla unreal/carla/Build/boost-1.80.0-install/include\boost/asio/detail/win_iocp_socket_service.hpp:244:5 in function &#39;bind&#39;]</span>
+</code></pre></div></p>
+<blockquote>
+<p>原因：本地端口被其他程序占用。</p>
+<p>解决：重启电脑</p>
+</blockquote>
+<h2 id="_6">其他</h2>
+<p><a href="../../build_faq/"><strong>构建问题</strong></a> — 解决构建代码时候最常见的问题</p>
+<p><a href="../../ue/ue_faq/"><strong>虚幻引擎问题</strong></a> - 虚幻引擎的一些专业问题</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

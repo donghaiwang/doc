@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>FlatHUD - 人车模拟</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "FlatHUD";
+        var mkdocs_page_input_path = "modules/VR/FlatHUD.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">FlatHUD</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/VR/FlatHUD.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="_1">头显</h2>
+<h1 id="adreyevrhud">ADReyeVRHUD 文档</h1>
+<h2 id="_2">概述</h2>
+<p><code>ADReyeVRHUD</code> 是基于虚幻引擎的<strong>头显</strong> (Head Up Display, HUD)类，继承自<code>ACarlaHUD</code>，专为虚拟现实环境设计，提供丰富的2D界面元素绘制功能。</p>
+<h2 id="_3">核心功能</h2>
+<h3 id="_4">🖍️ 文本绘制</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DrawDynamicText()</code></td>
+<td>绘制单帧动态文本（世界坐标/屏幕坐标）</td>
+</tr>
+<tr>
+<td><code>DrawStaticText()</code></td>
+<td>绘制带生命周期的静态文本</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">🖼️ 纹理绘制</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DrawDynamicTexture()</code></td>
+<td>单帧纹理绘制</td>
+</tr>
+<tr>
+<td><code>DrawReticle()</code></td>
+<td>持久性准星纹理</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">📐 图形绘制</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>相关方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线条</td>
+<td><code>DrawDynamicLine()</code></td>
+</tr>
+<tr>
+<td>矩形</td>
+<td><code>DrawDynamicRect()</code>/<code>DrawDynamicSquare()</code></td>
+</tr>
+<tr>
+<td>十字准星</td>
+<td><code>DrawDynamicCrosshair()</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">数据结构详解</h2>
+<h3 id="hudtext">HUDText 结构</h3>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">HUDText</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FString</span><span class="w"> </span><span class="n">Text</span><span class="p">;</span><span class="w">    </span><span class="c1">// 文本内容</span>
+<span class="w">    </span><span class="n">FVector2D</span><span class="w"> </span><span class="n">Screen</span><span class="p">;</span><span class="c1">// 屏幕坐标(X,Y)</span>
+<span class="w">    </span><span class="n">FColor</span><span class="w"> </span><span class="n">Colour</span><span class="p">;</span><span class="w">   </span><span class="c1">// RGBA颜色</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">Scale</span><span class="p">;</span><span class="w">     </span><span class="c1">// 字体缩放(1.0为默认大小)</span>
+<span class="w">    </span><span class="n">UFont</span><span class="o">*</span><span class="w"> </span><span class="n">TypeFace</span><span class="p">;</span><span class="w"> </span><span class="c1">// 字体对象(空时使用默认字体)</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2 id="_8">生命周期管理</h2>
+<pre class="mermaid"><code>graph TD
+    A[DrawStaticText] --&gt; B[加入StaticTextList]
+    B --&gt; C{每帧检查}
+    C --&gt;|时间到期| D[移除文本]
+    C --&gt;|时间未到| E[保持显示]</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../../js/umlconvert.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>路口评价指标分析计算(HutbCarlaCity) - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u8def\u53e3\u8bc4\u4ef7\u6307\u6807\u5206\u6790\u8ba1\u7b97(HutbCarlaCity)";
+        var mkdocs_page_input_path = "course/traffic_indicators.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">路口评价指标分析计算(HutbCarlaCity)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/course/traffic_indicators.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="hutbcarlacity">路口评价指标分析计算(HutbCarlaCity)</h1>
+<p>为支持  <a href="https://pan.baidu.com/s/15T1hGoWJ70tVmsTX7-zcSw?pwd=hutb"><strong>湖工商场景</strong></a> <strong>(WindowsNoEditor)</strong> 高保正的十字路口三维建模，设计  <strong><a href="https://github.com/OpenHUTB/doc/tree/master/src/course/traffic_indicators.py">traffic_indicators.py</a></strong>  脚本对路口交通流量、路口车均延误、路口饱和、排队长度四种路口真实性评价指标分析。</p>
+<p><strong>首先需要对场景中添加车辆，运行 <a href="https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py">generate_traffic.py</a> 脚本，生成足够的车辆。</strong></p>
+<h2 id="_1">定义命令行参数并获取模拟世界对象</h2>
+<div class="highlight"><pre><span></span><code><span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">)</span>
+<span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="s1">&#39;--host&#39;</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="c1">#默认ip</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;IP of the host server (default: 127.0.0.1)&#39;</span><span class="p">)</span>
+<span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--port&#39;</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="c1">#端口号</span>
+    <span class="n">default</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;TCP port to listen to (default: 2000)&#39;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">set_timeout</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>  <span class="c1"># 设置超时</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_world</span><span class="p">()</span>  <span class="c1"># 获取世界对象</span>
+</code></pre></div>
+<p>将路口定义为一个矩形区域，在Carla编辑器中得到相应坐标</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 路口坐标,</span>
+<span class="n">junctions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="o">-</span><span class="mi">194</span><span class="p">,</span> <span class="o">-</span><span class="mi">372</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="o">-</span><span class="mi">34</span><span class="p">],</span> <span class="c1">#桐梓坡路-西二环路口</span>
+    <span class="p">[</span><span class="mi">449</span><span class="p">,</span> <span class="mi">381</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="o">-</span><span class="mi">87</span><span class="p">]</span>    <span class="c1">#桐梓坡路-望岳路口</span>
+
+<span class="p">]</span>
+<span class="c1"># 用于跟踪已经计算的车辆id以及进入的时间</span>
+<span class="n">counted_vehicles</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{},</span>
+    <span class="p">{}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h2 id="_2"><strong>计算对应路口交通流量、车均延误、饱和度、排队长度</strong></h2>
+<p>定义俩个全局变量</p>
+<div class="highlight"><pre><span></span><code><span class="n">SATURATION</span> <span class="o">=</span> <span class="mi">32</span>     <span class="c1"># 路口最大容量</span>
+<span class="n">DWELL_TIME</span> <span class="o">=</span> <span class="mi">50</span>      <span class="c1"># 50秒后认为车辆已离开路口</span>
+</code></pre></div>
+<h3 id="get_traffic_flow">路口交通流量函数get_traffic_flow()<span id="trafficFlow"></span></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_traffic_flow</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="n">junction</span><span class="p">,</span> <span class="n">traffic_flows</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">counted_vehicles</span><span class="p">):</span>
+    <span class="c1"># 获取所有正在行驶的车辆列表</span>
+    <span class="n">vehicle_list</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_actors</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;vehicle.*&#39;</span><span class="p">)</span>
+    <span class="c1"># counted_vehicles = {} 是一个字典</span>
+    <span class="n">current_time</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_snapshot</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">elapsed_seconds</span>
+    <span class="c1"># 遍历所有正在行驶的车辆</span>
+    <span class="k">for</span> <span class="n">vehicle</span> <span class="ow">in</span> <span class="n">vehicle_list</span><span class="p">:</span>
+        <span class="n">vehicle_id</span> <span class="o">=</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">id</span>
+        <span class="c1"># 表示车辆还没经过路口</span>
+        <span class="k">if</span> <span class="n">vehicle_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">counted_vehicles</span><span class="p">:</span>
+            <span class="c1"># 获取车辆的位置信息</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">get_location</span><span class="p">()</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">y</span>
+            <span class="c1"># 车辆经过路口</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">junction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">junction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">junction</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">junction</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+                <span class="c1"># 车流量加1</span>
+                <span class="n">traffic_flows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">traffic_flows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">counted_vehicles</span><span class="p">[</span><span class="n">vehicle_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span>
+
+    <span class="c1"># 移除离开路口时间超过dwell_time的车辆</span>
+    <span class="n">vehicles_to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="n">vid</span> <span class="k">for</span> <span class="n">vid</span><span class="p">,</span> <span class="n">enter_time</span> <span class="ow">in</span> <span class="n">counted_vehicles</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">enter_time</span> <span class="o">&gt;</span> <span class="n">DWELL_TIME</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">vehicle_id</span> <span class="ow">in</span> <span class="n">vehicles_to_remove</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">counted_vehicles</span><span class="p">[</span><span class="n">vehicle_id</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="saturation">路口饱和度函数saturation()<span id="saturation"></span></h3>
+<p>采用<strong>路口实际车流量/路口道路最大所承载车流量</strong> 计算  <strong>路口饱和度</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1">#计算路口饱和度</span>
+<span class="k">def</span> <span class="nf">saturation</span><span class="p">(</span><span class="n">world</span><span class="p">,</span><span class="n">junctions</span><span class="p">,</span><span class="n">counted_vehicles</span><span class="p">):</span>
+    <span class="n">saturation_degrees</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">ave_saturation</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># 流量</span>
+    <span class="n">traffic_flows</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># 用于跟踪已经计算的车辆id以及进入的时间</span>
+
+    <span class="n">queue_length</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">time_tamp</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time_tamp</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># i表示第i个路口</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">junctions</span><span class="p">)):</span>
+            <span class="n">get_traffic_flow</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="n">junctions</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">traffic_flows</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">counted_vehicles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">saturation_degrees</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">traffic_flows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">SATURATION</span> <span class="o">+</span> <span class="n">saturation_degrees</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">time_tamp</span> <span class="o">==</span> <span class="mi">10000</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">junctions</span><span class="p">)):</span>
+                <span class="n">ave_saturation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">saturation_degrees</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10000</span>
+                <span class="n">queue_length</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">traffic_flows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+
+            <span class="k">break</span>
+
+
+
+    <span class="k">return</span> <span class="n">ave_saturation</span>
+</code></pre></div>
+<h3 id="queue_lengths">排队长度函数queue_lengths()<span id="queueLength"></span></h3>
+<p>采用 <strong>路口实际车流量*平均车辆长度</strong>  计算 <strong>排队长度</strong></p>
+<div class="highlight"><pre><span></span><code>#计算排队长度
+def queue_lengths(world,junctions,counted_vehicles):
+    # 流量
+    traffic_flows = [0, 0]
+
+    # 用于跟踪已经计算的车辆id以及进入的时间
+
+    queue_length = [0, 0]
+    time_tamp = 0
+    while True:
+        time_tamp += 1
+        # i表示第i个路口
+        for i in range(len(junctions)):
+            get_traffic_flow(world, junctions[i], traffic_flows, i, counted_vehicles[i])
+
+
+        # print(saturation_degrees)
+        # 1000个时间步拟作1天
+        # print(time_tamp)
+        if time_tamp == 10000:
+            for i in range(len(junctions)):
+                queue_length[i] = (traffic_flows[i] * 3) / 4
+            break
+    return queue_length
+</code></pre></div>
+<h3 id="ave_delay">车均延误函数ave_delay()<span id="aveDelay"></span></h3>
+<p>采用以下计算公式进行计算：<img alt="" src="../../img/traffic_course_img/4.png" /></p>
+<p>其中<strong>D</strong>为路口车均延误参数，<strong>C</strong>为路口交通信号灯配时总时间，<strong>y</strong>为路口饱和度，<strong>T</strong>为当前分析时段的时长。</p>
+<div class="highlight"><pre><span></span><code>#得到交通信号灯的配时信息
+def get_traffic_light(world, light_id):
+    traffic_lights = world.get_actors().filter(&#39;traffic.traffic_light&#39;)
+    total_time = 0
+    green_time = 0
+    for traffic_light in traffic_lights:
+        if traffic_light.id == light_id:
+            red_time = traffic_light.get_red_time()
+            green_time = traffic_light.get_green_time()
+            yellow_time = traffic_light.get_yellow_time()
+            total_time = red_time + green_time + yellow_time
+
+    return total_time, green_time
+
+
+#计算平均路口车均延误
+def ave_delay(world, light_id, ave_saturation, junctions):
+    vehicle_ave_delays = []
+    total_time, green_time = get_traffic_light(world, light_id)
+    for i in range(len(junctions)):
+        vehicle_ave_delay = 0.5 * total_time * (1-green_time / total_time)**2 / (1 - ave_saturation[i]) + min(1, ave_saturation[i]) * 2
+        vehicle_ave_delays.append(vehicle_ave_delay)
+    return vehicle_ave_delays
+</code></pre></div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

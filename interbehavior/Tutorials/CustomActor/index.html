@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>DReyeVR 自定义参与者 - 人车模拟</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "DReyeVR \u81ea\u5b9a\u4e49\u53c2\u4e0e\u8005";
+        var mkdocs_page_input_path = "interbehavior/Tutorials/CustomActor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">DReyeVR 自定义参与者</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/interbehavior/Tutorials/CustomActor.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="dreyevr">DReyeVR 自定义参与者</h1>
+<h2 id="_1">什么？</h2>
+<p>我们经常对在模拟器中运行时生成任意“类似AR（增强现实）”的元素感兴趣，这些元素可以完全记录并轻松重现。 </p>
+<h3 id="3d">示例：3D边界框</h3>
+<ul>
+<li>使用半透明（不透明度小于 1）材质，​​我们可以简单地创建一个细长的立方体演员，并将其覆盖在任何范围内，作为一个简单的 BBOX 指示器。<ul>
+<li>我们可以让参与者跟踪一定的范围，这样它就可以跟随车辆/行人/任何东西，而不会干扰物理（物理模拟被禁用）。</li>
+<li>嘘！这实际上已经在代码中基本实现（但被禁用），请查看 <a href="./#bounding-box-example">底部的示例</a> </li>
+</ul>
+</li>
+</ul>
+<h3 id="_2">示例：凝视线</h3>
+<ul>
+<li>如果您想实时绘制视线（不使用仅限编辑器的 DrawDebugLine），您可以简单地使用细长的立方体作为从用户凝视原点到世界空间凝视目标的“射线”。</li>
+</ul>
+<h3 id="_3">示例：调试轨迹</h3>
+<ul>
+<li>与 Carla 中的调试路径类似，生成动态球体轨迹有助于在世界中绘制类似 AR 的指导方针，并帮助引导驾驶员通过地图。</li>
+</ul>
+<h2 id="_4">为什么？</h2>
+<ol>
+<li>让每个“自定义参与者CustomActor”成为其自己的实体（不一定与 EgoVehicle/EgoSensor 绑定），可以轻松使用 Carla 记录器进行记录，而无需修改核心 DReyeVR 数据。当我们想要更改记录器的 API（这种情况经常发生）但又不想丢失之前实验的数据（这些实验的数据记录（二进制格式）我们无法轻松修改）时，这一点很重要。</li>
+<li>抽象“自定义参与者CustomActor”为我们在运行时操纵模拟器中的参与者提供了足够的灵活性，并允许轻松地执行新的有趣场景，而不必担心记录/重放。</li>
+</ol>
+<h1 id="_5">使用</h1>
+<p>使用这些 CustomActors 的设计非常简单，并与 UE4/Carla 的 <a href="https://docs.unrealengine.com/5.0/en-US/API/Runtime/Engine/GameFramework/AActor/">AActors</a> 概念相配合。您可以在 <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/DReyeVRData.h"><code>DReyeVRData.h</code></a><code>::CustomActorData</code> 中看到我们如何定义这些参与者的所有核心数据（以及记录/重放的内容）</p>
+<p>我们已准备好几种基本的 3D 形状，供简单的 CustomActor 使用。理论上，您可以使用任何静态网格。要访问这些类型（或添加您自己的类型），您应该查看 <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Actor/DReyeVRCustomActor.h"><code>DReyeVRCustomActor.h</code></a> 中的引用：
+<div class="highlight"><pre><span></span><code><span class="cp">#define MAT_OPAQUE &quot;Material&#39;/Game/DReyeVR/Custom/OpaqueParamMaterial.OpaqueParamMaterial&#39;&quot;</span>
+<span class="cp">#define MAT_TRANSLUCENT &quot;Material&#39;/Game/DReyeVR/Custom/TranslucentParamMaterial.TranslucentParamMaterial&#39;&quot;</span>
+<span class="cp">#define SM_SPHERE &quot;StaticMesh&#39;/Engine/BasicShapes/Sphere.Sphere&#39;&quot;</span>
+<span class="cp">#define SM_CUBE &quot;StaticMesh&#39;/Engine/BasicShapes/Cube.Cube&#39;&quot;</span>
+<span class="cp">#define SM_CONE &quot;StaticMesh&#39;/Engine/BasicShapes/Cone.Cone&#39;&quot;</span>
+
+<span class="c1">// 在此处添加新的字符串文字</span>
+<span class="cp">#define SM_CUSTOM_MESH &quot;StaticMesh&#39;/Path/To/Your/StaticMesh.StaticMesh&#39;&quot;</span>
+</code></pre></div></p>
+<h2 id="_6">生成自定义参与者</h2>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Actor/DReyeVRCustomActor.h&quot;</span>
+<span class="p">...</span>
+<span class="c1">// 示例参数，你可以将其更改为你想要的任何值</span>
+<span class="n">FString</span><span class="w"> </span><span class="n">PathToSM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SM_CUBE</span><span class="p">;</span>
+<span class="n">FString</span><span class="w"> </span><span class="n">PathToMat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MAT_TRANSLUCENT</span><span class="p">;</span>
+<span class="n">FString</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;NewActorName&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 每个参与者需要一个唯一的名称！</span>
+<span class="n">UWorld</span><span class="w"> </span><span class="o">*</span><span class="n">World</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetWorld</span><span class="p">();</span>
+<span class="n">ADReyeVRCustomActor</span><span class="w"> </span><span class="o">*</span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ADReyeVRCustomActor</span><span class="o">::</span><span class="n">CreateNew</span><span class="p">(</span><span class="n">PathToSM</span><span class="p">,</span><span class="w"> </span><span class="n">PathToMaterial</span><span class="p">,</span><span class="w"> </span><span class="n">World</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="p">);</span>
+</code></pre></div>
+<p>从实现角度来看，自定义参与者全部由“全局”表 (<code>static std::unordered_map&lt;std::string, class ADReyeVRCustomActor *&gt;</code>) 管理，该表按参与者的名称对参与者进行索引，因此，所有参与者都必须具有唯一的名称。当生成许多参与者时，这通常很容易做到，因为 UE4 <code>AActor</code> 本身具有按其生成顺序枚举的唯一名称。要进一步了解我们如何使用全局表，请查看 <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Actor/DReyeVRCustomActor.h"><code>DReyevRCustomActor.h</code></a> 中的 <code>ADReyeVRCustomActor::ActiveCustomActors</code></p>
+<h2 id="_7">激活/停用自定义参与者</h2>
+<p>要激活（在世界中查看），只需运行
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="o">-&gt;</span><span class="n">Activate</span><span class="p">();</span>
+</code></pre></div>
+这将确保该参与者的每一次动作都会被 Carla 记录器记录下来。</p>
+<p>同样，要停用参与者（禁用可见性、录制和动作功能），请执行以下操作：
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="o">-&gt;</span><span class="n">Deactivate</span><span class="p">();</span>
+</code></pre></div></p>
+<p>您可以使用 <code>A-&gt;IsActive()</code> 检查参与者是否“活跃”。如果为真（参与者活跃），则参与者将自动记录在 CArla 记录器中，从而可以轻松重放。</p>
+<h2 id="_8">更新自定义参与者</h2>
+<p>这些方法来自 UE4 <code>AActor</code> 基类，我们的类继承并扩展了该基类。
+<div class="highlight"><pre><span></span><code><span class="c1">// resize the actor</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">SetActorScale3D</span><span class="p">(</span><span class="n">FVector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">));</span>
+
+<span class="c1">// move the actor</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">SetActorLocation</span><span class="p">(</span><span class="n">FVector</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+
+<span class="c1">// rotate the actor</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">SetActorRotation</span><span class="p">(</span><span class="n">FRotator</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span><span class="w"> </span><span class="mi">45</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</code></pre></div></p>
+<p>假设您正在使用我们为您提供的参数材料之一，您也可以修改材料参数并让其实时生效：
+<div class="highlight"><pre><span></span><code><span class="c1">// change vector properties</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">MaterialParams</span><span class="p">.</span><span class="n">BaseColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FLinearColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">// RGBA</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">MaterialParams</span><span class="p">.</span><span class="n">Emissive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">FLinearColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">// RGBA</span>
+
+<span class="c1">// change scalar properties</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">MaterialParams</span><span class="p">.</span><span class="n">Metallic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.f</span><span class="p">;</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">MaterialParams</span><span class="p">.</span><span class="n">Specular</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">0.15f</span><span class="p">;</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">MaterialParams</span><span class="p">.</span><span class="n">Roughness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.f</span><span class="p">;</span>
+<span class="n">A</span><span class="o">-&gt;</span><span class="n">MaterialParams</span><span class="p">.</span><span class="n">Anisotropy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5f</span><span class="p">;</span>
+</code></pre></div></p>
+<p>请注意，为了使用不透明度 <code>Opacity</code> 属性，材质需要具有半透明混合模式。到目前为止，我们只有两种材质类型：不透明和半透明，每种都有自己的一组可用属性，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>不透明参数材质 OpaqueParamMaterial</th>
+<th>半透明参数材质 TranslucentParamMaterial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="OpaqueMaterial" src="../../Figures/Actor/OpaqueParamMaterial.jpg" /></td>
+<td><img alt="OpaqueMaterial" src="../../Figures/Actor/TranslucentParamMaterial.jpg" /></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_9">边界框示例</h2>
+<p>作为 CustomActor 边界框实际操作的示例，请查看 <a href="../../DReyeVR/LevelScript.cpp"><code>LevelScript.cpp::DrawBBoxes</code></a> ，其中包含一些用于绘制半透明边界框的简单逻辑（根据与 EgoVehicle 的距离着色）。要启用此功能，您需要通过删除函数主体周围的 <code>#if 0</code> 和相应的 <code>#endif</code> 来手动启用它。</p>
+<p>实际操作时可能如下所示：</p>
+<p><img alt="BboxExample" src="../../Figures/Actor/Bbox.jpg" /></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../../js/umlconvert.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

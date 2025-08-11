@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>目录 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u76ee\u5f55";
+        var mkdocs_page_input_path = "modules/Settings.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">目录</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/Settings.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">目录</h1>
+<ul>
+<li><a href="#一核心配置管理模块">一.核心配置管理模块</a></li>
+<li><a href="#1全局配置框架">1.全局配置框架</a><ul>
+<li><a href="#11-核心配置类-ucarlasettings">1.1 核心配置类 UCarlaSettings</a></li>
+<li><a href="#类定义">类定义</a></li>
+<li><a href="#12-参数配置矩阵">1.2 参数配置矩阵</a></li>
+</ul>
+</li>
+<li><a href="#2运行模式管理系统">2.运行模式管理系统</a><ul>
+<li><a href="#21-单次模拟剧集配置">2.1 单次模拟剧集配置</a></li>
+<li><a href="#22-运行时控制接口">2.2 运行时控制接口</a></li>
+<li><a href="#23-动态参数更新机制">2.3 动态参数更新机制</a></li>
+</ul>
+</li>
+<li><a href="#3配置加载策略">3.配置加载策略</a><ul>
+<li><a href="#31-多级覆盖机制">3.1 多级覆盖机制</a></li>
+<li><a href="#32-优先级实现逻辑">3.2 优先级实现逻辑</a></li>
+</ul>
+</li>
+<li><a href="#4高级配置特性">4.高级配置特性</a><ul>
+<li><a href="#41-热重载支持">4.1 热重载支持</a></li>
+<li><a href="#42-混合配置模式">4.2 混合配置模式</a></li>
+</ul>
+</li>
+<li><a href="#二画质管理模块">二.画质管理模块</a></li>
+<li><a href="#21-画质等级定义">2.1 画质等级定义</a></li>
+<li><a href="#22-画质策略应用">2.2 画质策略应用</a></li>
+<li><a href="#23-动态调参系统">2.3 动态调参系统</a><ul>
+<li><a href="#231-自动降级机制">2.3.1 自动降级机制</a></li>
+<li><a href="#232-画质参数混合">2.3.2 画质参数混合</a></li>
+</ul>
+</li>
+<li><a href="#三服务端-客户端通信模块">三.服务端-客户端通信模块</a></li>
+<li><a href="#31-配置管理结构">3.1 配置管理结构</a></li>
+<li><a href="#32-模块架构设计">3.2 模块架构设计</a></li>
+<li><a href="#33-安全策略">3.3 安全策略</a><ul>
+<li><a href="#331-端口保护机制">3.3.1 端口保护机制</a></li>
+</ul>
+</li>
+<li><a href="#四调试与日志模块">四.调试与日志模块</a></li>
+<li><a href="#41-接口定义">4.1 接口定义</a></li>
+<li><a href="#42-模块特性说明">4.2 模块特性说明</a></li>
+<li><a href="#五结构树">五.结构树</a></li>
+<li><a href="#六关键设计原则">六.关键设计原则</a></li>
+<li><a href="#61-分层解耦">6.1 分层解耦</a></li>
+<li><a href="#62-可扩展性">6.2 可扩展性</a></li>
+<li><a href="#63-跨模式支持">6.3 跨模式支持</a></li>
+<li><a href="#七-总结">七 总结</a></li>
+<li><a href="#71-文件关联图">7.1  文件关联图</a></li>
+<li><a href="#72-核心功能解析">7.2 核心功能解析</a></li>
+<li><a href="#73-关键交互流程">7.3 关键交互流程</a></li>
+<li><a href="#74-设计模式应用">7.4 设计模式应用</a></li>
+<li><a href="#75-跨模块协作">7.5 跨模块协作</a></li>
+<li><a href="#76-关键架构优势">7.6 关键架构优势</a></li>
+<li><a href="#77-典型数据流示例">7.7 典型数据流示例</a></li>
+</ul>
+<h1 id="_2">一.核心配置管理模块</h1>
+<h2 id="1">1.全局配置框架</h2>
+<h3 id="11-ucarlasettings">1.1 核心配置类 UCarlaSettings</h3>
+<h4 id="_3">类定义</h4>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">UCLASS</span><span class="p">(</span><span class="n">Config</span><span class="o">=</span><span class="n">Game</span><span class="p">,</span><span class="w"> </span><span class="n">DefaultConfig</span><span class="p">)</span>
+<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">CARLA_API</span><span class="w"> </span><span class="n">UCarlaSettings</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">UObject</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="n">GENERATED_BODY</span><span class="p">()</span>
+<span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="c1">// 网络通信参数</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span><span class="w"> </span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">Category</span><span class="o">=</span><span class="s">&quot;Network&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">int32</span><span class="w"> </span><span class="n">RPCPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="p">;</span><span class="w">  </span><span class="c1">// RPC主通信端口</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span><span class="w"> </span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">Category</span><span class="o">=</span><span class="s">&quot;Network&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">int32</span><span class="w"> </span><span class="n">StreamingPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2001</span><span class="p">;</span><span class="w">  </span><span class="c1">// 视频流端口</span>
+<span class="w">    </span><span class="c1">// 运行模式控制</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span><span class="w"> </span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">Category</span><span class="o">=</span><span class="s">&quot;Simulation&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">bSynchronousMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">  </span><span class="c1">// 同步模式开关</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span><span class="w"> </span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">Category</span><span class="o">=</span><span class="s">&quot;Rendering&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">bDisableRendering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">  </span><span class="c1">// 无头模式开关</span>
+<span class="w">    </span><span class="p">};</span>
+</code></pre></div></li>
+<li><strong>涉及文件</strong>：</li>
+<li><code>CarlaSettings.h</code>：   </li>
+<li>：声明配置参数和加载接口</li>
+<li><code>CarlaSettings.cpp</code>：   </li>
+<li>：实现动态配置加载逻辑</li>
+</ul>
+<h3 id="12">1.2 参数配置矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>配置参数</th>
+<th>类型</th>
+<th>默认值</th>
+<th>Config 分类</th>
+<th>动态性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RPCPort</strong></td>
+<td>int32</td>
+<td>2000</td>
+<td>Network</td>
+<td>静态</td>
+<td>RPC通信主通道</td>
+</tr>
+<tr>
+<td><strong>StreamingPort</strong></td>
+<td>int32</td>
+<td>2001</td>
+<td>Network</td>
+<td>动态</td>
+<td>视频流传输端口</td>
+</tr>
+<tr>
+<td><strong>bSynchronousMode</strong></td>
+<td>bool</td>
+<td>false</td>
+<td>Simulation</td>
+<td>热更新</td>
+<td>同步仿真模式开关</td>
+</tr>
+<tr>
+<td><strong>TextureStreamingPool</strong></td>
+<td>int32</td>
+<td>2048</td>
+<td>Rendering</td>
+<td>冷更新</td>
+<td>纹理流送内存分配（单位：MB）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>参数说明</strong>：<ul>
+<li><code>RPCPort</code>：   <ul>
+<li>：由于其具有静态性，所以需在服务启动前配置，并且再端口冲突时，启动时自动检测并增量尝试。</li>
+</ul>
+</li>
+<li><code>StreamingPort</code>：   <ul>
+<li>：支持多路视频流并行分发。</li>
+</ul>
+</li>
+<li><code>bSynchronousMode</code>：   <ul>
+<li>：可运行时修改</li>
+<li>：需要配合FixedDeltaSeconds参数使用</li>
+</ul>
+</li>
+<li><code>TextureStreamingPool</code>：   <ul>
+<li>：限制同时加载的高清纹理资源量，防止显存过载。建议根据场景材质复杂度动态调整，平衡渲染质量与性能。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2">2.运行模式管理系统</h2>
+<h3 id="21">2.1 单次模拟剧集配置</h3>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">USTRUCT</span><span class="p">(</span><span class="n">BlueprintType</span><span class="p">)</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">FEpisodeSettings</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="n">GENERATED_BODY</span><span class="p">()</span>
+<span class="w">    </span><span class="c1">// 仿真步长控制</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">BlueprintReadWrite</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">FixedDeltaSeconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0333f</span><span class="p">;</span><span class="w"> </span><span class="c1">// 33.3ms对应30FPS</span>
+<span class="w">    </span><span class="c1">// 同步执行参数</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">BlueprintReadWrite</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">bSynchronousMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">  </span><span class="c1">// 本剧集同步模式设定</span>
+<span class="w">    </span><span class="c1">// 子步控制逻辑</span>
+<span class="w">    </span><span class="n">UPROPERTY</span><span class="p">(</span><span class="n">EditAnywhere</span><span class="p">,</span><span class="w"> </span><span class="n">BlueprintReadWrite</span><span class="p">)</span>
+<span class="w">    </span><span class="n">int32</span><span class="w"> </span><span class="n">MaxSubsteps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="c1">// 每帧最大物理子步数</span>
+<span class="w">    </span><span class="p">};</span>
+</code></pre></div></li>
+<li><strong>功能说明</strong> ：为物理仿真提供精准的时序控制与稳定性保障，实现以下目标：</li>
+<li>：确定性仿真环境</li>
+<li>：动态稳定性控制</li>
+<li>：资源适配规则</li>
+</ul>
+<h3 id="22">2.2 运行时控制接口</h3>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ApplyRuntimeSettings</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEpisodeSettings</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Settings</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 物理系统参数设置</span>
+<span class="w">    </span><span class="n">GEngine</span><span class="o">-&gt;</span><span class="n">GetPhysicsScene</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">SetMaxSubsteps</span><span class="p">(</span><span class="n">Settings</span><span class="p">.</span><span class="n">MaxSubsteps</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 时间步长同步</span>
+<span class="w">    </span><span class="n">UGameplayStatics</span><span class="o">::</span><span class="n">GetGameInstance</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">GetWorldSettings</span><span class="p">()</span><span class="o">-&gt;</span><span class="w">  </span>
+<span class="w">    </span><span class="n">SetFixedDeltaSeconds</span><span class="p">(</span><span class="n">Settings</span><span class="p">.</span><span class="n">FixedDeltaSeconds</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><strong>关键说明</strong>：<ul>
+<li><code>ApplyRuntimeSettings</code>： 该接口的核心是搭建物理仿真环境参数的动态调节通道，实现：  </li>
+<li><code>时序重组</code>：在运行时重构时间微分系统</li>
+<li><code>资源再分配</code>：根据场景复杂度动态调节物理线程负载</li>
+<li><code>模式热切换</code>：支持同步/异步模式的实时迁移</li>
+</ul>
+</li>
+</ul>
+<h3 id="23">2.3 动态参数更新机制</h3>
+<ul>
+<li><strong>核心架构图</strong>：
+    <pre class="mermaid"><code>graph TD
+A[动态参数源] --&gt;|异步消息| B[参数解析器]
+B --&gt; C{参数校验}
+C --&gt;|有效| D[物理系统控制器]
+C --&gt;|无效| E[错误回滚]
+D --&gt; F[时间离散化系统]
+D --&gt; G[物理线程池]
+F --&gt; H[帧率稳定器]
+G --&gt; I[子步负载监视]
+H --&gt; J[渲染线程]
+I --&gt; K[自适应调整引擎]</code></pre></li>
+</ul>
+<h2 id="3">3.配置加载策略</h2>
+<h3 id="31">3.1 多级覆盖机制</h3>
+<pre class="mermaid"><code>graph TD
+    A[命令行参数] --&gt; B[用户配置文件]
+    B --&gt; C[默认系统配置]
+    C --&gt; D[引擎硬编码默认值]</code></pre>
+<h3 id="32">3.2 优先级实现逻辑</h3>
+<ul>
+<li><strong>代码示例</strong>：
+<div class="highlight"><pre><span></span><code><span class="w">   </span><span class="kt">void</span><span class="w"> </span><span class="nf">LoadHierarchyConfig</span><span class="p">()</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="c1">// 第一步：读取命令行参数</span>
+<span class="w">    </span><span class="n">FParse</span><span class="o">::</span><span class="n">Value</span><span class="p">(</span><span class="n">FCommandLine</span><span class="o">::</span><span class="n">Get</span><span class="p">(),</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;-carla-port=&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">RPCPort</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 第二步：加载INI配置文件</span>
+<span class="w">    </span><span class="n">GConfig</span><span class="o">-&gt;</span><span class="n">GetInt</span><span class="p">(</span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;/Script/Carla.CarlaSettings&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                   </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;RPCPort&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                   </span><span class="n">RPCPort</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                   </span><span class="n">GGameIni</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 第三步：应用硬编码默认值</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">RPCPort</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">RPCPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="p">;</span><span class="w"> </span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div></li>
+</ul>
+<h2 id="4">4.高级配置特性</h2>
+<h3 id="41">4.1 热重载支持</h3>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// 注册配置变更监听器</span>
+<span class="n">FCoreDelegates</span><span class="o">::</span><span class="n">OnConfigChanged</span><span class="p">.</span><span class="n">AddUObject</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span>
+<span class="o">&amp;</span><span class="n">UCarlaSettings</span><span class="o">::</span><span class="n">OnConfigChanged</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">UCarlaSettings::OnConfigChanged</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">IniFilename</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="k">if</span><span class="p">(</span><span class="n">IniFilename</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GGameIni</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ReloadConfig</span><span class="p">();</span><span class="w"> </span><span class="c1">// 重载当前配置</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><strong>热重载架构</strong>：
+    <pre class="mermaid"><code>graph LR
+    A[配置文件变更] --&gt; B[INotify接口] 
+    B --&gt; C{验证信号}
+    C --&gt;|有效性检查| D[资源重载]
+    D --&gt; E[场景状态保持]
+    D --&gt; F[脏数据清理]
+    E --&gt; G[实时渲染更新]
+    F --&gt; H[内存回收]</code></pre></li>
+</ul>
+<h3 id="42">4.2 混合配置模式</h3>
+<ul>
+<li><strong>配置源优先级</strong>：命令行参数&gt;用户设置&gt;场景预设&gt;默认配置&gt;环境变量</li>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">//继承基础配置</span>
+<span class="p">[</span><span class="n">BaseSettings</span><span class="p">]</span>
+<span class="n">bEnableWeather</span><span class="o">=</span><span class="n">True</span>
+<span class="n">SyncInterval</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span>
+
+<span class="p">[</span><span class="n">OverrideSettings</span><span class="p">]</span>
+<span class="n">SyncInterval</span><span class="o">=</span><span class="mi">2</span><span class="w"> </span><span class="p">;</span><span class="w"> </span>
+
+<span class="c1">// 动态参数注入</span>
+<span class="p">[</span><span class="n">DynamicInjection</span><span class="p">]</span><span class="w"> </span>
+<span class="n">WeatherSeverity</span><span class="o">=</span><span class="mf">0.7</span><span class="w"> </span><span class="p">;</span><span class="w"> </span>
+</code></pre></div></li>
+</ul>
+<h1 id="_4">二.画质管理模块</h1>
+<h2 id="21_1">2.1 画质等级定义</h2>
+<ul>
+<li>
+<p><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// QualityLevelUE.h</span>
+<span class="n">UENUM</span><span class="p">(</span><span class="n">BlueprintType</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="o">=</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;Carla Quality Preset&quot;</span><span class="p">))</span>
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">EQualityLevel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">uint8</span><span class="w"> </span><span class="p">{</span>
+<span class="n">Cinematic</span><span class="w">    </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;电影级 0x01&quot;</span><span class="p">),</span>
+<span class="n">Epic</span><span class="w">         </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;史诗级 0x02&quot;</span><span class="p">),</span>
+<span class="n">High</span><span class="w">         </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;高 0x04&quot;</span><span class="p">),</span>
+<span class="n">Medium</span><span class="w">       </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;中 0x08&quot;</span><span class="p">),</span><span class="w">    </span>
+<span class="n">Low</span><span class="w">          </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;低 0x10&quot;</span><span class="p">),</span>
+<span class="n">Custom</span><span class="w">       </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;自定义 0x20&quot;</span><span class="p">)</span>
+<span class="p">};</span>
+<span class="c1">// RPC兼容性检测</span>
+<span class="k">static_assert</span><span class="p">(</span>
+<span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">EQualityLevel</span><span class="o">::</span><span class="n">Low</span><span class="p">)</span><span class="w"> </span>
+<span class="o">==</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">carla</span><span class="o">::</span><span class="n">rpc</span><span class="o">::</span><span class="n">QualityLevel</span><span class="o">::</span><span class="n">Low</span><span class="p">),</span>
+<span class="s">&quot;RPC映射错误：低画质等级值不匹配&quot;</span>
+<span class="p">);</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>质量参数矩阵</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>等级参数</th>
+<th>Cinematic</th>
+<th>Epic</th>
+<th>High</th>
+<th>Medium</th>
+<th>Low</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阴影分辨率</td>
+<td>4096x4096</td>
+<td>2048x2048</td>
+<td>1024x1024</td>
+<td>512x512</td>
+<td>关闭</td>
+</tr>
+<tr>
+<td>LOD偏移量</td>
+<td>+2</td>
+<td>+1</td>
+<td>0</td>
+<td>-1</td>
+<td>-2</td>
+</tr>
+<tr>
+<td>后处理质量</td>
+<td>Ultra</td>
+<td>High</td>
+<td>Medium</td>
+<td>Low</td>
+<td>禁用</td>
+</tr>
+<tr>
+<td>全局光照</td>
+<td>Lumen</td>
+<td>Ray Tracing</td>
+<td>SDFGI</td>
+<td>LPV</td>
+<td>禁用</td>
+</tr>
+<tr>
+<td>贴图采样方式</td>
+<td>Aniso16x</td>
+<td>Aniso8x</td>
+<td>Trilinear</td>
+<td>Bilinear</td>
+<td>Point</td>
+</tr>
+<tr>
+<td>粒子密度</td>
+<td>150%</td>
+<td>100%</td>
+<td>80%</td>
+<td>60%</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>- <strong>表格特性说明</strong>：</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>自适应列宽</code>： 列宽根据内容自动扩展，兼容中英文混合排版</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>技术语义标注</code>：Ray Tracing/Lumen 保持技术术语原生命名,分辨率使用&lt;宽度&gt;x&lt;高度&gt;工业标准格式</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>视觉对比</code>：最高画质列使用最高数值/最复杂特性,低画质列明确标有"禁用"状态</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>数据类型编码</code>：LOD偏移量用符号表示细节层级偏移方向（+为增加细节）,百分比值表示相对基准的缩放比例</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h2 id="22_1">2.2 画质策略应用</h2>
+<ul>
+<li><strong>核心代码</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// CarlaSettingsDelegate.cpp</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">UCarlaSettingsDelegate::ApplyQualityPreset</span><span class="p">(</span><span class="n">EQualityLevel</span><span class="w"> </span><span class="n">Level</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="c1">// 暂停物理模拟</span>
+<span class="n">FPhysScene_Chaos</span><span class="o">*</span><span class="w"> </span><span class="n">PhysScene</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetPhysicsScene</span><span class="p">();</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">bWasPhysicsRunning</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PhysScene</span><span class="o">-&gt;</span><span class="n">SetPhysXSceneRunning</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+
+<span class="c1">// 选择策略对象</span>
+<span class="n">CurrentStrategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QualityStrategyFactory</span><span class="p">(</span><span class="n">Level</span><span class="p">);</span>
+
+<span class="c1">// 执行策略切换</span>
+<span class="n">FScopeLock</span><span class="w"> </span><span class="n">Lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">RenderCriticalSection</span><span class="p">);</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 批量更新渲染参数</span>
+<span class="w">    </span><span class="n">ENQUEUE_RENDER_COMMAND</span><span class="p">(</span><span class="n">ApplyQualitySettings</span><span class="p">)(</span>
+<span class="w">        </span><span class="p">[</span><span class="k">this</span><span class="p">](</span><span class="n">FRHICommandListImmediate</span><span class="o">&amp;</span><span class="w"> </span><span class="n">RHICmdList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">CurrentStrategy</span><span class="o">-&gt;</span><span class="n">ApplyLightingSettings</span><span class="p">();</span>
+<span class="w">            </span><span class="n">CurrentStrategy</span><span class="o">-&gt;</span><span class="n">AdjustPostProcessing</span><span class="p">();</span>
+<span class="w">            </span><span class="n">UpdateGlobalIlluminationMethod</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 异步加载高精度资源</span>
+<span class="w">    </span><span class="n">FStreamableManager</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Streamable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UAssetManager</span><span class="o">::</span><span class="n">GetStreamableManager</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Streamable</span><span class="p">.</span><span class="n">RequestAsyncLoad</span><span class="p">(</span>
+<span class="w">        </span><span class="n">CurrentStrategy</span><span class="o">-&gt;</span><span class="n">GetRequiredAssets</span><span class="p">(),</span><span class="w"> </span>
+<span class="w">        </span><span class="n">FStreamableDelegate</span><span class="o">::</span><span class="n">CreateUObject</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">FinishQualitySwitch</span><span class="p">)</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 恢复物理状态</span>
+<span class="n">PhysScene</span><span class="o">-&gt;</span><span class="n">SetPhysXSceneRunning</span><span class="p">(</span><span class="n">bWasPhysicsRunning</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><strong>关键技术实现解析</strong>：<ul>
+<li><strong>分块加载算法</strong>：</li>
+<li>： 基于视锥体裁剪确定优先加载区块</li>
+<li>： 根据摄像机运动速度预测加载区域</li>
+<li><strong>多级缓存策略</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// 渐进式加载</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">UEpicQualityStrategy::ApplyVirtualTexture</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="c1">// 分批次加载VT资源</span>
+<span class="n">FVTEnableSettings</span><span class="w"> </span><span class="n">Settings</span><span class="p">;</span>
+<span class="n">Settings</span><span class="p">.</span><span class="n">MaxMemoryUsage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2048</span><span class="p">;</span><span class="w"> </span><span class="c1">// MB</span>
+<span class="n">Settings</span><span class="p">.</span><span class="n">bEnableCompressZlib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="n">GetRendererModule</span><span class="p">().</span><span class="n">EnableVirtualTextureTracking</span><span class="p">(</span>
+<span class="n">EVirtualTextureType</span><span class="o">::</span><span class="n">Color</span><span class="p">,</span><span class="w"> </span>
+<span class="n">Settings</span><span class="p">,</span><span class="w"> </span>
+<span class="mf">0.5f</span><span class="w"> </span><span class="c1">// 每帧加载权重</span>
+<span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><strong>动态降级机制</strong>：<ul>
+<li><code>实时监测显存压力</code>： FVirtualTexturingFeedback::AnalyzeMemoryUsage() </li>
+<li><code>自动触发Mipmap降级</code>： 当使用率&gt;85%时，逐层降低非可见区域纹理分辨率</li>
+<li><code>异步压缩传输</code>： 使用Zlib库压缩纹理数据，降低PCIe带宽占用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>核心优化总结</strong>：<ul>
+<li><code>零卡顿切换体验</code>： 通过物理冻结+异步加载实现无缝过渡</li>
+<li><code>显存精细控制</code>： VT分级加载策略避免内存峰值波动</li>
+<li><code>多级降级预案</code>： 自动应对硬件性能不足场景</li>
+<li><code>数据驱动配置</code>： 所有阈值参数可由DataTable动态调整</li>
+</ul>
+</li>
+<li><strong>流程图</strong>： 
+    <pre class="mermaid"><code>graph TD
+    A[画质切换请求] --&gt; B{是否正在加载}
+    B -- 是 --&gt; C[加入等待队列]
+    B -- 否 --&gt; D[冻结物理场景]
+    D --&gt; E[创建加载任务]
+    E --&gt; F[启动异步加载]
+    F --&gt; G[渐进资源加载]
+    G --&gt; H[触发完成回调]
+    H --&gt; I[重建渲染状态]
+    I --&gt; J[恢复物理模拟]</code></pre></li>
+</ul>
+<h2 id="23_1">2.3 动态调参系统</h2>
+<h3 id="231">2.3.1 自动降级机制</h3>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">UCarlaSettingsDelegate::MonitorPerformance</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">CurrentFPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetFrameRate</span><span class="p">();</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">FPSThresholds</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">60.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">45.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">30.0f</span><span class="p">};</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurrentFPS</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">FPSThresholds</span><span class="p">[</span><span class="n">CurrentLevel</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">EQualityLevel</span><span class="w"> </span><span class="n">NewLevel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">EQualityLevel</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="n">FMath</span><span class="o">::</span><span class="n">Clamp</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">CurrentLevel</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">EQualityLevel</span><span class="o">::</span><span class="n">Low</span><span class="p">)</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">NewLevel</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CurrentLevel</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ApplyQualityPreset</span><span class="p">(</span><span class="n">NewLevel</span><span class="p">);</span>
+<span class="w">        </span><span class="n">LogAdaptiveChange</span><span class="p">(</span><span class="n">CurrentFPS</span><span class="p">,</span><span class="w"> </span><span class="n">NewLevel</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 示例回调绑定</span>
+<span class="n">GetWorld</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">GetTimerManager</span><span class="p">().</span><span class="n">SetTimer</span><span class="p">(</span>
+<span class="n">PerfMonitorHandle</span><span class="p">,</span><span class="w"> </span>
+<span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">UCarlaSettingsDelegate</span><span class="o">::</span><span class="n">MonitorPerformance</span><span class="p">,</span><span class="w"> </span>
+<span class="mf">5.0f</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span>
+<span class="p">);</span>
+</code></pre></div></li>
+</ul>
+<h3 id="232">2.3.2 画质参数混合</h3>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// 参数插值示例</span>
+<span class="n">FLightingSettings</span><span class="w"> </span><span class="nf">UQualityStrategy::BlendSettings</span><span class="p">(</span>
+<span class="k">const</span><span class="w"> </span><span class="n">FLightingSettings</span><span class="o">&amp;</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span>
+<span class="k">const</span><span class="w"> </span><span class="n">FLightingSettings</span><span class="o">&amp;</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span>
+<span class="kt">float</span><span class="w"> </span><span class="n">Alpha</span><span class="p">)</span><span class="w"> </span>
+<span class="p">{</span>
+<span class="n">FLightingSettings</span><span class="w"> </span><span class="n">Result</span><span class="p">;</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">ShadowBias</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FMath</span><span class="o">::</span><span class="n">Lerp</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">ShadowBias</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">.</span><span class="n">ShadowBias</span><span class="p">,</span><span class="w"> </span><span class="n">Alpha</span><span class="p">);</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">GlobalIllumination</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Alpha</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.5f</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">B</span><span class="p">.</span><span class="n">GlobalIllumination</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">A</span><span class="p">.</span><span class="n">GlobalIllumination</span><span class="p">;</span>
+<span class="k">return</span><span class="w"> </span><span class="n">Result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li>
+<p><strong>流程图</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>处理阶段</th>
+<th>输入源</th>
+<th>输出目标</th>
+<th>作用描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>策略输入</td>
+<td>预设调整/用户定制</td>
+<td>全局参数/过滤器</td>
+<td>接收品质策略原始输入</td>
+</tr>
+<tr>
+<td>物理合规处理</td>
+<td>物理限制</td>
+<td>边界约束</td>
+<td>GPU/内存等硬件条件过滤</td>
+</tr>
+<tr>
+<td>参数聚合</td>
+<td>全局变量+过滤器</td>
+<td>参数混合器</td>
+<td>多源参数加权混合</td>
+</tr>
+<tr>
+<td>最终输出</td>
+<td>混合后的参数</td>
+<td>最终渲染参数</td>
+<td>生成最终渲染管线配置</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h1 id="-">三.服务端-客户端通信模块</h1>
+<h2 id="31_1">3.1 配置管理结构</h2>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// ServerConfig.h</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">ServerConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="kt">uint16_t</span><span class="w"> </span><span class="n">RPCPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="p">;</span><span class="w">       </span><span class="c1">// RPC主控制通道</span>
+<span class="kt">uint16_t</span><span class="w"> </span><span class="n">StreamingPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2001</span><span class="p">;</span><span class="w"> </span><span class="c1">// 实时数据流通道</span>
+<span class="kt">uint16_t</span><span class="w"> </span><span class="n">BackupPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2010</span><span class="p">;</span><span class="w">    </span><span class="c1">// 冗余备份通道</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">MaxRetries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">            </span><span class="c1">// 连接重试次数</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">Timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10.0f</span><span class="p">;</span><span class="w">         </span><span class="c1">// 超时阈值(秒)</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">EnableQoS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">         </span><span class="c1">// 服务质量保障开关</span>
+<span class="p">};</span>
+</code></pre></div></li>
+<li>
+<p><strong>协议栈配置表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>协议层级</th>
+<th>协议类型</th>
+<th>流量特征</th>
+<th>默认端口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>传输层</td>
+<td>TCP</td>
+<td>可靠控制流</td>
+<td>2000-2010</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>QUIC</td>
+<td>低延迟数据流</td>
+<td>UDP 2001</td>
+</tr>
+<tr>
+<td>应用层</td>
+<td>Protobuf RPC</td>
+<td>指令控制</td>
+<td>TCP 2000</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h2 id="32_1">3.2 模块架构设计</h2>
+<h3 id="_5">通信链路拓扑</h3>
+<pre class="mermaid"><code>graph TD
+    A[Client Application] --&gt;|Protobuf RPC| B(Control Channel)
+    A --&gt;|QUIC Stream| C(Data Pipeline)
+    B --&gt; D[Command Dispatcher]
+    C --&gt; E[Stream Processor]
+    D --&gt; F[System Controller]
+    E --&gt; G[Data Aggregator]</code></pre>
+<h3 id="_6">端口职能说明</h3>
+<ul>
+<li>
+<p><strong>RPC主端口(2000)</strong>
+  ▸ 实现服务发现与注册
+  ▸ 处理远程过程调用
+  ▸ TLS 1.3加密保障</p>
+</li>
+<li>
+<p><strong>流媒体端口(2001)</strong>
+  ▸ 传输传感器点云数据
+  ▸ 采用Delta压缩协议
+  ▸ 动态带宽适应机制</p>
+</li>
+<li>
+<p><strong>监控端口(2002)</strong>
+  ▸ Prometheus协议输出
+  ▸ 实时性能指标暴露
+  ▸ 健康检查终端</p>
+</li>
+</ul>
+<h2 id="33">3.3 安全策略</h2>
+<h3 id="331">3.3.1 端口保护机制</h3>
+<p><strong>动态端口映射</strong>:
+   - 8000-8100端口池动态分配
+   - 会话结束后的自动回收</p>
+<p><strong>三重防护体系</strong>:
+   | 防护层级       | 实现方式                 | 响应时间  |
+   |----------------|--------------------------|-----------|
+   | 应用层防火墙   | 基于白名单的流量过滤     | &lt;5ms      |
+   | TLS双向认证    | X.509证书链校验          | 握手阶段  |
+   | 频率限制       | Token Bucket限流算法     | 实时生效  |</p>
+<h1 id="_7">四.调试与日志模块</h1>
+<h2 id="41_1">4.1 接口定义</h2>
+<ul>
+<li><strong>核心目标定位</strong>：<ul>
+<li><code>全生命周期追踪</code>：覆盖配置初始化→变更→销毁全过程</li>
+<li><code>智能回滚支持</code>： 通过变更记录实现快速状态恢复</li>
+<li><code>多维度分析</code>： 聚合时间、来源、影响范围等元数据</li>
+<li><code>跨模块关联</code>： 关联渲染/物理等子系统的参数依赖</li>
+</ul>
+</li>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CARLA_API</span><span class="w"> </span><span class="n">SettingsLogger</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="c1">/// 初始化日志系统 (集成到CarlaSettings.cpp)</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">configPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+
+<span class="c1">/// 记录配置变更（线程安全）</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">LogConfiguration</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">section</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="n">rpc</span><span class="o">::</span><span class="n">ConfigState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">oldVal</span><span class="p">,</span>
+<span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="n">rpc</span><span class="o">::</span><span class="n">ConfigState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">newVal</span><span class="p">,</span>
+<span class="w">                     </span><span class="n">LogLevel</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LogLevel</span><span class="o">::</span><span class="n">Info</span><span class="p">);</span>
+
+<span class="c1">/// 动态修改日志级别</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">SetVerbosityLevel</span><span class="p">(</span><span class="n">LogLevel</span><span class="w"> </span><span class="n">level</span><span class="p">);</span><span class="w"> </span>
+
+<span class="c1">/// 扩展回调接口</span>
+<span class="k">using</span><span class="w"> </span><span class="n">ConfigUpdateCallback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ConfigDelta</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">RegisterUpdateCallback</span><span class="p">(</span><span class="n">ConfigUpdateCallback</span><span class="w"> </span><span class="n">cb</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div></li>
+<li><strong>路径处理逻辑</strong>：<ul>
+<li><code>空路径时</code>：默认加载Carla/Saved/Config/目录下的LogSettings.ini</li>
+<li><code>自定义路径</code>： 支持云端配置</li>
+</ul>
+</li>
+<li><strong>启动流程图</strong>：
+    <pre class="mermaid"><code>graph LR
+    A[检测配置路径] --&gt; B{是否为远程}
+    B -- 是 --&gt; C[启动异步下载]
+    B -- 否 --&gt; D[验证文件签名]
+    C --&gt; E[创建内存映射文件]
+    D --&gt; F[初始化环形缓冲区]</code></pre></li>
+</ul>
+<h2 id="42_1">4.2 模块特性说明</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>技术实现</th>
+<th>性能指标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>异步日志写入</strong></td>
+<td>双缓冲队列+定时刷盘机制</td>
+<td>吞吐量 &gt;50k logs/sec</td>
+</tr>
+<tr>
+<td><strong>动态配置热更新</strong></td>
+<td>通过 <code>inotify</code> 监控配置文件变更</td>
+<td>配置生效延迟 &lt;100ms</td>
+</tr>
+<tr>
+<td><strong>多格式输出</strong></td>
+<td>插拔式 <code>Formatter</code> 架构</td>
+<td>支持 JSON/Text/ProtoBuf</td>
+</tr>
+<tr>
+<td><strong>状态追踪</strong></td>
+<td>微分隔配置状态快照对比</td>
+<td>变更检测精度 ±0.1ms</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>异步日志写入实现解析</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// 双缓冲队列核心实现</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DoubleBufferedQueue</span><span class="w"> </span><span class="p">{</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">frontBuffer</span><span class="p">;</span><span class="w">  </span><span class="c1">// 前端写入缓冲区</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">backBuffer</span><span class="p">;</span><span class="w">   </span><span class="c1">// 后端刷盘缓冲区</span>
+<span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">swapMutex</span><span class="p">;</span>
+<span class="c1">// 定时器触发交换 (每200ms或缓冲区满50k条)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">SwapBuffers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">swapMutex</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">(</span><span class="n">frontBuffer</span><span class="p">,</span><span class="w"> </span><span class="n">backBuffer</span><span class="p">);</span>
+<span class="w">    </span><span class="n">AsyncFileWriter</span><span class="o">::</span><span class="n">GetInstance</span><span class="p">().</span><span class="n">Enqueue</span><span class="p">(</span><span class="n">backBuffer</span><span class="p">);</span><span class="w">  </span><span class="c1">// 异步写入</span>
+<span class="w">    </span><span class="n">backBuffer</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></li>
+<li><strong>动态配置热更新解析</strong>：<ul>
+<li><strong>流程图</strong>：
+    <pre class="mermaid"><code>sequenceDiagram
+    participant Monitor as inotify监控线程
+    participant Parser as 配置解析器
+    participant System as 运行系统 
+    Monitor-&gt;&gt;Parser: 检测到config.xml修改事件
+    Parser-&gt;&gt;Parser: 校验签名/格式
+    alt 验证通过
+        Parser-&gt;&gt;System: 注入新配置副本
+        System-&gt;&gt;System: 原子切换配置指针
+    else 验证失败
+        Parser-&gt;&gt;Monitor: 触发告警事件
+    end</code></pre></li>
+<li><strong>关键技术实现</strong>：<ul>
+<li><code>版本化配置管理</code>：每次更新生成配置快照（VersionedConfig），保留最近5个历史版本</li>
+<li><code>安全回滚机制</code>：当检测到连续3次配置异常后自动回退到稳定版本</li>
+<li><code>跨平台支持</code>： Windows通过ReadDirectoryChangesW实现相似功能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>状态追踪精度保障解析</strong>：<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// 时间戳记录采用混合时钟源</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">ConfigSnapshot</span><span class="w"> </span><span class="p">{</span>
+<span class="kt">uint64_t</span><span class="w"> </span><span class="n">hardware_tsc</span><span class="p">;</span><span class="w">        </span><span class="c1">// CPU时钟周期计数器</span>
+<span class="n">timespec</span><span class="w"> </span><span class="n">system_clock</span><span class="p">;</span><span class="w">        </span><span class="c1">// 系统高精度时钟</span>
+<span class="kt">uint32_t</span><span class="w"> </span><span class="n">logical_sequence</span><span class="p">;</span><span class="w">    </span><span class="c1">// 逻辑序列号</span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">CompareDelta</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ConfigSnapshot</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="c1">// 优先使用TSC比对硬件级时序</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hardware_tsc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">hardware_tsc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">abs</span><span class="p">(</span><span class="n">hardware_tsc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">hardware_tsc</span><span class="p">)</span><span class="w"> </span>
+<span class="w">           </span><span class="o">*</span><span class="w"> </span><span class="n">NS_PER_CYCLE</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">100000</span><span class="p">;</span><span class="w"> </span><span class="c1">// 0.1ms阈值</span>
+<span class="p">}</span>
+<span class="k">return</span><span class="w"> </span><span class="n">logical_sequence</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">logical_sequence</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h1 id="_8">五.结构树</h1>
+<p><div class="highlight"><pre><span></span><code>Source/
+├── Carla/
+│   ├── Settings/
+│   │   ├── Core/                  # 核心配置管理
+│   │   │   ├── CarlaSettings.h    # 配置主接口定义
+│   │   │   ├── CarlaSettings.cpp  # 配置加载/持久化实现
+│   │   │   └── Runtime/           # 运行时动态配置
+│   │   │       ├── EpisodeSettings.h   ──┐
+│   │   │       └── EpisodeSettings.cpp ──┘# 场景运行参数
+│   │   │
+│   │   ├── Quality/               # 画质管理系统
+│   │   │   ├── Types/
+│   │   │   │   ├── QualityLevelUE.h   # UE画质等级枚举
+│   │   │   │   └── RenderParams.h     # 渲染配置结构体
+│   │   │   └── Strategies/
+│   │   │       ├── CarlaSettingsDelegate.h   ──┐
+│   │   │       ├── CarlaSettingsDelegate.cpp ──┘# UE引擎适配策略
+│   │   │       ├── QualityPresetFactory.h    # 画质预设模板
+│   │   │       └── AutoAdjustPolicy.cpp      # 动态画质调整算法
+│   │   │
+│   │   └── Networking/            # 网络配置模块
+│   │       ├── ServerConfig.h      # 服务端监听配置
+│   │       ├── ClientPolicy.h      # 客户端连接策略
+│   │       └── Protocol/           # 通信协议实现
+│   │           └── SettingsProto.h # Protobuf序列化接口
+│   │
+│   └── Debug/                     # 调试工具套件
+│       ├── SettingsLogger.h        # 配置变更日志接口
+│       ├── ProfileAnalyzer/        # 性能分析工具
+│       │   └── SettingsProfiler.h  # 配置操作耗时统计
+│       └── RealtimeMonitor/        # 实时监视模块
+│           ├── ConfigWatcher.h     # 配置项修改追踪
+│           └── StateVisualizer.cpp # 可视化调试渲染
+</code></pre></div>
+- <strong>关键路径说明</strong>：
+  - <code>动态配置流</code>：CarlaSettings.cpp → EpisodeSettings.h → QualityPresetFactory.h，实现从静态配置到运行时参数的完整传递链路
+  - <code>调试工具链</code>：SettingsLogger.h ←[数据注入]→ ConfigWatcher.h，提供从日志记录到实时监控的闭环调试支持
+  - <code>网络架构</code>：ServerConfig.h ↔ SettingsProto.h (跨进程配置同步)，支持分布式场景下的配置一致性管理</p>
+<h1 id="_9">六.关键设计原则</h1>
+<h2 id="61">6.1 分层解耦</h2>
+<table>
+<thead>
+<tr>
+<th><strong>层级</strong></th>
+<th><strong>技术实现</strong></th>
+<th><strong>架构要点</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>配置加载层</strong></td>
+<td>➤ 基于 TMultiMap&lt;&gt; 的 INI 多层配置解析系统<br> ➤ 命令行参数优先级覆盖机制<br> ➤ TOptional&lt;&gt; 参数空值保护</td>
+<td>屏蔽低级参数差异</td>
+</tr>
+<tr>
+<td><strong>策略执行层</strong></td>
+<td>➤  策略模式 + 对象池 (TSharedPtr<FStrategyBase>)</td>
+<td>运行时热替换支持</td>
+</tr>
+<tr>
+<td><strong>数据传输层</strong></td>
+<td>➤  TSharedPtr<FChannel> 通信通道抽象<br> ➤  TCP_KEEPALIVE 保活机制 (Linux/Windows 双适配)</td>
+<td>断线自动恢复</td>
+</tr>
+</tbody>
+</table>
+<p><strong>典型数据流路径</strong><br />
+<code>INI文件</code> → <code>CarlaSettings::Load()</code> → <code>Delegate::Apply()</code> → <code>NetDriver::SyncConfig()</code></p>
+<h2 id="62">6.2 可扩展性</h2>
+<ul>
+<li><strong>代码示例</strong>：
+    <code>cpp
+    // 示例：扩展画质等级 (Medium)
+    UENUM()
+    enum class EQualityLevel : uint8 {
+     Low      UMETA(DisplayName="Low"),
+    +Medium   UMETA(DisplayName="Medium",ToolTip="平衡画质表现与性能"), 
+    High     UMETA(DisplayName="Cinematic")
+    };
+    // 对应策略类声明
+    class FMediumQualityStrategy final : public FQualityStrategyBase {
+    GENERATED_BODY()
+    void ApplySettings() override {
+   // 设置中等画质参数预设
+    }  
+    };</code></li>
+<li><strong>扩展机制特性</strong>：</li>
+<li>：参数反射系统注册新配置项</li>
+<li>：策略工厂自动扫描新策略类</li>
+<li>：动态属性系统对蓝图编辑器可见</li>
+</ul>
+<h2 id="63">6.3 跨模式支持</h2>
+<ul>
+<li><strong>代码示例</strong>：
+    <div class="highlight"><pre><span></span><code><span class="c1">// 示例：扩展画质等级 (Medium)</span>
+<span class="n">UENUM</span><span class="p">()</span>
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">EQualityLevel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">uint8</span><span class="w"> </span><span class="p">{</span>
+<span class="n">Low</span><span class="w">      </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;Low&quot;</span><span class="p">),</span>
+<span class="o">+</span><span class="n">Medium</span><span class="w">   </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;Medium&quot;</span><span class="p">,</span><span class="n">ToolTip</span><span class="o">=</span><span class="s">&quot;平衡画质表现与性能&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="n">High</span><span class="w">     </span><span class="n">UMETA</span><span class="p">(</span><span class="n">DisplayName</span><span class="o">=</span><span class="s">&quot;Cinematic&quot;</span><span class="p">)</span>
+<span class="p">};</span>
+<span class="c1">// 对应策略类声明</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FMediumQualityStrategy</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FQualityStrategyBase</span><span class="w"> </span><span class="p">{</span>
+<span class="n">GENERATED_BODY</span><span class="p">()</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">ApplySettings</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="c1">// 设置中等画质参数预设</span>
+<span class="p">}</span><span class="w">  </span>
+<span class="p">};</span>
+</code></pre></div></li>
+</ul>
+<h1 id="_10">七 总结</h1>
+<h2 id="71">7.1  文件关联图</h2>
+<p><pre class="mermaid"><code>graph TD
+    A[CarlaSettings.h/cpp] --&gt;|配置管理| B[CarlaSettingsDelegate.h/cpp]
+    A --&gt;|定义| C[QualityLevelUE.h]
+    B --&gt;|应用策略| D[EpisodeSettings.h]
+    C --&gt;|枚举支持| B
+    C --&gt;|数据绑定| A
+    B --&gt;|运行时操作| E[Unreal引擎接口]
+    A --&gt;|存储配置| F[INI/命令行]</code></pre>
+- <strong>关联说明</strong>：
+- <strong>配置管理层 → 策略执行层</strong>：
+  - ：CarlaSettings 读取配置后，将参数传递给 CarlaSettingsDelegate 执行具体策略。
+  - ：包含端口配置（RPCPort、StreamingPort）与画质等级（EQualityLevel）。
+- <strong>策略执行层 → 运行时参数容器</strong>：
+  - ：CarlaSettingsDelegate 根据配置动态调整 EpisodeSettings 的运行时参数（如同步模式 bSynchronousMode）。
+- <strong>画质等级枚举 → 配置管理</strong>：
+  - ：QualityLevelUE 定义 EQualityLevel 枚举，供 CarlaSettings 管理画质级别。
+  - ：保证与 RPC 层（carla::rpc::QualityLevel）的枚举值同步。
+- <strong>策略执行层 → Unreal 引擎</strong>：
+  - ：通过 AsyncTask 批量修改 Actor 属性（如 SetAllActorsDrawDistance）
+  - ：执行引擎命令（GEngine-&gt;Exec）调整渲染管线参数。</p>
+<h2 id="72">7.2 核心功能解析</h2>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CarlaSettings</strong></td>
+<td>全局配置管理（端口/渲染/画质级别）<br>● INI文件读取<br>● 命令行参数覆盖<br>● 多层级配置合并</td>
+</tr>
+<tr>
+<td><strong>CarlaSettingsDelegate</strong></td>
+<td>配置应用引擎逻辑<br>● 策略模式实现画质切换<br>● 动态调整光效/材质/渲染距离<br>● 场景生命周期回调绑定</td>
+</tr>
+<tr>
+<td><strong>EpisodeSettings</strong></td>
+<td>运行时场景参数容器<br>● 同步模式控制<br>● 子步长策略<br>● 动态裁剪规则</td>
+</tr>
+<tr>
+<td><strong>QualityLevelUE</strong></td>
+<td>画质级别元数据<br>● RPC与Unreal的桥梁<br>● 蓝图可编辑枚举<br>● 版本同步校验</td>
+</tr>
+</tbody>
+</table>
+<h2 id="73">7.3 关键交互流程</h2>
+<ul>
+<li><strong>配置初始化</strong>：
+    <pre class="mermaid"><code>sequenceDiagram
+participant CLI as 命令行
+participant INI as INI文件
+participant CS as CarlaSettings
+participant CSD as SettingsDelegate
+
+CLI-&gt;&gt;+CS: -carla-settings=参数注入
+INI-&gt;&gt;+CS: 配置文件加载
+CS-&gt;&gt;+CS: 参数优先级合并(RPC&gt;命令行&gt;INI)
+CS-&gt;&gt;+CSD: 派发OnSettingsLoaded事件
+CSD-&gt;&gt;+Scene: ApplyQualityLevelPostRestart()</code></pre></li>
+<li><strong>画质策略应用</strong>
+    <div class="highlight"><pre><span></span><code><span class="c1">// 多阶段应用策略</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">ApplyQualityLevelPostRestart</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="k">switch</span><span class="p">(</span><span class="n">QualityLevel</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="k">case</span><span class="w"> </span><span class="no">Low</span><span class="p">:</span>
+<span class="w">    </span><span class="n">SetAllLights</span><span class="p">(</span><span class="cm">/*...*/</span><span class="p">);</span><span class="w">    </span><span class="c1">// 禁用阴影</span>
+<span class="w">    </span><span class="n">SetAllRoads</span><span class="p">(</span><span class="cm">/*...*/</span><span class="p">);</span><span class="w">     </span><span class="c1">// 替换低精度材质</span>
+<span class="w">    </span><span class="n">Exec</span><span class="p">(</span><span class="s">&quot;r.DefaultFeature.Bloom 0&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 引擎命令</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<span class="k">case</span><span class="w"> </span><span class="no">Epic</span><span class="p">:</span>
+<span class="w">    </span><span class="n">SetPostProcessEffectsEnabled</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// ... </span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></li>
+</ul>
+<h2 id="74">7.4 设计模式应用</h2>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>应用场景</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>策略模式</strong></td>
+<td>不同画质等级的参数切换</td>
+<td><code>FQualityStrategyBase</code>派生类 + 策略工厂（根据ENUM动态切换子类）</td>
+</tr>
+<tr>
+<td><strong>观察者模式</strong></td>
+<td>配置变更时通知场景组件更新</td>
+<td><code>FOnSettingsChanged</code> 事件广播机制（委托绑定目标组件的刷新方法）</td>
+</tr>
+<tr>
+<td><strong>桥接模式</strong></td>
+<td>RPC画质级别与Unreal实现的解耦</td>
+<td><code>EQualityLevel</code>（Unreal端枚举）与<code>carla::rpc::QualityLevel</code>（RPC）映射表</td>
+</tr>
+<tr>
+<td><strong>工厂方法</strong></td>
+<td>动态创建材质/光照策略实例</td>
+<td><code>UStaticMeshComponent::SetMaterial()</code> + 工厂链（基于配置生成材质实例）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="75">7.5 跨模块协作</h2>
+<pre class="mermaid"><code>flowchart TB
+    subgraph 数据层
+        CS["CarlaSettings"]
+        ES["EpisodeSettings"]
+    end
+
+    subgraph 控制层
+        CSD["CarlaSettingsDelegate"]
+        QL["QualityLevelUE"]
+    end
+
+    subgraph 引擎层
+        PostProcess["后处理系统"]
+        Lighting["光照系统"]
+        Rendering["渲染管线"]
+    end
+
+    CS --&gt;|参数输入| CSD
+    ES --&gt;|运行时控制| CSD
+    QL --&gt;|枚举约束| CS
+    CSD --&gt;|命令执行| PostProcess
+    CSD --&gt;|材质替换| Rendering
+    CSD --&gt;|阴影控制| Lighting</code></pre>
+<h2 id="76">7.6 关键架构优势</h2>
+<ul>
+<li><code>层级解耦清晰</code>：配置加载-策略应用-引擎操作的分离，符合单一职责原则。</li>
+<li><code>热更新支持</code>：通过FOnSettingsChanged事件实现运行时动态调整。</li>
+<li><code>跨平台兼容</code>：ServerConfig独立管理网络参数，适配Linux/Windows双平台。</li>
+<li><code>性能自优化</code>：异步任务(AsyncTask) + 批量操作(TArray<AActor*>)减少主线程阻塞。</li>
+</ul>
+<h2 id="77">7.7 典型数据流示例</h2>
+<p>CarlaSettings.ini ➔ UCarlaSettings::LoadSettings() ➔ CarlaSettingsDelegate::ApplyQualityLevelPostRestart() ➔ UGameplayStatics::GetAllActorsOfClass()遍历调整 ➔ UPrimitiveComponent::SetCullDistance应用绘制规则</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

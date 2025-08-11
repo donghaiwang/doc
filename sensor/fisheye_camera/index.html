@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>鱼眼相机 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u9c7c\u773c\u76f8\u673a";
+        var mkdocs_page_input_path = "sensor/fisheye_camera.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">鱼眼相机</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/sensor/fisheye_camera.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">鱼眼相机</h1>
+<p>实现比传统相机视野更广的相机。</p>
+<h2 id="_2">实现原理</h2>
+<p>参考 <a href="https://ww2.mathworks.cn/help/vision/ref/cameraintrinsicskb.html">基于KB模型的相机内参</a> 和 <a href="https://ww2.mathworks.cn/help/vision/ug/fisheye-calibration-basics.html">鱼眼校准基础知识</a> ，
+Kannale-Brandt 模型通过考虑镜头畸变来扩展理想的针孔模型，以代表真实的相机。
+畸变点(distorted)为( <script type="math/tex">x_{d}, y_{d} </script> )，其中
+<script type="math/tex; mode=display">
+x_{d} = \frac{\theta_d}{\gamma} \times x
+</script>
+</p>
+<p>
+<script type="math/tex; mode=display">
+y_{d} = \frac{\theta_d}{\gamma} \times y
+</script>
+</p>
+<p>其中，归一化图像坐标中未失真像素的位置为 <script type="math/tex"> (x,y) </script>：
+<script type="math/tex; mode=display">
+\gamma = x^2 + y^2
+</script>
+</p>
+<p>
+<script type="math/tex; mode=display">
+\theta _d = \theta (1 + k_1 \theta^2 + k_2 \theta^4 + k_3 \theta^6 + k_4 \theta^8)
+</script>
+</p>
+<p>
+<script type="math/tex; mode=display">
+\theta = atan(\gamma)
+</script>
+</p>
+<p>这里的 <script type="math/tex"> k_1, k_2, k_3, k_4 </script> 是镜头的畸变系数，<script type="math/tex">atan</script> 为反正切（与<script type="math/tex">x</script>轴的夹角）。</p>
+<h2 id="_3">实现步骤</h2>
+<p>参考 <a href="../../tuto_D_create_sensor/">添加新传感器</a> 。</p>
+<h3 id="0-">0- 虚幻引擎端的修改</h3>
+<p>更新3个虚幻引擎的源代码：</p>
+<ul>
+<li>
+<p><a href="https://github.com/OpenHUTB/engine/blob/hutb/Engine/Shaders/Private/SimpleElementPixelShader.usf"><code>Engine/Shaders/Private/SimpleElementPixelShader.usf</code></a></p>
+<p>Unreal Shader(.usf, 着色器) 文件。 其中函数<code>void CubemapTexturePropertiesFisheye()</code>实现了鱼眼相机的畸变模型：
+<script type="math/tex; mode=display"> 
+x = x_d \frac{r}{\theta _d} = \frac{r}{\theta (1 + k_1 \theta^2 + k_2 \theta^4 + k_3 \theta^6 + k_4 \theta^8)}  
+</script>
+<a href="https://github.com/OpenHUTB/UnrealEngine/blob/83a7677378ff770073ca9544460a02d264a3ce46/Engine/Shaders/Private/SimpleElementPixelShader.usf#L410">代码实现</a> ：<code>theta = r / (1.0f + d1*th2 + d2*th4 + d3*th6 + d4*th8);</code>。</p>
+</li>
+<li>
+<p><a href="https://github.com/OpenHUTB/engine/blob/hutb/Engine/Source/Runtime/Engine/Private/CubemapUnwrapUtils.cpp"><code>Engine/Source/Runtime/Engine/Private/CubemapUnwrapUtils.cpp</code></a></p>
+</li>
+<li><a href="https://github.com/OpenHUTB/engine/blob/hutb/Engine/Source/Runtime/Engine/Public/CubemapUnwrapUtils.h"><code>Engine/Source/Runtime/Engine/Public/CubemapUnwrapUtils.h</code></a></li>
+</ul>
+<h3 id="1-">1- 创建新传感器 <span id="1-sensor-actor"></span></h3>
+<p>为新的 C++ 类创建两个文件：</p>
+<ul>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.h"><code>Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.h</code></a></li>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/GnssSensor.cpp"><code>Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/FisheyeSensor.cpp</code></a></li>
+</ul>
+<h3 id="2-">2- 传感器数据序列化器 <span id="2-sensor-data-serializer"></span></h3>
+<p>这个类只需要有两个静态方法，序列化<code>Serialize</code>和反序列化<code>Deserialize</code>。我们将为它添加两个文件，这次是位于 <code>LibCarla</code> 模块中：</p>
+<ul>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/LibCarla/source/carla/sensor/s11n/ImageSerializerCube.cpp"><code>LibCarla/source/carla/sensor/s11n/ImageSerializerCube.h</code></a></li>
+</ul>
+<p>序列化函数 Serialize 输入为一个传感器Sensor，返回一个缓冲区Buffer。</p>
+<p><div class="highlight"><pre><span></span><code><span class="cp">#pragma pack(push, 1)</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ImageHeader</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">width</span><span class="p">;</span>
+<span class="w">      </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">      </span><span class="kt">float</span><span class="w"> </span><span class="n">fov_angle</span><span class="p">;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="cp">#pragma pack(pop)</span>
+</code></pre></div>
+将内存对齐调整为1字节对齐，也就是说结构体中的各个成员会按照1字节对齐，而不是默认的机器字节对齐方式。这样做可以减少内存的浪费。
+首先将当前的对齐规则保存在堆栈中。这样，在后续的代码中，可以通过 <code>#pragma pack(pop)</code> 恢复之前的对齐方式。
+unsigned若省略后一个关键字，大多数编译器都会认为是 unsigned int。</p>
+<ul>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/LibCarla/source/carla/sensor/s11n/ImageSerializerCube.h"><code>LibCarla/source/carla/sensor/s11n/ImageSerializerCube.cpp</code></a></li>
+</ul>
+<h3 id="3-">3- 传感器数据对象 <span id="3-sensor-data-object"></span></h3>
+<ul>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/LibCarla/source/carla/sensor/data/ImageCube.h"><code>LibCarla/source/carla/sensor/data/ImageCube.h</code></a></li>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/LibCarla/source/carla/sensor/data/ImageTmpl.h"><code>LibCarla/source/carla/sensor/data/ImageTmplCube.h</code></a></li>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/LibCarla/source/carla/image/ImageConverterCube.h"><code>LibCarla/source/carla/image/ImageConverterCube.h</code></a></li>
+<li><a href="https://github.com/OpenHUTB/carla/blob/fisheye-camera/LibCarla/source/carla/image/ImageViewCube.h"><code>LibCarla/source/carla/image/ImageViewCube.h</code></a></li>
+</ul>
+<h3 id="4-">4- 注册传感器 <span id="4-register-your-sensor"></span></h3>
+<ul>
+<li>
+<p><a href="https://github.com/OpenHUTB/carla/blob/1c60b0f41064f241318c6c3555293e40d150ba5a/LibCarla/source/carla/sensor/SensorRegistry.h#L87"><code>LibCarla/source/carla/sensor/SensorRegistry.h</code></a></p>
+<p>将CarlaUE4中的鱼眼相机传感器参与者AFisheyeSensor和LibCarla中的图像序列化器组合成一个单一的对象：<code>std::pair&lt;AFisheyeSensor *, s11n::ImageSerializerCube&gt;</code>。</p>
+</li>
+</ul>
+<h3 id="5-">5- 使用示例 <span id="5-usage-example"></span></h3>
+<ul>
+<li><a href="https://github.com/OpenHUTB/doc/blob/master/src/sensor/fisheye_demo.py"><code>fisheye_demo.py</code></a></li>
+</ul>
+<p>启动后按数字键<code>2</code>，则显示鱼眼相机画面：
+<img alt="FisheyeImage" src="../../img/sensor/fisheye_demo.jpg" /></p>
+<h2 id="_4">问题</h2>
+<p>使用官网中的 <a href="https://github.com/carla-simulator/carla/pull/3755">PR</a> 的代码进行编译，报错：<code>D:\work\workspace\carla\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\include\carla/streaming/detail/tcp/ServerSession.h(70): error C2338: This function only accepts arguments of type BufferView.</code>：</p>
+<p>解决：需要使用<a href="https://github.com/GimpelZhang/carla/tree/fisheye">GimpelZhang</a> 的中的<a href="https://github.com/carla-simulator/carla/commit/894736b6dbdd5f0a2bc42d9ec3697a0596e7cb75">FisherSensor.cpp</a> </p>
+<p>报错：<code>D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/V2XSensor.cpp(189): error C2653: “UCarlaStatics”: 不是类或命名空间名称
+  D:/work/workspace/carla/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/V2XSensor.cpp(189): error C3861: “GetCurrentEpisode”: 找不到标识符</code></p>
+<p>临时解决办法：注释掉这一块代码，只保留
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ActorPowerList</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="_5">参考</h2>
+<ul>
+<li><a href="https://users.aalto.fi/~kannalj1/publications/tpami2006.pdf">A generic camera model and calibration method for conventional, wide-angle, and fish-eye lenses</a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

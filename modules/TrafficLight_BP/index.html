@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>TrafficLight BP - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "TrafficLight BP";
+        var mkdocs_page_input_path = "modules/TrafficLight_BP.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">TrafficLight BP</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/TrafficLight_BP.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="_1">交通信号灯蓝图</h2>
+<ul>
+<li>自定义触发器组件 <a href="https://bitbucket.org/carla-simulator/carla-content/src/master/Blueprints/TrafficLight/BP_CustomTriggerComponent.uasset">BP_CustomTriggerComponent</a></li>
+<li>交通信号灯与OpenDrive <a href="https://bitbucket.org/carla-simulator/carla-content/src/master/Blueprints/TrafficLight/BP_TLOpenDrive.uasset">BP_TLOpenDrive</a></li>
+<li>交通信号灯与OpenDrive版本2 <a href="https://bitbucket.org/carla-simulator/carla-content/src/master/Blueprints/TrafficLight/BP_TLOpenDrive_v02.uasset">BP_TLOpenDrive_v02</a></li>
+<li><a href="https://bitbucket.org/carla-simulator/carla-content/src/master/Blueprints/TrafficLight/BP_TrafficLightNew_T10_master_largeBIG_rsc.uasset">BP_TrafficLightNew_T10_master_largeBIG_rsc</a></li>
+<li><a href="https://bitbucket.org/carla-simulator/carla-content/src/master/Blueprints/TrafficLight/BP_TrafficLightNew_T10_master_mediumBIG_rsc.uasset">BP_TrafficLightNew_T10_master_mediumBIG_rsc</a></li>
+<li><a href="https://bitbucket.org/carla-simulator/carla-content/src/master/Blueprints/TrafficLight/BP_TrafficLightNew_T10_master_noArmsBIG_rsc.uasset">BP_TrafficLightNew_T10_master_noArmsBIG_rsc</a></li>
+</ul>
+<h1 id="carlatrafficlight">Carla虚幻场景中交通信号灯（TrafficLight）技术说明</h1>
+<h2 id="1">1. 概述</h2>
+<p>在 HUTB 自动驾驶仿真平台中，交通信号灯（TrafficLight）是模拟交通环境中控制车辆和行人动态行为的关键元素。它们模仿现实中的交通信号装置，通过红绿灯的变化调节交通流，确保模拟场景的真实性和可靠性。本文介绍 HUTB中交通信号灯的基本功能、管理方式、操作接口以及其在模拟中的应用场景。</p>
+<hr />
+<h2 id="2-trafficlight">2. 交通信号灯（TrafficLight）简介</h2>
+<ul>
+<li><strong>定义</strong>：交通信号灯（TrafficLight）是位于道路交叉口或特定路段，用以指示车辆及行人通行状态的场景元素。</li>
+<li><strong>功能</strong>：</li>
+<li>控制交叉口或道路片段的通行与等待状态。</li>
+<li>支持多种状态切换（如绿灯、黄灯、红灯）。</li>
+<li>可以自动或手动控制，实现模拟中的交通管理。</li>
+<li><strong>作用场景</strong>：</li>
+<li>构建真实的交通环境，测试自动驾驶策略。</li>
+<li>仿真交通规则遵守与违法行为。</li>
+<li>配合其他场景元素，模拟复杂交通场景。</li>
+</ul>
+<hr />
+<h2 id="3">3. 交通信号灯的基本构造与属性</h2>
+<h3 id="31">3.1 实例创建</h3>
+<ul>
+<li>交通信号灯作为场景中的参与者（Actor）存在，可由蓝图（Blueprint）实例化。</li>
+<li>通过API可以获取现有信号灯，修改或控制其状态。</li>
+</ul>
+<h3 id="32">3.2 主要属性</h3>
+<ul>
+<li><strong>状态（State）</strong>：显示当前交通信号灯的颜色状态（红色、黄色、绿色）。</li>
+<li><strong>时间参数（Timing）</strong>：定义状态持续时间以及转换时间。</li>
+<li><strong>位置（Transform）</strong>：信号灯在场景中的位置与方向。</li>
+<li><strong>灯光类型</strong>：单灯或多灯组合（如箭头灯、圆形灯等）。</li>
+</ul>
+<h3 id="33">3.3 信号灯状态</h3>
+<ul>
+<li><strong>Green（绿灯）</strong>：允许车辆和行人通行。</li>
+<li><strong>Yellow（黄灯）</strong>：警示即将变红，车辆应准备停止。</li>
+<li><strong>Red（红灯）</strong>：禁止车辆和行人通行。</li>
+</ul>
+<hr />
+<h2 id="4">4. 交通信号灯的管理与控制</h2>
+<h3 id="41">4.1 获取场景中的交通信号灯</h3>
+<p>通过场景中的地图接口可以检索所有已存在的信号灯实例：
+<div class="highlight"><pre><span></span><code><span class="n">traffic_lights</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_actors</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;traffic.traffic_light&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="42">4.2 改变信号灯状态</h3>
+<p>可以通过 API 设置单个或多个信号灯的状态：
+<div class="highlight"><pre><span></span><code><span class="c1"># 设置第一个信号灯为绿色</span>
+<span class="n">traffic_lights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">Green</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="43">4.3 定时控制与自动切换</h3>
+<ul>
+<li>利用时间参数或仿真流程，设定自动切换逻辑。</li>
+<li>也可结合交通管理器 TrafficManager 实现智能调度。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 例：连续切换某个信号灯状态</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">light</span> <span class="o">=</span> <span class="n">traffic_lights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">light</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">Red</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">light</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">carla</span><span class="o">.</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">Green</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="44">4.4 交通信号灯的事件检测</h3>
+<p>监控交通信号灯状态变化，结合自动驾驶场景的决策调整。</p>
+<hr />
+<h2 id="5">5. 交通信号灯的场景应用</h2>
+<ul>
+<li><strong>交叉口管理</strong>：实现不同方向的车辆按交通规则流动。</li>
+<li><strong>交通流控制</strong>：模拟高峰、低谷或交通管制场景。</li>
+<li><strong>自主驾驶训练</strong>：测试车辆对红绿灯的识别和响应能力。</li>
+<li><strong>复杂场景构建</strong>：结合动态信号灯变化，模拟交通堵塞、突发事件。</li>
+</ul>
+<hr />
+<h2 id="6">6. 其他相关功能</h2>
+<ul>
+<li><strong>信号灯状态的动画与显示</strong>：通过信号灯模型（Actor）自带灯光效果表现变化。</li>
+<li><strong>配合交通管理器</strong>：自动调度信号灯状态，实现场景智能交通控制。</li>
+<li><strong>自定义信号灯</strong>：可根据场景需要，制作特殊交通灯（如指示灯、箭头灯等）。</li>
+</ul>
+<hr />
+<h2 id="7">7. 小结</h2>
+<p>交通信号灯（TrafficLight）在Carla中扮演着调控交通流的重要角色。通过API可以灵活控制信号灯的状态和位置，为创建逼真的交通环境和自动驾驶测试场景提供基础保障。深入了解和掌控交通信号灯的操作，有助于实现高度仿真化、动态化的交通场景，为自动驾驶研发提供更可靠的仿真平台。</p>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

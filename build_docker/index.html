@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Build docker - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Build docker";
+        var mkdocs_page_input_path = "build_docker.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Build docker</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/build_docker.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="docker-carla"><a href="https://carla.readthedocs.io/en/latest/build_docker/">Docker 中的 Carla</a></h1>
+<p>用户可以拉取基于 Carla 版本的映像以在 Docker 容器中运行。这对于以下用户很有用：</p>
+<ul>
+<li>想要运行 Carla 而不需要安装所有依赖项</li>
+<li>运行多个 Carla 服务器并执行 GPU 映射</li>
+<li>在没有显示的情况下运行 Carla 服务器</li>
+</ul>
+<p>本教程介绍了运行 Carla 图像的要求以及如何使用 OpenGL 和 Vulkan 图形 API 运行图像。</p>
+<ul>
+<li><a href="#before_you_begin"><strong>在你开始之前</strong></a></li>
+<li><a href="#running_carla_in_a_container"><strong>在容器中运行 Carla</strong></a></li>
+<li><a href="#off_screen_mode"><strong>离屏模式</strong></a></li>
+</ul>
+<hr />
+<h2 id="_1">在你开始之前 <span id="before_you_begin"></span></h2>
+<p>您需要安装：</p>
+<ul>
+<li><strong>Docker:</strong> 按照 <a href="https://docs.docker.com/engine/install/">此处</a> 的安装说明进行操作。</li>
+<li><strong>NVIDIA Container Toolkit:</strong> NVIDIA 容器工具包是一个库和工具集，可将 NVIDIA 图形设备公开给 Linux 容器。它专为在 Linux 主机系统或适用于 Linux 的 Windows 子系统版本 2 下的 Linux 发行版中运行的 Linux 容器而设计。<code>nvidia-docker2</code>按照 <a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#installation-guide">此处</a> 的说明安装该软件包。</li>
+</ul>
+<p>CentOS安装Docker：
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>yum-utils<span class="w"> </span>device-mapper-persistent-data<span class="w"> </span>lvm2
+yum-config-manager<span class="w"> </span>--add-repo<span class="w"> </span>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum<span class="w"> </span>list<span class="w"> </span>docker-ce<span class="w"> </span>--showduplicates<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-r
+yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>docker-ce-18.03.1.ce
+</code></pre></div></p>
+<p>docker启动出错：<code>failed to start daemon: error initializing graphdriver: driver not supported</code></p>
+<p>解决：
+<div class="highlight"><pre><span></span><code>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/docker/*
+systemctl<span class="w"> </span>restart<span class="w"> </span>docker
+</code></pre></div></p>
+<p>CentOS 安装 NVIDIA 容器工具包命令：
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>-L<span class="w"> </span>https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tee<span class="w"> </span>/etc/yum.repos.d/nvidia-container-toolkit.repo
+yum-config-manager<span class="w"> </span>--enable<span class="w"> </span>nvidia-container-toolkit-experimental
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nvidia-container-toolkit
+nvidia-ctk<span class="w"> </span>runtime<span class="w"> </span>configure<span class="w"> </span>--runtime<span class="o">=</span>docker
+</code></pre></div></p>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>Docker 需要 sudo 才能运行。按照 <a href="https://docs.docker.com/install/linux/linux-postinstall/">本指南</a> 将用户添加到 docker sudo 组。</p>
+</div>
+<hr />
+<h2 id="carla">在容器中运行 Carla <span id="running_carla_in_a_container"></span></h2>
+<p><strong>1. 拉取 Carla 镜像。</strong></p>
+<p>您可以提取最新的 Carla 映像或特定的发行版本。最新镜像是指 <a href="https://github.com/carla-simulator/carla/releases">最新的打包版本</a> 。要拉取映像，请运行以下命令之一：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 拉取最新的镜像</span>
+docker<span class="w"> </span>pull<span class="w"> </span>carlasim/carla:latest
+
+<span class="c1"># 拉取特定的版本</span>
+docker<span class="w"> </span>pull<span class="w"> </span>carlasim/carla:0.9.12
+</code></pre></div>
+<p><strong>2. 运行 Carla 容器。</strong></p>
+<p>不同版本的 Carla 支持不同的图形 API，这可能会影响 Docker 镜像的运行条件：</p>
+<ul>
+<li>0.9.12 仅支持 Vulkan</li>
+<li>0.9.7+ 同时支持 Vulkan 和 OpenGL。</li>
+</ul>
+<p><strong>Carla 0.9.12</strong></p>
+<p>要使用显示运行 Carla：</p>
+<div class="highlight"><pre><span></span><code>sudo docker run --privileged --gpus all --net=host -e DISPLAY=$DISPLAY carlasim/carla:0.9.12 /bin/bash ./CarlaUE4.sh
+</code></pre></div>
+<p>要在离屏模式下运行 Carla：</p>
+<div class="highlight"><pre><span></span><code>sudo docker run --privileged --gpus all --net=host -v /tmp/.X11-unix:/tmp/.X11-unix:rw carlasim/carla:0.9.12 /bin/bash ./CarlaUE4.sh -RenderOffScreen
+</code></pre></div>
+<p><strong>Carla 0.9.7 至 0.9.11</strong></p>
+<p>要使用 Vulkan 运行 Carla：</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--privileged<span class="w"> </span>--gpus<span class="w"> </span>all<span class="w"> </span>--net<span class="o">=</span>host<span class="w"> </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">SDL_VIDEODRIVER</span><span class="o">=</span>x11<span class="w"> </span>-v<span class="w"> </span>/tmp/.X11-unix:/tmp/.X11-unix:rw<span class="w"> </span>carlasim/carla:0.9.11<span class="w"> </span>/bin/bash<span class="w"> </span>./CarlaUE4.sh<span class="w"> </span>-vulkan<span class="w"> </span>&lt;-additonal-carla-flags&gt;
+</code></pre></div>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>只要您的计算机有显示器，此命令将允许您使用 Vulkan 运行 Carla 映像。有关在离屏模式下运行 Vulkan 的信息，请参阅 <a href="../adv_rendering_options/#off-screen-mode">渲染文档</a> 。</p>
+</div>
+<p>要使用 OpenGL 运行 Carla：</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span><span class="w"> </span>--net<span class="o">=</span>host<span class="w"> </span>--gpus<span class="w"> </span>all<span class="w"> </span>--runtime<span class="o">=</span>nvidia<span class="w"> </span>carlasim/carla:&lt;version&gt;<span class="w"> </span>/bin/bash<span class="w"> </span>CarlaUE4.sh<span class="w"> </span>-opengl<span class="w"> </span>&lt;-additonal-carla-flags&gt;
+</code></pre></div>
+<p><strong>3. （可选）配置 Docker 标志。</strong></p>
+<p>上面的命令使用了一些 Docker 标志，可以根据您的需要进行配置：</p>
+<ul>
+<li><strong>Networking:</strong> <a href="https://docs.docker.com/engine/reference/run/#network-settings"><code>--net=host</code></a> 参数将允许容器共享主机的整个网络。如果您希望将主机上的特定端口 <a href="https://docs.docker.com/engine/reference/run/#expose-incoming-ports">映射到容器端口</a> ，请使用标志 <code>-p &lt;host-ports&gt;:&lt;container-ports&gt;</code>。 </li>
+<li><strong>GPUs:</strong> 您可以使用 <code>--gpus all</code> 选择有所 GPU，或者使用 <code>--gpus '"device=&lt;gpu_01&gt;,&lt;gpu_02&gt;"'</code> 使用特定 GPU。 浏览 <a href="https://docs.docker.com/config/containers/resource_constraints/#gpu">此处</a> 获取更多信息。 </li>
+</ul>
+<hr />
+<h2 id="_2">离屏模式 <span id="off_screen_mode"></span></h2>
+<p>如果您在没有显示器的计算机上运行 Carla，则 OpenGL 不需要配置，但是您需要执行一些额外的步骤才能使用 Carla 0.9.12 之前的 Vulkan 执行相同的操作。有关信息，请参阅<a href="../adv_rendering_options/#off-screen-mode">渲染文档</a> 。</p>
+<hr />
+<p>与此主题相关的任何问题或疑问都可以在 Carla 论坛中发布。</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="跳转至 Carla 论坛">
+Carla 论坛</a>
+</p>
+</div>
+
+<hr />
+<h2 id="devcontainer-ubuntu-2204">开发容器(Devcontainer): 基于镜像的Ubuntu 22.04</h2>
+<p><em>这些说明已在 <strong>Ubuntu 24.04</strong> 中测试过。</em></p>
+<p>以下文档旨在解释如何构建使用 <strong>Ubuntu 22.04</strong> 编译 Carla 的 Docker 镜像。 </p>
+<ul>
+<li><a href="../build/build_docker_ubuntu22/">CARLA Docker 开发环境 (Ubuntu 22.04)</a></li>
+</ul>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

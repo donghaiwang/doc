@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Carla ROS Scenario Runner - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Carla ROS Scenario Runner";
+        var mkdocs_page_input_path = "carla_ros_scenario_runner.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Carla ROS Scenario Runner</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/carla_ros_scenario_runner.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carla-ros-scenario-runner">Carla ROS Scenario Runner</h1>
+<p>The <a href="https://github.com/carla-simulator/ros-bridge/tree/master/carla_ros_scenario_runner">CARLA ROS Scenario Runner 包</a> 是一个包装器，用于通过 ROS 使用 CARLA <a href="https://github.com/carla-simulator/scenario_runner">Scenario Runner</a> 执行 <a href="https://www.asam.net/standards/detail/openscenario/">OpenScenarios</a> 。 </p>
+<ul>
+<li><a href="#before_you_begin"><strong>在你开始之前</strong></a></li>
+<li><a href="#using_ros_scenario_runner"><strong>使用 ROS Scenario Runner</strong></a></li>
+<li><a href="#run_ros_scenario_runner"><strong>运行 ROS Scenario Runner</strong></a></li>
+<li><a href="#ros_api"><strong>ROS 应用程序接口</strong></a><ul>
+<li><a href="#services">服务</a></li>
+<li><a href="#publications">发布</a></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="_1">在你开始之前 <span id="before_you_begin"></span></h2>
+<ul>
+<li>按照 Scenario Runner <a href="https://github.com/carla-simulator/scenario_runner/blob/master/Docs/getting_started.md">入门”教程</a> 安装 Scenario Runner。</li>
+<li>安装 Python 模块 <strong>Pexpect</strong>:</li>
+</ul>
+<h2 id="sudo-apt-install-python-pexpect"><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>python-pexpect
+</code></pre></div></h2>
+<h2 id="ros-scenario-runner">使用 ROS Scenario Runner <span id="using_ros_scenario_runner"></span></h2>
+<p>ROS Scenario Runner 最好在 <a href="../rviz_plugin/"><code>rviz_carla_plugin</code></a> 中使用。</p>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>目前不支持更改地图。每个场景都需要使用当前活动的地图。</p>
+</div>
+<p><a href="https://github.com/carla-simulator/ros-bridge/blob/master/carla_ad_demo/config/FollowLeadingVehicle.xosc">此处</a> 提供了一个示例场景。特别重要的是 <a href="https://github.com/carla-simulator/ros-bridge/blob/master/carla_ad_demo/config/FollowLeadingVehicle.xosc#L78">ROS 控制器</a> 的设置：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;Controller</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;EgoVehicleAgent&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Properties&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;module&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;carla_ros_scenario_runner.ros_vehicle_control&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;launch&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;carla_ad_agent.launch&quot;</span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;launch-package&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;carla_ad_agent&quot;</span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;path_topic_name&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;waypoints&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/Properties&gt;</span>
+<span class="nt">&lt;/Controller&gt;</span>
+</code></pre></div>
+<p>上面的代码示例显示了一个正在启动的 <a href="../carla_ad_agent/"><code>carla_ad_agent</code></a> 实例。任何附加内容<code>&lt;Property&gt;</code>都应作为 ROS 参数附加（名称:=值）。</p>
+<hr />
+<h2 id="ros-scenario-runner_1">运行 ROS Scenario Runner <span id="run_ros_scenario_runner"></span></h2>
+<p><strong>1.</strong> 运行 ROS Scenario Runner 包：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ROS 1</span>
+roslaunch<span class="w"> </span>carla_ros_scenario_runner<span class="w"> </span>carla_ros_scenario_runner.launch<span class="w"> </span>scenario_runner_path:<span class="o">=</span>&lt;path_to_scenario_runner&gt;
+
+<span class="c1"># ROS 2</span>
+ros2<span class="w"> </span>launch<span class="w"> </span>carla_ros_scenario_runner<span class="w"> </span>carla_ros_scenario_runner.launch.py<span class="w"> </span>scenario_runner_path:<span class="o">=</span>&lt;path_to_scenario_runner&gt;
+</code></pre></div>
+<p><strong>2.</strong> 运行场景：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ROS 1</span>
+rosservice<span class="w"> </span>call<span class="w"> </span>/scenario_runner/execute_scenario<span class="w"> </span><span class="s2">&quot;{ &#39;scenario&#39;: { &#39;scenario_file&#39;: &#39;&lt;full_path_to_openscenario_file&gt;&#39; } }&quot;</span>
+
+<span class="c1"># ROS 2</span>
+ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/scenario_runner/execute_scenario<span class="w"> </span>carla_ros_scenario_runner_types/srv/ExecuteScenario<span class="w"> </span><span class="s2">&quot;{ &#39;scenario&#39;: { &#39;scenario_file&#39;: &#39;&lt;full_path_to_openscenario_file&gt;&#39; } }&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="ros">ROS 应用程序接口 <span id="ros_api"></span></h2>
+<h3 id="_2">服务 <span id="services"></span></h3>
+<table>
+<thead>
+<tr>
+<th>服务</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/scenario_runner/execute_scenario</code></td>
+<td><a href="https://github.com/carla-simulator/ros-bridge/blob/ros2/carla_ros_scenario_runner_types/srv/ExecuteScenario.srv"><code>carla_ros_scenario_runner_types.ExecuteScenario</code></a></td>
+<td>执行一个场景。如果当前正在运行另一个场景，它将停止。</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<h3 id="_3">发布 <span id="publications"></span></h3>
+<table>
+<thead>
+<tr>
+<th>主题</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/scenario_runner/status</code></td>
+<td><a href="https://github.com/carla-simulator/ros-bridge/blob/ros2/carla_ros_scenario_runner_types/msg/CarlaScenarioRunnerStatus.msg"><code>carla_ros_scenario_runner_types.CarlaScenarioRunnerStatus</code></a></td>
+<td>场景运行器执行的当前状态（由 <a href="../rviz_plugin/">rviz_carla_plugin</a> 使用）</td>
+</tr>
+</tbody>
+</table>
+<p>控制器<code>ros_vehicle_control</code>提供以下主题：</p>
+<table>
+<thead>
+<tr>
+<th>主题</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/carla/&lt;ROLE NAME&gt;/waypoints</code></td>
+<td><a href="https://docs.ros.org/en/api/nav_msgs/html/msg/Path.html"><code>nav_msgs.Path</code></a></td>
+<td>场景中定义的路径。注：可以通过修改参数<code>path_topic_name</code>来更改主题名称</td>
+</tr>
+<tr>
+<td><code>/carla/&lt;ROLE NAME&gt;/target_speed</code></td>
+<td><a href="https://docs.ros.org/en/api/std_msgs/html/msg/Float64.html"><code>std_msgs.Float64</code></a></td>
+<td>场景中定义的目标速度</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

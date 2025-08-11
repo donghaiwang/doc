@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>NUREC 集成工具 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "NUREC \u96c6\u6210\u5de5\u5177";
+        var mkdocs_page_input_path = "ue/tools.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">NUREC 集成工具</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/ue/tools.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="nurec">NUREC 集成工具</h1>
+<p>本文档介绍了<code>tools/</code>目录中可用于 HUTB-NUREC 集成的实用工具。</p>
+<h2 id="_1">提取蓝图尺寸工具</h2>
+<p><code>extract_blueprint_sizes.py</code>工具用于测量 HUTB 中所有车辆和步行者蓝图的尺寸。在 HUTB 中重放 NUREC 场景时，这些尺寸对于正确调整 Actor 尺寸至关重要。</p>
+<h3 id="_2">目的</h3>
+<p>在重放 NUREC 场景时，我们需要将真实世界中的物体尺寸与 HUTB actor 尺寸进行匹配。此工具：</p>
+<ol>
+<li>连接到正在运行的 HUTB 服务器</li>
+<li>生成每个可用的车辆和行人蓝图</li>
+<li>测量其边界框尺寸（宽度、长度、高度）</li>
+<li>将结果保存为 NUREC 集成可以使用的 JSON 文件</li>
+</ol>
+<h3 id="_3">使用</h3>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>tools/extract_blueprint_sizes.py<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</code></pre></div>
+<h4 id="_4">先决条件：</h4>
+<ul>
+<li>正在运行的 HUTB 服务器</li>
+<li>当前地图中有足够的生成点供所有蓝图使用</li>
+</ul>
+<h4 id="_5">命令行选项：</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>长格式</th>
+<th>默认</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td></td>
+<td>127.0.0.1</td>
+<td>HUTB 主机服务器的 IP 地址</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>--port</td>
+<td>2000</td>
+<td>HUTB 服务器的 TCP 端口</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>--start</td>
+<td>0.0</td>
+<td>测量开始时间</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>--duration</td>
+<td>200.0</td>
+<td>测量持续时间</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>--recorder-filename</td>
+<td>test1.log</td>
+<td>记录器文件名</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>--camera</td>
+<td>0</td>
+<td>摄像机跟随参与者（例如，82）</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>--time-factor</td>
+<td>0.2</td>
+<td>时间因子（默认1.0）</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>--ignore-hero</td>
+<td></td>
+<td>忽略英雄车辆</td>
+</tr>
+<tr>
+<td>--move-spectator</td>
+<td></td>
+<td></td>
+<td>移动观察者摄像机</td>
+</tr>
+<tr>
+<td>--spawn-sensors</td>
+<td></td>
+<td></td>
+<td>在重放世界中生成传感器</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">输出</h3>
+<p>该工具生成两个 JSON 文件：</p>
+<ol>
+<li><code>blueprint_sizes_vehicle.json</code>: 包含所有车辆蓝图的尺寸</li>
+<li><code>blueprint_sizes_walker.json</code>: 包含所有行人蓝图的尺寸 </li>
+</ol>
+<p>每个文件包含一对列表：(blueprint_id，[x_extent，y_extent，z_extent]) ，其中：
+- x_extent: 参与者沿其局部 X 轴的半长
+- y_extent: 参与者沿其局部 Y 轴的半宽
+- z_extent: 参与者沿其局部 Z 轴的半高</p>
+<h3 id="_7">例子</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 连接到本地 HUTB 服务器并提取蓝图尺寸</span>
+python<span class="w"> </span>tools/extract_blueprint_sizes.py<span class="w"> </span>--host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--port<span class="w"> </span><span class="m">2000</span>
+</code></pre></div>
+<h3 id="_8">笔记</h3>
+<ul>
+<li>该工具可能需要几分钟才能运行，因为它需要单独生成和测量每个蓝图</li>
+<li>确保使用具有足够出生点的地图（推荐使用 Town10HD）</li>
+<li>该工具自动过滤掉无效测量值（无穷大或 NaN 值）</li>
+<li>生成的 JSON 文件应放置在 NUREC 集成目录中，以便与重放脚本一起使用 </li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

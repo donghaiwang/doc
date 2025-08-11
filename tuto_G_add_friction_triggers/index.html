@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>如何添加摩擦触发器 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u5982\u4f55\u6dfb\u52a0\u6469\u64e6\u89e6\u53d1\u5668";
+        var mkdocs_page_input_path = "tuto_G_add_friction_triggers.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">如何添加摩擦触发器</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/tuto_G_add_friction_triggers.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">如何添加摩擦触发器</h1>
+<p>摩擦触发器(<em>Friction Triggers</em>) 是可以在运行时添加的框触发器，让用户在处于这些类型的触发器内时定义车辆车轮的不同摩擦力。例如，这对于动态地在地图的某些区域中制作光滑的表面可能很有用。</p>
+<p>为了使用 PythonAPI 生成摩擦触发器，用户必须首先获取
+<code>static.trigger.friction</code> 蓝图定义，然后为该蓝图定义设置以下必要属性：</p>
+<ul>
+<li><em>friction</em>: 当车辆位于触发盒内时，触发盒的摩擦力。</li>
+<li><em>extent_x</em>: X 坐标中边界框的范围（以厘米为单位）。</li>
+<li><em>extent_y</em>: Y 坐标中边界框的范围（以厘米为单位）。</li>
+<li><em>extent_z</em>: Z 坐标中边界框的范围（以厘米为单位）。</li>
+</ul>
+<p>完成此操作后，定义一个变换来指定摩擦触发器的位置和旋转并生成它。</p>
+<h5 id="_2">例子</h5>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">carla</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 连接到客户端</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">set_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="c1"># 获取事件和参与者</span>
+    <span class="n">world</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_world</span><span class="p">()</span>
+    <span class="n">actors</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_actors</span><span class="p">()</span>
+
+    <span class="c1"># Find Trigger Friction Blueprint</span>
+    <span class="n">friction_bp</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">get_blueprint_library</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;static.trigger.friction&#39;</span><span class="p">)</span>
+
+    <span class="n">extent</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="mf">700.0</span><span class="p">,</span> <span class="mf">700.0</span><span class="p">,</span> <span class="mf">700.0</span><span class="p">)</span>
+
+    <span class="n">friction_bp</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;friction&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+    <span class="n">friction_bp</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;extent_x&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">extent</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">friction_bp</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;extent_y&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">extent</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+    <span class="n">friction_bp</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;extent_z&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">extent</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+
+    <span class="c1"># Spawn Trigger Friction</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">()</span>
+    <span class="n">transform</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">carla</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">friction_bp</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+    <span class="c1"># Optional for visualizing trigger</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">draw_box</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">carla</span><span class="o">.</span><span class="n">BoundingBox</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">extent</span> <span class="o">*</span> <span class="mf">1e-2</span><span class="p">),</span> <span class="n">rotation</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">rotation</span><span class="p">,</span> <span class="n">life_time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">carla</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

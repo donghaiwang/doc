@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>自定义开发 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u81ea\u5b9a\u4e49\u5f00\u53d1";
+        var mkdocs_page_input_path = "dev/custom_dev.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">自定义开发</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/dev/custom_dev.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">自定义开发</h1>
+<h2 id="ue4_dev">同步 <a href="https://github.com/carla-simulator/carla/commits/ue4-dev/">ue4_dev 分支</a></h2>
+<p>1.在需要合并 <a href="https://github.com/carla-simulator/carla/commit/cf17eb576e866404eabac0c93af3558da0d91be3">提交</a> 的地址栏中页面地址后添加<code>.patch</code>，下载对应提交的补丁。</p>
+<p>2.检查patch是否能正常打入:
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>apply<span class="w"> </span>--check<span class="w"> </span>【path/to/xxx.patch】
+</code></pre></div></p>
+<p>3.如果检查能够正常打入（第2步没有任何输出），则执行：
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>apply<span class="w"> </span>【path/to/xxx.patch】
+</code></pre></div>
+如果有冲突则按行进行合并。</p>
+<h2 id="_2">冲突解决</h2>
+<p><a href="../../../carla/PythonAPI/examples/open3d_lidar.py">open3d_lidar.py</a>
+强制打补丁
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>apply<span class="w"> </span>--reject<span class="w"> </span>xxx.patch
+</code></pre></div>
+加入这个选项能够将能打上的补丁先打上，冲突的文件生成*.rej文件</p>
+<p>注意：如果强行打补丁后，文件内容修改了，但是git没跟踪到修改记录，则需要启用稀疏检出（允许检出仓库中需要的部分内容）：
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>config<span class="w"> </span>core.sparsecheckout<span class="w"> </span><span class="nb">true</span>
+</code></pre></div></p>
+<h2 id="gitlab">保存到Gitlab</h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>xj<span class="w"> </span>http://172.20.46.154:8090/traffic/carla.git
+git<span class="w"> </span>push<span class="w"> </span>xj
+</code></pre></div>
+<p>报错：<code>remote: GitLab: LFS objects are missing. Ensure LFS is properly set up or try a manual "git lfs push --all".</code></p>
+<blockquote>
+<p>原因：GitLab启用了大文件。</p>
+<p>解决：在gitlab项目设置中禁用Git大型文件存储(LFS)。</p>
+<p>设置&gt;通用&gt;可见性、项目特性、权限&gt;展开&gt; Git大型文件存储(LFS)</p>
+</blockquote>
+<p>报错：
+<div class="highlight"><pre><span></span><code>Uploading<span class="w"> </span>LFS<span class="w"> </span>objects:<span class="w">   </span><span class="m">0</span>%<span class="w"> </span><span class="o">(</span><span class="m">0</span>/1<span class="o">)</span>,<span class="w"> </span><span class="m">0</span><span class="w"> </span>B<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>B/s,<span class="w"> </span><span class="k">done</span>.
+batch<span class="w"> </span>response:<span class="w"> </span>Repository<span class="w"> </span>or<span class="w"> </span>object<span class="w"> </span>not<span class="w"> </span>found:<span class="w"> </span>http://172.20.46.154:8090/traffic/carla.git/info/lfs/objects/batch
+Check<span class="w"> </span>that<span class="w"> </span>it<span class="w"> </span>exists<span class="w"> </span>and<span class="w"> </span>that<span class="w"> </span>you<span class="w"> </span>have<span class="w"> </span>proper<span class="w"> </span>access<span class="w"> </span>to<span class="w"> </span>it
+error:<span class="w"> </span>failed<span class="w"> </span>to<span class="w"> </span>push<span class="w"> </span>some<span class="w"> </span>refs<span class="w"> </span>to<span class="w"> </span><span class="s1">&#39;http://172.20.46.154:8090/traffic/carla.git&#39;</span>
+</code></pre></div></p>
+<blockquote>
+<p>原因：可能其他分支包含大文件</p>
+<p>解决：只推送当前分支
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>xj<span class="w"> </span>-u<span class="w"> </span>OpenHUTB
+<span class="c1"># 推送到github</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>OpenHUTB:OpenHUTB
+</code></pre></div></p>
+</blockquote>
+<h2 id="bitbucket">同步bitbucket资产</h2>
+<p>1.打开对应修改的资产</p>
+<p>2.打开页面右边<code>...</code>中的<code>Open in Source</code></p>
+<p>3.在新页面中的<code>...</code>中打开<code>Open raw</code></p>
+<p>4.下载并覆盖本地的文件</p>
+<h2 id="dev">使用dev分支开发</h2>
+<h3 id="dev_1">删除dev分支</h3>
+<div class="highlight"><pre><span></span><code>::<span class="w"> </span>位于dev分支，切换到其他分支
+git<span class="w"> </span>checkout<span class="w"> </span>hutb
+::<span class="w"> </span>删除dev分支
+git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>dev
+::<span class="w"> </span>删除远程分支
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>--delete<span class="w"> </span>dev
+git<span class="w"> </span>push<span class="w"> </span>hutb<span class="w"> </span>--delete<span class="w"> </span>dev
+::<span class="w"> </span>更新最新的修改
+git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>hutb:hutb<span class="w"> </span>--rebase
+git<span class="w"> </span>push<span class="w"> </span>hutb
+::<span class="w"> </span>新建dev分支
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>dev
+git<span class="w"> </span>push<span class="w"> </span>hutb
+</code></pre></div>
+<h2 id="_3">其他</h2>
+<h5 id="commit"><a href="https://blog.csdn.net/zi__li/article/details/106604872">修改commit的记录</a></h5>
+<p>如果要只是要修改上一次commit的信息，如果是用TortoiseGit，在Commit界面选择Amend Last Commit即可修改。</p>
+<h5 id="_4">使用旧仓库存放新的提交记录</h5>
+<blockquote>
+<p>1.删除所有文件</p>
+<p>2.复制新的仓库文件到旧仓库（包括.git文件夹）</p>
+<p>3.修改.git/config文件，指向旧仓库的地址</p>
+</blockquote>
+<h5 id="_5">补充</h5>
+<p><a href="../cicd/">持续集成</a></p>
+<h2 id="_6">参考</h2>
+<p><a href="https://blog.csdn.net/xiewenhao12/article/details/117923288">git 生成补丁文件及打补丁</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

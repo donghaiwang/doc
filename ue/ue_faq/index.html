@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>虚幻引擎 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u865a\u5e7b\u5f15\u64ce";
+        var mkdocs_page_input_path = "ue/ue_faq.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">虚幻引擎</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/ue/ue_faq.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">虚幻引擎</h1>
+<h2 id="_2">文档</h2>
+<h3 id="_3">理解基础概念</h3>
+<h4 id="_4">关卡</h4>
+<p><a href="https://openhutb.github.io/engine_doc/zh-CN/Basics/Levels/HowTo/ChangeDefaultLevel/index.html">更改默认关卡</a></p>
+<h2 id="_5">蓝图</h2>
+<ul>
+<li><a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/blueprints-quick-start-guide?application_version=4.27">蓝图快速入门指南</a></li>
+<li><a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/possessing-pawns?application_version=4.27">持有棋子</a></li>
+</ul>
+<h2 id="_6">编程</h2>
+<p><a href="https://github.com/CarlaUnreal/UnrealEngine/pull/38/files"><code>class ENGINE_API</code></a> 是一个宏，用于控制类的导出行为，确保类在不同模块（DLL或共享库）之间正确使用。</p>
+<h2 id="_7">杂项</h2>
+<ul>
+<li><a href="../syntax/">语法</a></li>
+<li><a href="../pixel_streaming/">像素流推送</a></li>
+<li><a href="../config/">配置说明</a></li>
+<li><a href="../ue_commandlet/">虚幻引擎commandlet</a></li>
+<li><a href="../ue_pipeline/">虚幻引擎管线</a></li>
+<li><a href="../effect/">虚幻引擎相关效果</a></li>
+<li><a href="../shader/">着色器</a></li>
+<li><a href="../unreal_editor/">虚幻编辑器</a></li>
+</ul>
+<h2 id="_8">源代码分析</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/637746453">USkeletalMeshComponent</a></li>
+<li><a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/actor-lifecycle?application_version=4.27">Actor生命周期</a></li>
+</ul>
+<h2 id="_9">其他</h2>
+<ul>
+<li><a href="https://blog.csdn.net/qq_43497224/article/details/129336509">PIE 和 SIE</a></li>
+</ul>
+<p>默认运行测试位置：菜单栏中央，三角形按钮。或者按</p>
+<p>Play Modes
+运行（测试）模式主要有两种，编辑器中运行（Play In Editor）或在编辑器中模拟（Simulate In Editor）。</p>
+<p>PIE
+PIE的意思是：Play，玩。你做的游戏是如何让玩家操控游玩的，在这里就是如何操控游玩的。（比如第一人称游戏，PIE下就是鼠标控制摄像机视角旋转，方向键移动,）</p>
+<p>SIE
+的意思是：模拟，测试。在这个模式下相当于是上帝视角。此时游戏在运行，但是我们仍然可以用之前做游戏（摆放地图关卡Actor、修改运行时参数）的方式修改这个世界。</p>
+<p>PIE和SIE切换
+在PIE模式下，shift + F1可以获得鼠标控制权（一般第一人称第三人称下鼠标用于旋转方向摄像头，不会出现光标）。然后点击工具栏的弹出（Eject）可以切换到SIE</p>
+<p>你也可以点击 控制（Possess） 功能的快捷键（F10）来从在编辑器中模拟（SIE）切换到在编辑器中运行（PIE）。</p>
+<h2 id="_10">加速构建过程</h2>
+<p>每次执行hutb的make的操作时，都会出现
+<div class="highlight"><pre><span></span><code>Using &#39;git status&#39; to determine working set for adaptive non-unity build (D:\work\workspace\UnrealEngine).
+Waiting for &#39;git status&#39; command to complete
+Target is up to date
+Total execution time: 2.38 seconds
+</code></pre></div>
+可以 <a href="https://github.com/adamrehn/ue4-docker/commit/9cf1375c33098a2787b5f514fd0ff36167a12b96">移除虚幻引擎的<code>.git</code>目录</a> 来禁用 UBT 的 <code>git status</code> 调用，达到加速构建流程的作用。</p>
+<p>此功能用于从 Unity 构建中排除大多数迭代文件。这应该会降低编译速度（如果你经常构建引擎，这个功能确实很有用，但大多数情况下并非如此）。</p>
+<p>要禁用此行为，您可以更改 <code>Engine\Saved\UnrealBuildTool\BuildConfiguration.xml</code> 里的<code>&lt;Configuration&gt; &lt;/Configuration&gt;</code>中添加：
+<div class="highlight"><pre><span></span><code>  &lt;SourceFileWorkingSet&gt;
+    &lt;Provider&gt;None&lt;/Provider&gt;
+  &lt;/SourceFileWorkingSet&gt;
+</code></pre></div></p>
+<h2 id="_11">插件</h2>
+<h3 id="usd">USD</h3>
+<p>Universal Scene Description (USD) 是通用场景描述，一个开放且可扩展的生态系统，用于在 3D 世界中描述、组合、模拟和协作，最初由皮克斯动画工作室发明；是 Omniverse 使用的文件格式，人称元宇宙的 HTML。</p>
+<p>什么是仿真就绪（SimReady）素材</p>
+<p>仿真就绪（SimReady）素材是虚拟世界的基础模块，SimReady 素材不仅仅是 3D 物件，它们包含基于 Universal Scene Description (USD) 构建的准确物理属性、行为和连接的数据流。</p>
+<h2 id="_12">编译</h2>
+<h6 id="ueoverride">编译UE时报错：使用“override”声明的成员函数不能重写基类成员</h6>
+<p>出错位置：<code>D:\work\workspace\UnrealEngine\Engine\Source\Runtime\CoreUObject\Public\UObject\CoreNet.h</code> 345 行
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">FArchive</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">FSoftObjectPath</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Value</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+</code></pre></div></p>
+<h6 id="airsim">编译AirSim后，启动编译器崩溃</h6>
+<p>报错信息：
+<div class="highlight"><pre><span></span><code>Assertion failed: ResourceTableFrameCounter == INDEX_NONE [File:D:/work/workspace/UnrealEngine/Engine/Source/Runtime/Windows/D3D11RHI/Private/D3D11Texture.cpp] [Line: 2260]
+
+UE4Editor_Core!AssertFailedImplV() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Core\Private\Misc\AssertionMacros.cpp:104]
+UE4Editor_Core!FDebug::CheckVerifyFailedImpl() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Core\Private\Misc\AssertionMacros.cpp:461]
+UE4Editor_D3D11RHI!FD3D11DynamicRHI::RHIUpdateTextureReference() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Windows\D3D11RHI\Private\D3D11Texture.cpp:2260]
+UE4Editor_RHI!FRHICommandListImmediate::UpdateTextureReference() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\RHI\Private\RHICommandList.cpp:2730]
+UE4Editor_Engine!FStreamableTextureResource::FinalizeStreaming() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Engine\Private\Rendering\StreamableTextureResource.cpp:220]
+UE4Editor_Engine!FTexture2DUpdate::DoFinishUpdate() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Engine\Private\Streaming\Texture2DUpdate.cpp:158]
+UE4Editor_Engine!FTexture2DStreamIn_DDC_AsyncCreate::Finalize() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Engine\Private\Streaming\Texture2DStreamIn_DDC_AsyncCreate.cpp:84]
+UE4Editor_Engine!TRenderAssetUpdate&lt;FTexture2DUpdateContext&gt;::TickInternal() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Engine\Private\Streaming\RenderAssetUpdate.inl:76]
+UE4Editor_Engine!&lt;lambda_c13beac94fedf293002b1e0b20710a81&gt;::operator()() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Engine\Private\Streaming\RenderAssetUpdate.cpp:270]
+UE4Editor_Engine!TEnqueueUniqueRenderCommandType&lt;`FRenderAssetUpdate::ScheduleRenderTask&#39;::`2&#39;::RenderAssetUpdateCommandName,&lt;lambda_c13beac94fedf293002b1e0b20710a81&gt; &gt;::DoTask() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\RenderCore\Public\RenderingThread.h:183]
+UE4Editor_Engine!TGraphTask&lt;TEnqueueUniqueRenderCommandType&lt;`FRenderAssetUpdate::ScheduleRenderTask&#39;::`2&#39;::RenderAssetUpdateCommandName,&lt;lambda_c13beac94fedf293002b1e0b20710a81&gt; &gt; &gt;::ExecuteTask() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Core\Public\Async\TaskGraphInterfaces.h:886]
+UE4Editor_Core!FNamedTaskThread::ProcessTasksNamedThread() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Core\Private\Async\TaskGraph.cpp:709]
+UE4Editor_Core!FNamedTaskThread::ProcessTasksUntilQuit() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Core\Private\Async\TaskGraph.cpp:601]
+UE4Editor_RenderCore!RenderingThreadMain() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\RenderCore\Private\RenderingThread.cpp:373]
+UE4Editor_RenderCore!FRenderingThread::Run() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\RenderCore\Private\RenderingThread.cpp:509]
+UE4Editor_Core!FRunnableThreadWin::Run() [D:\work\workspace\UnrealEngine\Engine\Source\Runtime\Core\Private\Windows\WindowsRunnableThread.cpp:86]
+</code></pre></div></p>
+<blockquote>
+<p><a href="https://github.com/carla-simulator/carla/issues/6201#issuecomment-1436199677">原因</a> ：把Ue4NoEditor的附加地图包和从源码编译的ue4editor搞混了，所以把附加地图的引擎文件夹文件放到了unreal4.26.2的文件夹里。</p>
+<p>未使用的 <a href="https://github.com/carla-simulator/carla/issues/6075#issuecomment-1623373687">暂时解决办法</a> ：直接注释掉 D3D11Texture.cpp 中引发错误的那行代码 (l. 2260) 。 或者 <a href="https://forums.unrealengine.com/t/ue-4-26-built-from-source-crashes-when-opening-project/739873/10">改配置文件</a></p>
+</blockquote>
+<p>Carla 编辑器运行崩溃：
+<div class="highlight"><pre><span></span><code>LoginId:bc22576a452b36c1831fe8942b55e57a
+EpicAccountId:77cf3795af004e58a037e9c9d4a5aa0d
+
+Unhandled Exception: EXCEPTION_STACK_OVERFLOW
+
+user32
+user32
+sdk_legacy_steering_wheel_x64
+user32
+user32
+sdk_legacy_steering_wheel_x64
+</code></pre></div></p>
+<h6 id="vs2022ue426">使用vs2022编译UE4.26时候报错</h6>
+<p><div class="highlight"><pre><span></span><code>LIN110 无法打开文件“D:\work\workspace\UnrealEngine\Engine\Binaries\Win64\UE4Editor-Engine.dll”
+LIN110 无法打开文件“D:\work\workspace\UnrealEngine\Engine\Binaries\Win64\UE4Editor-UnrealEd.dll”
+LIN110 无法打开文件“D:\work\workspace\UnrealEngine\Engine\Binaries\Win64\UE4Editor-Chaos.dll”
+LIN110 无法打开文件“D:\work\workspace\UnrealEngine\Engine\Binaries\Win64\UE4Editor-DetailCustomization.dll”
+</code></pre></div>
+在对应目录中存在。</p>
+<p><a href="https://forums.unrealengine.com/t/link-fatal-error-lnk1104-cannot-open-file/287530/11">解决</a> ：使用<code>资源监视器</code>找到<code>UEEditor.exe</code>对应的进程，结束进程，然后就可以启动虚幻编辑器了（原因不明）。</p>
+<h6 id="detected-compiler-newer-than-visual-studio-2019-please-update-min-version-checking-in-windowsplatformcompilersetuph">编译警告：Detected compiler newer than Visual Studio 2019, please update min version checking in WindowsPlatformCompilerSetup.h</h6>
+<h5 id="cpu">如何修改编译使用的CPU核心数量</h5>
+<p>修改Engine\Saved\UnrealBuildTool\BuildConfiguration.xml文件中的配置：
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span>
+<span class="nt">&lt;Configuration</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;https://www.unrealengine.com/BuildConfiguration&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ProjectFileGenerator&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Format&gt;</span>VisualStudio2019<span class="nt">&lt;/Format&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/ProjectFileGenerator&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ParallelExecutor&gt;</span>
+<span class="w">        </span><span class="nt">&lt;ProcessorCountMultiplier&gt;</span>0.75<span class="nt">&lt;/ProcessorCountMultiplier&gt;</span>
+<span class="w">        </span><span class="nt">&lt;MaxProcessorCount&gt;</span>24<span class="nt">&lt;/MaxProcessorCount&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/ParallelExecutor&gt;</span>
+<span class="nt">&lt;/Configuration&gt;</span>
+</code></pre></div></p>
+<h2 id="_13">源代码管理</h2>
+<h6 id="openhutb"><a href="https://www.cnblogs.com/gjmhome/p/14061090.html">从原来的仓库迁移到OpenHUTB的引擎仓库</a></h6>
+<p>1.修改文件<code>.git/config</code>远端的仓库地址
+<div class="highlight"><pre><span></span><code><span class="o">[</span>remote<span class="w"> </span><span class="s2">&quot;origin&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>https://github.com/OpenHUTB/engine.git
+<span class="w">    </span><span class="nv">fetch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>+refs/heads/*:refs/remotes/origin/*
+</code></pre></div></p>
+<p>2.合并两个不相关的仓库：
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>pull<span class="w"> </span>-f<span class="w"> </span>origin<span class="w"> </span>hutb<span class="w"> </span>--allow-unrelated-histories
+</code></pre></div></p>
+<p>3.丢弃本地提交，强制回到线上最新版本：
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>reset<span class="w"> </span>--hard<span class="w"> </span>origin/hutb
+</code></pre></div></p>
+<h2 id="_14">参考链接</h2>
+<ul>
+<li>
+<p><a href="https://www.bilibili.com/video/BV164411Y732/?share_source=copy_web&amp;vd_source=d956d8d73965ffb619958f94872d7c57">UE4初学者系列教程合集-全中文新手入门教程</a></p>
+</li>
+<li>
+<p><a href="https://docs.unrealengine.com/4.26/zh-CN/">ue4官方文档</a></p>
+</li>
+<li>
+<p><a href="https://forums.unrealengine.com/categories?tag=unreal-engine">官方讨论社区</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/egc-community">知乎的虚幻引擎社区</a></p>
+</li>
+<li>
+<p><a href="https://portal.productboard.com/epicgames/1-unreal-engine-public-roadmap/tabs/24-unreal-engine-4-27">虚幻引擎开放路线图</a></p>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Traffic 模块 - 人车模拟</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Traffic \u6a21\u5757";
+        var mkdocs_page_input_path = "modules/Traffic.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Traffic 模块</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/modules/Traffic.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="traffic">Traffic 模块</h1>
+<h1 id="_1">目录</h1>
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#系统架构流程图">系统架构流程图</a></li>
+<li><a href="#核心功能">核心功能</a></li>
+<li><a href="#1-车辆生成系统">1. 车辆生成系统</a><ul>
+<li><a href="#功能描述">功能描述</a></li>
+<li><a href="#参数配置表">参数配置表</a></li>
+<li><a href="#模块逻辑">模块逻辑</a></li>
+<li><a href="#工程应用场景">工程应用场景</a></li>
+<li><a href="#车辆类型配置示例">车辆类型配置示例</a></li>
+</ul>
+</li>
+<li><a href="#2-行人ai系统">2. 行人AI系统</a><ul>
+<li><a href="#功能特性">功能特性</a></li>
+<li><a href="#模块逻辑">模块逻辑</a></li>
+<li><a href="#工程应用场景">工程应用场景</a></li>
+<li><a href="#人群密度配置表">人群密度配置表</a></li>
+</ul>
+</li>
+<li><a href="#3-交通信号控制">3. 交通信号控制</a><ul>
+<li><a href="#功能组件">功能组件</a></li>
+<li><a href="#信号相位时序表">信号相位时序表</a></li>
+</ul>
+</li>
+<li><a href="#4-路径规划系统">4. 路径规划系统</a></li>
+<li><a href="#5-性能优化">5. 性能优化</a></li>
+<li><a href="#接口定义">接口定义</a></li>
+<li><a href="#python-api">Python API</a></li>
+<li><a href="#控制协议">控制协议</a></li>
+<li><a href="#常见问题">常见问题</a></li>
+<li><a href="#配置与依赖">配置与依赖</a></li>
+<li><a href="#必要组件">必要组件</a></li>
+<li><a href="#安装步骤">安装步骤</a></li>
+<li><a href="#使用示例">使用示例</a></li>
+<li><a href="#基础车辆生成">基础车辆生成</a><ul>
+<li><a href="#车辆生成流程图">车辆生成流程图</a></li>
+</ul>
+</li>
+<li><a href="#交通信号配置">交通信号配置</a><ul>
+<li><a href="#交通信号控制流程图">交通信号控制流程图</a></li>
+</ul>
+</li>
+<li><a href="#高级配置">高级配置</a></li>
+<li><a href="#自定义行为模型">自定义行为模型</a></li>
+<li><a href="#路径网络调试">路径网络调试</a><ul>
+<li><a href="#路径网络验证流程">路径网络验证流程</a></li>
+</ul>
+</li>
+<li><a href="#性能优化">性能优化</a><ul>
+<li><a href="#硬件配置推荐">硬件配置推荐</a></li>
+<li><a href="#渲染参数">渲染参数</a></li>
+</ul>
+</li>
+<li><a href="#调试诊断">调试诊断</a></li>
+<li><a href="#错误代码表">错误代码表</a></li>
+<li><a href="#性能监控">性能监控</a></li>
+<li><a href="#注意事项">注意事项</a></li>
+</ul>
+<h2 id="_2">概述</h2>
+<p>CarlaUnreal 的 Traffic 模块用于在虚幻引擎中模拟动态城市交通系统，支持：
+- 自动驾驶仿真中的复杂交通流生成
+- 车辆、行人、交通信号等元素的自动化行为控制
+- 基于规则的交通行为模型配置</p>
+<hr />
+<h2 id="_3">系统架构</h2>
+<h3 id="_4">模块交互逻辑</h3>
+<p><pre class="mermaid"><code>graph TD
+  subgraph 输入层
+    A[高精地图] --&gt; B[路径网络]
+    C[行为配置文件] --&gt; D[规则引擎]
+  end
+
+  subgraph 核心层
+    B --&gt; E[流量生成器]
+    D --&gt; F[信号控制器]
+    E --&gt; G[物理模拟]
+    F --&gt; G
+    G --&gt; H[环境状态]
+  end
+
+  subgraph 输出层
+    H --&gt; I[传感器数据]
+    H --&gt; J[交互事件]
+  end
+
+  J --&gt; D[规则引擎]</code></pre>
+<strong>工程实践要点</strong>：<br />
+1. <strong>数据驱动配置</strong>：通过JSON文件定义不同城市场景的交通特征参数<br />
+2. <strong>分层调试</strong>：可独立运行信号控制或车辆生成模块进行单元测试<br />
+3. <strong>实时热更新</strong>：支持运行时动态调整<code>SpawnDensity</code>等关键参数  </p>
+<hr />
+<h2 id="_5">核心功能</h2>
+<h3 id="trafficlightbase">交通灯(TrafficLightBase)</h3>
+<p>需要了解 TrafficLightBase 如何与 OpenDRIVE 集成，如何生成触发区域，以及如何与车辆控制器交互。此外，状态管理机制和冻结功能也是关键点。相关的子类如 停车标志( <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/StopSignComponent.cpp">StopSignComponent</a> ) 和 让行标志( <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/YieldSignComponent.cpp">YieldSignComponent</a> ) ，虽然它们处理不同的信号类型，但共享类似的机制。</p>
+<p>交通灯基类( <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.cpp">TrafficLightBase</a> ) <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.h#L20">继承自</a> 交通标志基类( <a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficSignBase.cpp">ATrafficSignBase</a> 继承自AActor) ，ATrafficLightBase 的构造函数里创建了 交通灯组件(UTrafficLightComponent) ，并将其附加到根组件上。这表明TrafficLightBase 通过交通灯组件来管理交通灯的状态。</p>
+<p>TrafficLightBase 实现了通知轮式车辆( <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.cpp#L73">NotifyWheeledVehicle</a> )和 取消轮式车辆通知( <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.cpp#L87">UnNotifyWheeledVehicle</a> ) 方法，用来通知交通灯所对应车道上车辆当前的交通灯状态。当车辆进入触发区域时，会调用 NotifyWheeledVehicle ，<a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.cpp#L80">将交通灯状态传递给车辆的控制器</a> ，从而让车辆做出反应，比如停车或减速。</p>
+<p>TrafficLightBase中的 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.cpp#L64">SetTrafficLightState</a> 方法不仅改变自身的状态，还会通过 TrafficLightComponent 的 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightComponent.cpp#L112">SetLightState</a> 方法更新所有关联的车辆控制器。这确保了交通信号灯通知到所有所影响的车辆。</p>
+<p><a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightBase.cpp#L276">LightChangedCompatibility</a> 方法是为了向后兼容旧的系统，确保状态变化能被正确处理。</p>
+<p><a href="https://github.com/OpenHUTB/carla/blob/OpenHUTB/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightComponent.cpp">TrafficLightComponent</a> 负责处理具体的信号状态，比如红绿黄灯的切换。UTrafficLightComponent 的 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightComponent.cpp#L27">InitializeSign</a> 方法会根据 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightComponent.cpp#L31">地图中的信号信息</a> 生成 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficLightComponent.cpp#L97C9-L97C32">触发框</a> ，当车辆进入这些区域时，会触发相应的事件，比如改变交通灯状态。</p>
+<h4 id="_6">一、核心功能概述</h4>
+<p>TrafficLightBase是Carla仿真系统中交通信号灯的核心实现类，负责管理交通信号灯的以下核心功能：</p>
+<ul>
+<li><strong>状态管理</strong>：维护红/黄/绿三种信号状态及倒计时逻辑</li>
+<li><strong>车辆交互</strong>：检测进入触发区域的车辆并下发状态指令</li>
+<li><strong>OpenDRIVE集成</strong>：与道路网络信号定义进行动态匹配</li>
+<li><strong>冻结机制</strong>：支持仿真暂停时的状态保持</li>
+</ul>
+<h4 id="_7">二、关键组件架构</h4>
+<ol>
+<li>
+<p>组件构成</p>
+</li>
+<li>
+<p>UTrafficLightComponent（核心控制组件）</p>
+<ul>
+<li>管理信号状态（ETrafficLightState枚举）</li>
+<li>维护关联的车辆控制器列表</li>
+<li>处理与OpenDRIVE信号的映射关系</li>
+</ul>
+</li>
+<li>ATrafficLightGroup（信号组管理）<ul>
+<li>控制同一交叉口的多个信号灯协同工作</li>
+<li>实现信号周期切换逻辑</li>
+</ul>
+</li>
+<li>UTrafficLightController（信号周期控制器）<ul>
+<li>定义信号阶段（FTrafficLightStage）</li>
+<li>管理绿灯/黄灯/红灯的持续时间</li>
+</ul>
+</li>
+</ol>
+<h3 id="trafficsignbase">交通标志(TrafficSignBase)</h3>
+<p><a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficSignBase.h#L50">SetTrafficSignState</a> 方法，将交通灯的状态转换为对应的 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficSignBase.h#L50">枚举值</a> ，这样 <a href="https://github.com/OpenHUTB/carla/blob/a57b1162ab87bd81b42fc2ce7551e4d1f16cce88/Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Traffic/TrafficSignBase.h#L49">蓝图系统</a> 可以通过接口获取当前状态。</p>
+<h3 id="1">1. 车辆生成系统</h3>
+<h4 id="_8">功能描述</h4>
+<ul>
+<li><strong>Spawner Actors</strong>：通过路径点网络自动生成车辆</li>
+<li>
+<p><strong>流量控制</strong>：</p>
+<ul>
+<li>密度调节（车辆/分钟）</li>
+<li>车型比例配置</li>
+<li>区域限定生成</li>
+</ul>
+</li>
+<li>
+<p><strong>行为模式</strong>：</p>
+<ul>
+<li>遵守交通规则</li>
+<li>自适应巡航</li>
+<li>变道逻辑</li>
+</ul>
+</li>
+</ul>
+<h4 id="_9">参数配置表</h4>
+<table>
+<thead>
+<tr>
+<th>参数项</th>
+<th>类型</th>
+<th>默认值</th>
+<th>范围</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SpawnDensity</td>
+<td>float</td>
+<td>30.0</td>
+<td>0-200</td>
+<td>每分钟生成车辆数</td>
+</tr>
+<tr>
+<td>MaxVehicles</td>
+<td>int</td>
+<td>100</td>
+<td>0-500</td>
+<td>场景内最大同时存在车辆数</td>
+</tr>
+<tr>
+<td>SpawnRadius</td>
+<td>meters</td>
+<td>1500</td>
+<td>100-5000</td>
+<td>以玩家为中心的生成半径</td>
+</tr>
+<tr>
+<td>LaneChangeFrequency</td>
+<td>float</td>
+<td>0.3</td>
+<td>0.0-1.0</td>
+<td>变道概率（0=从不，1=频繁）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_10">模块逻辑</h4>
+<p><pre class="mermaid"><code>graph LR
+  A[路径网络加载] --&gt; B[生成策略计算]
+  B --&gt; C{密度控制}
+  C --&gt;|达标| D[车型选择]
+  C --&gt;|超限| E[进入休眠]
+  D --&gt; F[行为树注入]
+  F --&gt; G[物理实体生成]
+  G --&gt; H[生命周期监控]</code></pre>
+<strong>工程应用场景</strong>：<br />
+- <strong>自动驾驶压力测试</strong>：通过调节<code>SpawnDensity=200</code>模拟高峰流量，验证感知系统对密集车流的处理能力<br />
+- <strong>特殊车辆调度</strong>：设置<code>EmergencyVehicleRatio=0.2</code>模拟紧急救援通道，测试优先通行算法<br />
+- <strong>区域限流测试</strong>：配置<code>SpawnRadius=300</code>聚焦特定路段的交通流建模</p>
+<h4 id="_11">车辆类型配置示例</h4>
+<div class="highlight"><pre><span></span><code><span class="nt">VehicleMix</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Blueprint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/Game/Carla/Blueprints/Vehicles/Sedan&quot;</span>
+<span class="w">    </span><span class="nt">Weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.6</span>
+<span class="w">    </span><span class="nt">Attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MaxSpeed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">160</span><span class="w">   </span><span class="c1"># km/h</span>
+<span class="w">      </span><span class="nt">ColorVariants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<hr />
+<h3 id="2-ai">2. 行人AI系统</h3>
+<h4 id="_12">功能特性</h4>
+<ul>
+<li>
+<p>基于导航网格的路径规划</p>
+</li>
+<li>
+<p>群体行为模拟：</p>
+<ul>
+<li>行人分组</li>
+<li>避障逻辑</li>
+<li>路口等待行为</li>
+</ul>
+</li>
+</ul>
+<h4 id="_13">模块逻辑</h4>
+<p><pre class="mermaid"><code>flowchart TB
+  Start[导航请求] --&gt; PathCheck{路径有效性}
+  PathCheck -- 有效 --&gt; BehaviorSelect[行为模式选择]
+  PathCheck -- 无效 --&gt; Replan[重新规划]
+
+  BehaviorSelect --&gt;|常规| Normal[沿路径移动]
+  BehaviorSelect --&gt;|群体| Group[跟随领队]
+
+  Normal --&gt; ObstacleCheck{障碍检测}
+  ObstacleCheck -- 有 --&gt; Avoidance[动态避让]
+  ObstacleCheck -- 无 --&gt; Continue[保持移动]
+
+  Group --&gt; Formation[保持队形]</code></pre>
+<strong>工程应用场景</strong>：<br />
+- <strong>十字路口仿真</strong>：配置<code>路口等待概率=0.8</code>模拟行人遵守信号灯行为<br />
+- <strong>紧急疏散模拟</strong>：设置<code>群体跟随系数=0.95</code>测试密集人流下的路径规划性能<br />
+- <strong>商业区建模</strong>：应用<code>时段波动系数+0.3</code>实现白天高峰人流自动调节</p>
+<hr />
+<h4 id="_14">人群密度配置表</h4>
+<table>
+<thead>
+<tr>
+<th>区域类型</th>
+<th>基础密度</th>
+<th>时段波动系数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>商业区</td>
+<td>0.8</td>
+<td>+0.3 (白天)</td>
+</tr>
+<tr>
+<td>住宅区</td>
+<td>0.5</td>
+<td>-0.2 (夜间)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="3">3. 交通信号控制</h3>
+<h4 id="_15">功能组件</h4>
+<ul>
+<li>可编程信号灯系统：</li>
+<li>相位时间配置</li>
+<li>感应式信号触发</li>
+<li>紧急车辆优先通道</li>
+</ul>
+<h4 id="_16">信号相位时序表</h4>
+<table>
+<thead>
+<tr>
+<th>相位阶段</th>
+<th>持续时间</th>
+<th>触发条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Green</td>
+<td>25s</td>
+<td>车辆队列&gt;3辆</td>
+</tr>
+<tr>
+<td>Yellow</td>
+<td>4s</td>
+<td>倒计时结束</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_17">交通信号控制流程图</h4>
+<p><pre class="mermaid"><code>stateDiagram-v2
+  [*] --&gt; 信号检测
+  信号检测 --&gt; 相位决策
+  相位决策 --&gt; 绿灯: 车流&gt;阈值
+  相位决策 --&gt; 黄灯: 倒计时结束
+  黄灯 --&gt; 红灯: 3秒过渡
+  红灯 --&gt; 相位决策: 周期循环
+  绿灯 --&gt; 紧急优先检测
+  紧急优先检测 --&gt; 强制黄灯: 检测到应急车辆</code></pre>
+<strong>工程应用场景</strong>：<br />
+- <strong>智能信号优化</strong>：部署感应式控制策略，使路口通行效率提升40%<br />
+- <strong>公交优先系统</strong>：通过<code>priority_vehicle_types</code>定义公交车辆，实现绿灯延长<br />
+- <strong>夜间模式</strong>：配置<code>Flashing</code>相位降低能耗，同时保证基本通行安全  </p>
+<hr />
+<h3 id="4">4. 路径规划系统</h3>
+<ul>
+<li>基于Waypoint的路由网络</li>
+<li>动态路径重计算</li>
+<li>交叉路口优先级管理</li>
+</ul>
+<h3 id="5">5. 性能优化</h3>
+<ul>
+<li>动态加载/卸载远端车辆</li>
+<li>LOD控制机制</li>
+<li>多线程路径计算</li>
+</ul>
+<hr />
+<h2 id="_18">接口定义</h2>
+<h3 id="python-api">Python API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">TrafficManager</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">set_global_speed_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">speed</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<h3 id="_19">控制协议</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;spawn_vehicle&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sedan&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="_20">常见问题</h2>
+<p><strong>Q: 车辆无法生成</strong>
+- 检查Waypoint文件路径有效性
+- 验证SpawnRadius是否大于最小阈值（200米）</p>
+<p><strong>Q: 车辆卡在交叉路口</strong>
+- 调整Waypoint连接半径(wp_connection_radius)
+- 检查信号灯相位配置</p>
+<p><strong>Q: 交通流导致性能下降</strong>
+- 降低GlobalDensity参数
+- 启用bEnableDynamicLOD</p>
+<hr />
+<h2 id="_21">配置与依赖</h2>
+<h3 id="_22">必要组件</h3>
+<ol>
+<li>CarlaUnreal插件（0.9.12+）</li>
+<li>路径网络资源包</li>
+<li>交通信号蓝图库</li>
+</ol>
+<h3 id="_23">安装步骤</h3>
+<ol>
+<li>启用插件：
+   <div class="highlight"><pre><span></span><code><span class="na">[ProjectName].uproject &gt; Plugins &gt; CarlaUnreal</span>
+</code></pre></div></li>
+<li>导入基础资源：</li>
+<li><code>/Content/Carla/Static/TrafficSigns</code></li>
+<li><code>/Content/Carla/Maps/HDMaps</code></li>
+<li>创建TrafficManager实例：
+   <div class="highlight"><pre><span></span><code><span class="n">UTrafficManager</span><span class="o">::</span><span class="n">CreateTrafficSystem</span><span class="p">(</span><span class="n">World</span><span class="p">);</span>
+</code></pre></div></li>
+</ol>
+<hr />
+<h2 id="_24">使用示例</h2>
+<h3 id="_25">基础车辆生成</h3>
+<ol>
+<li>放置<code>VehicleSpawner</code> Actor</li>
+<li>配置参数：
+   <div class="highlight"><pre><span></span><code><span class="nt">spawn_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w">      </span><span class="c1"># 车辆/分钟</span>
+<span class="nt">vehicle_mix</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">sedan</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60%</span>
+<span class="w">  </span><span class="nt">truck</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20%</span>
+<span class="w">  </span><span class="nt">motorcycle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20%</span>
+<span class="nt">path_radius</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500m</span><span class="w">  </span><span class="c1"># 生成半径</span>
+</code></pre></div></li>
+<li>连接路径网络节点</li>
+</ol>
+<h3 id="_26">车辆生成流程图</h3>
+<pre class="mermaid"><code>sequenceDiagram
+  participant Spawner as 生成器
+  participant Graph as 路径网络
+  participant AI as 车辆AI
+  participant World as 世界场景
+
+  Spawner-&gt;&gt;Graph: 请求可用路径
+  Graph--&gt;&gt;Spawner: 返回路径节点
+  Spawner-&gt;&gt;World: 生成车辆实例
+  World-&gt;&gt;AI: 挂载控制组件
+  AI-&gt;&gt;Graph: 实时路径查询
+  AI-&gt;&gt;World: 执行移动指令</code></pre>
+<hr />
+<h2 id="_27">高级配置</h2>
+<h3 id="_28">自定义行为模型</h3>
+<ol>
+<li>修改<code>BehaviorTree/CarlaTrafficBT</code></li>
+<li>调整决策参数：
+   <div class="highlight"><pre><span></span><code><span class="n">UTrafficParticipantComponent</span><span class="o">::</span><span class="n">SetBehaviorParams</span><span class="p">(</span>
+<span class="w">    </span><span class="n">MinSafetyDistance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Aggressiveness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.3</span><span class="w"> </span><span class="c1">// [0-1]</span>
+<span class="p">)</span>
+</code></pre></div></li>
+</ol>
+<h3 id="_29">路径网络调试</h3>
+<ol>
+<li>启用调试视图：
+   <div class="highlight"><pre><span></span><code><span class="go">console command: show TrafficPaths</span>
+</code></pre></div></li>
+<li>路径有效性检测：
+   <div class="highlight"><pre><span></span><code><span class="n">road_graph</span><span class="o">.</span><span class="n">validate_connectivity</span><span class="p">()</span>
+</code></pre></div></li>
+</ol>
+<hr />
+<h3 id="_30">路径网络验证流程</h3>
+<h2 id="graph-lr-a-b-b-c-c-d-c-e-e-f-f-b-d-g"><pre class="mermaid"><code>graph LR
+  A[原始路径数据] --&gt; B[拓扑分析]
+  B --&gt; C{闭合验证}
+  C -- 通过 --&gt; D[生成导航网格]
+  C -- 失败 --&gt; E[标记断点]
+  E --&gt; F[人工修复]
+  F --&gt; B
+  D --&gt; G[发布可用网络]</code></pre></h2>
+<h3 id="_31">性能优化</h3>
+<h4 id="_32">硬件配置推荐</h4>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>最低要求</th>
+<th>推荐配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU</td>
+<td>i5-8600K 3.6GHz</td>
+<td>i7-10700K 3.8GHz</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_33">渲染参数</h4>
+<div class="highlight"><pre><span></span><code><span class="na">bEnableLOD</span><span class="o">=</span><span class="s">True</span>
+<span class="na">LODThresholds</span><span class="o">=</span><span class="s">(Distance=5000, ActorCount=50)</span>
+</code></pre></div>
+<hr />
+<h2 id="_34">调试诊断</h2>
+<h3 id="_35">错误代码表</h3>
+<table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>严重等级</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T001</td>
+<td>Critical</td>
+<td>检查路径网络闭合性</td>
+</tr>
+<tr>
+<td>T004</td>
+<td>Warning</td>
+<td>重新连接蓝图信号线</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_36">性能监控</h3>
+<div class="highlight"><pre><span></span><code><span class="n">TrafficMonitor</span><span class="o">.</span><span class="n">GetMetrics</span><span class="p">(</span>
+    <span class="n">Metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Vehicles.Alive&quot;</span><span class="p">,</span> <span class="s2">&quot;FPS.Main&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="_37">注意事项</h2>
+<ol>
+<li>路径网络需形成闭合回路</li>
+<li>高密度交通时建议启用 LOD 优化</li>
+<li>与 CarSim/VeriStand 联用时注意时钟同步</li>
+</ol>
+<p>关键要点说明：
+1. 采用分层结构，从功能概述到具体配置逐级展开
+2. 包含代码片段与配置示例提升实用性
+3. 强调与 HUTB 核心架构的集成方式
+4. 提供典型问题诊断路径
+5. 注意区分基础使用与高级定制内容</p>
+<p>建议根据实际项目需求补充：
+- 版本特定特性说明
+- 性能优化参数参考值
+- 与ROS/自动驾驶栈的接口示例
+- 实际项目部署的最佳实践
+```</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../../js/umlconvert.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

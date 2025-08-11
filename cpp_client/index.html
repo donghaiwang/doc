@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>C++ 客户端示例 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "C++ \u5ba2\u6237\u7aef\u793a\u4f8b";
+        var mkdocs_page_input_path = "cpp_client.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">C++ 客户端示例</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/cpp_client.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="c">C++ 客户端示例</h1>
+<p>此示例使用 Carla 的C++API创建一个应用程序，以从C++连接和控制模拟器。</p>
+<h2 id="_1">编译和运行</h2>
+<p>使用提供的 Makefile（仅限Linux）编译并运行示例。请注意，它希望有一个模拟器在2000端口运行。（<a href="https://github.com/OpenHUTB/doc/tree/master/src/cmake/CMakeLists.txt">Windows客户端cmake文件</a> ）</p>
+<div class="highlight"><pre><span></span><code>make run
+</code></pre></div>
+<h2 id="_2">它的工作原理</h2>
+<p>为了将应用程序链接到 LibCarla，我们需要使用与应用程序相同的编译器和配置来编译 LibCarla。为此，我们生成一个 CMake 工具链文件，指定所需的编译器和标志</p>
+<div class="highlight"><pre><span></span><code><span class="c"># ToolChain.cmake 示例</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_C_COMPILER</span><span class="w"> </span><span class="s">/usr/bin/clang-8</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_COMPILER</span><span class="w"> </span><span class="s">/usr/bin/clang++-8</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_FLAGS</span><span class="w"> </span><span class="s2">&quot;${CMAKE_CXX_FLAGS} -std=c++14 -O3 -DNDEBUG&quot;</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">STRING</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+</code></pre></div>
+<p>编译LibCarla.client时，我们将此文件传递给CMake</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/path/to/carla-root-folder
+
+make<span class="w"> </span>setup
+
+<span class="nb">cd</span><span class="w"> </span>/path/to/build-folder
+
+cmake<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-G<span class="w"> </span><span class="s2">&quot;Ninja&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Client<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-DLIBCARLA_BUILD_RELEASE<span class="o">=</span>ON<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-DLIBCARLA_BUILD_DEBUG<span class="o">=</span>OFF<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-DLIBCARLA_BUILD_TEST<span class="o">=</span>OFF<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-DCMAKE_TOOLCHAIN_FILE<span class="o">=</span>/path/to/ToolChain.cmake<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>/path/to/install-folder<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/path/to/carla-root-folder
+
+ninja
+ninja<span class="w"> </span>install
+</code></pre></div>
+<p>这将在提供的安装路径上生成以下结构</p>
+<div class="highlight"><pre><span></span><code>libcarla-install
+├── include
+│ ├── carla
+│ ├── cephes
+│ ├── pugixml
+|   ├── ...
+│ └── system
+│     ├── boost
+│     ├── recast
+│     └── rpc
+└── lib
+    ├── libcarla_client.a
+    ├── librpc.a
+    ├── libboost_filesystem.a
+    └── ...
+</code></pre></div>
+<p>我们的应用程序至少需要链接到<code>libcarla_client.a</code>，<code>librpc.a</code>、<code>libRecast.a</code>和<code>libDetour*.a</code>。如果我们利用IO我们需要链接的功能和/或图像处理<code>boost_filesystem</code>、<code>png</code>、<code>tiff</code>和/或<code>jpeg</code>。</p>
+<p>有关更多详细信息，请查看提供的 Makefile。</p>
+<h2 id="_3">其他</h2>
+<p><a href="../tuto_D_python_api/">链接库说明</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

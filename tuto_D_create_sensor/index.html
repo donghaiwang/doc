@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>如何添加新传感器 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u5982\u4f55\u6dfb\u52a0\u65b0\u4f20\u611f\u5668";
+        var mkdocs_page_input_path = "tuto_D_create_sensor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">如何添加新传感器</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/tuto_D_create_sensor.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1">如何添加新传感器</h1>
+<p>本教程介绍了向 Carla 添加新传感器的基础知识。它提供了在虚幻引擎 4 中实现传感器并通过 Carla 的 Python API 公开其数据的必要步骤。我们将通过创建新传感器作为示例来遵循所有步骤。</p>
+<ul>
+<li><a href="#prerequisites"><strong>先决条件</strong></a>  </li>
+<li><a href="#introduction"><strong>介绍</strong></a>  </li>
+<li><a href="#creating-a-new-sensor"><strong>创建新传感器</strong></a>  <ul>
+<li><a href="#1-sensor-actor">1- 传感器参与者</a>  </li>
+<li><a href="#2-sensor-data-serializer">2- 传感器数据序列化器</a>  </li>
+<li><a href="#3-sensor-data-object">3- 传感器数据对象</a>  </li>
+<li><a href="#4-register-your-sensor">4- 注册您的传感器</a>  </li>
+<li><a href="#5-usage-example">5- 使用示例</a>  </li>
+</ul>
+</li>
+<li><a href="#appendix"><strong>附录</strong></a>  <ul>
+<li><a href="#reusing-buffers">重用缓冲区</a>  </li>
+<li><a href="#sending-data-asynchronously">异步发送数据</a>  </li>
+<li><a href="#client-side-sensors">客户端传感器</a>  </li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="_2">先决条件 <span id="prerequisites"></span></h2>
+<p>为了实现新的传感器，您需要编译 Carla 源代码，有关如何实现此目的的详细说明，请参阅 <a href="../build_linux/">从源代码构建</a> 。</p>
+<p>本教程还假设读者精通 C++ 编程。</p>
+<hr />
+<h2 id="_3">介绍 <span id="introduction"></span></h2>
+<p>Carla 中的传感器是一种特殊类型的参与者，可以产生数据流。有些传感器每次更新时都会连续产生数据，而另一些传感器仅在某些事件发生后才产生数据。例如，相机在每次更新时都会生成图像，但碰撞传感器仅在发生碰撞时才会触发。</p>
+<p>尽管大多数传感器在服务器端（虚幻引擎 4）中计算测量结果，但值得注意的是，某些传感器仅在客户端中运行。此类传感器的一个例子是 LaneInvasion，每次越过车道标记时它都会发出通知。有关更多详细信息，请参阅 <a href="#appendix-client-side-sensors">附录：客户端传感器</a> 。</p>
+<p>在本教程中，我们将重点关注服务器端传感器。</p>
+<p>为了让虚幻引擎 4 内运行的传感器将数据一路发送到 Python 客户端，我们需要覆盖整个通信管道。</p>
+<p><img alt="Communication pipeline" src="../img/build_modules.jpg" /></p>
+<p>因此，我们需要以下类来涵盖管道的不同步骤</p>
+<ul>
+<li>
+<p><strong>传感器参与者</strong><br>
+    负责测量和/或模拟数据的参与者。使用虚幻引擎 4框架在 Carla 插件中运行。用户可以作为传感器参与者访问。</p>
+</li>
+<li>
+<p><strong>序列化器</strong><br>
+    对象包含用于序列化和反序列化传感器生成的数据的方法。在 LibCarla 中运行，包括服务器和客户端。</p>
+</li>
+<li>
+<p><strong>传感器数据</strong><br>
+    表示传感器生成的数据的对象。这是将在 C++ 和 Python API 中传递给最终用户的对象。</p>
+</li>
+</ul>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>为了确保最佳性能，传感器使用基于模板元编程的“编译时插件系统”进行注册和调度。最有可能的是，在所有部分都存在之前，代码不会编译。</p>
+</div>
+<hr />
+<h2 id="_4">创建新传感器 <span id="creating-a-new-sensor"></span></h2>
+<p><a href="https://gist.github.com/nsubiron/011fd1b9767cd441b1d8467dc11e00f9"><strong>完整源代码在这里。</strong></a></p>
+<p>我们将创建一个传感器来检测车辆周围的其他参与者。为此，我们将创建一个触发盒来检测其中的物体，并且每次车辆进入触发盒时我们都会向客户端报告状态。我们称之为 <em>安全距离传感器</em> 。</p>
+<p><img alt="Trigger box" src="../img/safe_distance_sensor.jpg" /></p>
+<p><em>为了简单起见，我们不会考虑所有的边缘情况，也不会以最有效的方式实现。这只是一个说明性示例。</em></p>
+<h3 id="1-">1- 创建新传感器 <span id="1-sensor-actor"></span></h3>
+<p>这是我们要创建的最复杂的类。这里我们在虚幻引擎框架内运行，虚幻引擎 4 API 的知识将非常有帮助，但不是必不可少的，我们假设读者以前从未使用过虚幻引擎 4。</p>
+<p>在 <code>UE4</code> 内部，我们有一个与客户端类似的层次结构，<code>ASensor</code> 派生自<code>AActor</code>，而参与者 <code>Actor</code> 大致是可以放入世界中的任何对象。<code>AActor</code>有一个名为<code>Tick</code>的虚拟函数，我们可以使用它在每次模拟器更新时更新我们的传感器。在更高的层次结构中 <code>UObject</code>，我们有大多数虚幻引擎 4 类的基类。重要的是要知道派生的对象<code>UObject</code>是通过指针进行处理的，并且当它们不再被引用时会被垃圾收集。指向 <code>UObjects</code> 的类成员需要用宏<code>UPROPERTY</code>进行标记，否则它们将被垃圾收集。</p>
+<p>开始吧。</p>
+<p>该类必须位于 Carla 插件内，我们将为新的 C++ 类创建两个文件：</p>
+<ul>
+<li><code>Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/SafeDistanceSensor.h</code></li>
+<li><code>Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/SafeDistanceSensor.cpp</code></li>
+</ul>
+<p>最起码，传感器需要继承<code>ASensor</code>，并提供获取传感器属性定义的静态方法<code>GetSensorDefinition</code>；但我们还将重写<code>Set</code>、<code>SetOwner</code>、<code>Tick</code>方法。该传感器还需要一个触发盒来检测我们周围的其他参与者。有了这个和一些必需的虚幻引擎 4 样板代码，头文件看起来像</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Sensor/Sensor.h&quot;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Actor/ActorDefinition.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Actor/ActorDescription.h&quot;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Components/BoxComponent.h&quot;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;SafeDistanceSensor.generated.h&quot;</span><span class="c1">  // 反射机制，通过UHT生成*.generated.h</span>
+
+<span class="n">UCLASS</span><span class="p">()</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CARLA_API</span><span class="w"> </span><span class="n">ASafeDistanceSensor</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ASensor</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">GENERATED_BODY</span><span class="p">()</span>
+
+<span class="k">public</span><span class="o">:</span>
+
+<span class="w">  </span><span class="n">ASafeDistanceSensor</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FObjectInitializer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ObjectInitializer</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">FActorDefinition</span><span class="w"> </span><span class="nf">GetSensorDefinition</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Set</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FActorDescription</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ActorDescription</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOwner</span><span class="p">(</span><span class="n">AActor</span><span class="w"> </span><span class="o">*</span><span class="n">Owner</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Tick</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">DeltaSeconds</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+
+<span class="w">  </span><span class="n">UPROPERTY</span><span class="p">()</span>
+<span class="w">  </span><span class="n">UBoxComponent</span><span class="w"> </span><span class="o">*</span><span class="n">Box</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>在 cpp 文件中，首先我们需要一些包含</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Sensor/SafeDistanceSensor.h&quot;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Actor/ActorBlueprintFunctionLibrary.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Game/CarlaEpisode.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Util/BoundingBoxCalculator.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Carla/Vehicle/CarlaWheeledVehicle.h&quot;</span>
+</code></pre></div>
+<p>然后我们就可以继续实现该功能了。构造函数将创建触发框，并告诉虚幻引擎4 我们希望调用我们的勾选函数。如果我们的传感器没有使用节拍功能，我们可以在此处禁用它以避免不必要的节拍：
+<div class="highlight"><pre><span></span><code><span class="n">ASafeDistanceSensor</span><span class="o">::</span><span class="n">ASafeDistanceSensor</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FObjectInitializer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ObjectInitializer</span><span class="p">)</span>
+<span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="n">Super</span><span class="p">(</span><span class="n">ObjectInitializer</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Box</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CreateDefaultSubobject</span><span class="o">&lt;</span><span class="n">UBoxComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;BoxOverlap&quot;</span><span class="p">));</span>
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">SetupAttachment</span><span class="p">(</span><span class="n">RootComponent</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">SetHiddenInGame</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="w"> </span><span class="c1">// Disable for debugging.</span>
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">SetCollisionProfileName</span><span class="p">(</span><span class="n">FName</span><span class="p">(</span><span class="s">&quot;OverlapAll&quot;</span><span class="p">));</span>
+
+<span class="w">  </span><span class="n">PrimaryActorTick</span><span class="p">.</span><span class="n">bCanEverTick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>现在我们需要告诉 Carla 这个传感器有什么属性，这将用于在我们的蓝图库中创建一个新的蓝图，用户可以使用这个蓝图来配置和生成这个传感器。我们将在这里定义触发框的属性，在本例中我们将仅公开 X 和 Y 安全距离</p>
+<div class="highlight"><pre><span></span><code><span class="n">FActorDefinition</span><span class="w"> </span><span class="nf">ASafeDistanceSensor::GetSensorDefinition</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">Definition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UActorBlueprintFunctionLibrary</span><span class="o">::</span><span class="n">MakeGenericSensorDefinition</span><span class="p">(</span>
+<span class="w">      </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;other&quot;</span><span class="p">),</span>
+<span class="w">      </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;safe_distance&quot;</span><span class="p">));</span>
+
+<span class="w">  </span><span class="n">FActorVariation</span><span class="w"> </span><span class="n">Front</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Front</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;safe_distance_front&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Front</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EActorAttributeType</span><span class="o">::</span><span class="n">Float</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Front</span><span class="p">.</span><span class="n">RecommendedValues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;1.0&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="n">Front</span><span class="p">.</span><span class="n">bRestrictToRecommended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">FActorVariation</span><span class="w"> </span><span class="n">Back</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Back</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;safe_distance_back&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Back</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EActorAttributeType</span><span class="o">::</span><span class="n">Float</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Back</span><span class="p">.</span><span class="n">RecommendedValues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;0.5&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="n">Back</span><span class="p">.</span><span class="n">bRestrictToRecommended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">FActorVariation</span><span class="w"> </span><span class="n">Lateral</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Lateral</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;safe_distance_lateral&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Lateral</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EActorAttributeType</span><span class="o">::</span><span class="n">Float</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Lateral</span><span class="p">.</span><span class="n">RecommendedValues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;0.5&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="n">Lateral</span><span class="p">.</span><span class="n">bRestrictToRecommended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Definition</span><span class="p">.</span><span class="n">Variations</span><span class="p">.</span><span class="n">Append</span><span class="p">({</span><span class="w"> </span><span class="n">Front</span><span class="p">,</span><span class="w"> </span><span class="n">Back</span><span class="p">,</span><span class="w"> </span><span class="n">Lateral</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">Definition</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这样，传感器工厂就能够根据用户需求创建<strong>安全距离传感器</strong>。创建传感器后，立即使用用户请求的参数调用该<code>Set</code>函数</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">ASafeDistanceSensor::Set</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FActorDescription</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Description</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Super</span><span class="o">::</span><span class="n">Set</span><span class="p">(</span><span class="n">Description</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">Front</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UActorBlueprintFunctionLibrary</span><span class="o">::</span><span class="n">RetrieveActorAttributeToFloat</span><span class="p">(</span>
+<span class="w">      </span><span class="s">&quot;safe_distance_front&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Description</span><span class="p">.</span><span class="n">Variations</span><span class="p">,</span>
+<span class="w">      </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">Back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UActorBlueprintFunctionLibrary</span><span class="o">::</span><span class="n">RetrieveActorAttributeToFloat</span><span class="p">(</span>
+<span class="w">      </span><span class="s">&quot;safe_distance_back&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Description</span><span class="p">.</span><span class="n">Variations</span><span class="p">,</span>
+<span class="w">      </span><span class="mf">0.5f</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">Lateral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UActorBlueprintFunctionLibrary</span><span class="o">::</span><span class="n">RetrieveActorAttributeToFloat</span><span class="p">(</span>
+<span class="w">      </span><span class="s">&quot;safe_distance_lateral&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Description</span><span class="p">.</span><span class="n">Variations</span><span class="p">,</span>
+<span class="w">      </span><span class="mf">0.5f</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">M_TO_CM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.0f</span><span class="p">;</span><span class="w"> </span><span class="c1">// Unit conversion.</span>
+
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">LocationX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">M_TO_CM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">Front</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Back</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">ExtentX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">M_TO_CM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">Front</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Back</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">ExtentY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">M_TO_CM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Lateral</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">SetRelativeLocation</span><span class="p">(</span><span class="n">FVector</span><span class="p">{</span><span class="n">LocationX</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">});</span>
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">SetBoxExtent</span><span class="p">(</span><span class="n">FVector</span><span class="p">{</span><span class="n">ExtentX</span><span class="p">,</span><span class="w"> </span><span class="n">ExtentY</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>该 <code>set</code> 函数是在虚幻引擎 4 之前被<code>BeginPlay</code>调用，我们这里不会使用这个虚函数，但它对于其他传感器很重要。</p>
+</div>
+<p>现在我们将根据我们所附加的参与者的边界框来扩展盒子体积。为此，最方便的方法是使用 <code>SetOwner</code>虚函数。当我们的传感器连接到另一个参与者时，会调用此函数。</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">ASafeDistanceSensor::SetOwner</span><span class="p">(</span><span class="n">AActor</span><span class="w"> </span><span class="o">*</span><span class="n">Owner</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Super</span><span class="o">::</span><span class="n">SetOwner</span><span class="p">(</span><span class="n">Owner</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">BoundingBox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UBoundingBoxCalculator</span><span class="o">::</span><span class="n">GetActorBoundingBox</span><span class="p">(</span><span class="n">Owner</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">SetBoxExtent</span><span class="p">(</span><span class="n">BoundingBox</span><span class="p">.</span><span class="n">Extent</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">GetUnscaledBoxExtent</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>唯一要做的就是实际测量，因为我们将使用该<code>Tick</code>函数。我们将查找当前与我们的盒子重叠的所有车辆，并将此列表发送给客户端：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">ASafeDistanceSensor::Tick</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">DeltaSeconds</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Super</span><span class="o">::</span><span class="n">Tick</span><span class="p">(</span><span class="n">DeltaSeconds</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">TSet</span><span class="o">&lt;</span><span class="n">AActor</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">DetectedActors</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Box</span><span class="o">-&gt;</span><span class="n">GetOverlappingActors</span><span class="p">(</span><span class="n">DetectedActors</span><span class="p">,</span><span class="w"> </span><span class="n">ACarlaWheeledVehicle</span><span class="o">::</span><span class="n">StaticClass</span><span class="p">());</span>
+<span class="w">  </span><span class="n">DetectedActors</span><span class="p">.</span><span class="n">Remove</span><span class="p">(</span><span class="n">GetOwner</span><span class="p">());</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">DetectedActors</span><span class="p">.</span><span class="n">Num</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">Stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetDataStream</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Stream</span><span class="p">.</span><span class="n">Send</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">GetEpisode</span><span class="p">(),</span><span class="w"> </span><span class="n">DetectedActors</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<p>在可投入生产的传感器中，该<code>Tick</code>函数应该得到高度优化，特别是当传感器发送大量数据时。游戏线程中的每次更新都会调用此函数，因此会显著影响模拟器的性能。</p>
+</div>
+<p>好吧，这里发生了一些我们还没有提到的事情，这个流是什么？</p>
+<p>每个传感器都有一个关联的数据流。该流用于将数据发送到客户端，这是您在 Python API 中使用 <code>sensor.listen(callback)</code> 方法时订阅的流。每次向这里发送一些数据时，都会触发客户端的回调。但在此之前，数据将经过多个层。首先是我们接下来要创建的序列化器。一旦我们完成了下一节的<code>Serialize</code>序列化函数，我们就会完全理解这一部分。</p>
+<h3 id="2-">2- 传感器数据序列化器 <span id="2-sensor-data-serializer"></span></h3>
+<p>这个类其实比较简单，只需要有两个静态方法，<code>Serialize</code>和<code>Deserialize</code>。我们将为它添加两个文件，这次是位于 <code>LibCarla</code> 模块中：</p>
+<ul>
+<li><code>LibCarla/source/carla/sensor/s11n/SafeDistanceSerializer.h</code></li>
+<li><code>LibCarla/source/carla/sensor/s11n/SafeDistanceSerializer.cpp</code></li>
+</ul>
+<p>让我们从<code>SafeDistanceSerializer.h</code>中的<code>Serialize</code>函数开始。该函数将接收我们传递给<code>Stream.Send(...)</code>函数的任何内容作为参数，唯一的条件是第一个参数必须是传感器并且它必须返回一个缓冲区。</p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Buffer</span><span class="w"> </span><span class="nf">Serialize</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Sensor</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</code></pre></div>
+<p><code>carla::Buffer</code> 只是一块动态分配的原始内存，具有一些方便的功能，我们将使用它向客户端发送原始数据。</p>
+<p>在此示例中，我们需要以在客户端有意义的方式将检测到的参与者列表写入缓冲区。这就是我们将剧集对象传递给此函数的原因。</p>
+<p><code>UCarlaEpisode</code>类表示模拟器中运行的当前剧集 <em>episode</em>，即自上次加载地图以来的模拟状态。它包含与 Carla 相关的所有信息，除其他外，它还允许搜索参与者 ID。我们可以将这些 ID 发送给客户端，客户端将能够将这些 ID 识别为参与者</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">SensorT</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">EpisodeT</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ActorListT</span><span class="o">&gt;</span>
+<span class="k">static</span><span class="w"> </span><span class="n">Buffer</span><span class="w"> </span><span class="n">Serialize</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SensorT</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EpisodeT</span><span class="w"> </span><span class="o">&amp;</span><span class="n">episode</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ActorListT</span><span class="w"> </span><span class="o">&amp;</span><span class="n">detected_actors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">size_in_bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">ActorId</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">detected_actors</span><span class="p">.</span><span class="n">Num</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Buffer</span><span class="w"> </span><span class="n">buffer</span><span class="p">{</span><span class="n">size_in_bytes</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">*</span><span class="n">actor</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">detected_actors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ActorId</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">episode</span><span class="p">.</span><span class="n">FindActor</span><span class="p">(</span><span class="n">actor</span><span class="p">).</span><span class="n">GetActorId</span><span class="p">();</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">ActorId</span><span class="p">));</span>
+<span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">ActorId</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">buffer</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>我们对虚幻引擎 4 类进行模板化以避免在 LibCarla 中包含这些文件。</p>
+</div>
+<p>返回的这个缓冲区将会返回给我们，只不过这次是在<strong>客户端</strong>，封装在<code>RawData</code>对象中的反序列化<code>Deserialize</code>函数中</p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">SensorData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Deserialize</span><span class="p">(</span><span class="n">RawData</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">data</span><span class="p">);</span>
+</code></pre></div>
+<p>我们在 cpp 文件中实现这个方法，比较简单</p>
+<div class="highlight"><pre><span></span><code><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">SensorData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SafeDistanceSerializer</span><span class="o">::</span><span class="n">Deserialize</span><span class="p">(</span><span class="n">RawData</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">SensorData</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">data</span><span class="o">::</span><span class="n">SafeDistanceEvent</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">data</span><span class="p">)));</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>除了我们还没有定义什么是安全距离事件 <code>SafeDistanceEvent</code> 之外。</p>
+<h3 id="3-">3- 传感器数据对象 <span id="3-sensor-data-object"></span></h3>
+<p>我们需要为该传感器的用户创建一个数据对象，表示 <em>安全距离事件</em> 的数据。我们将此文件添加到</p>
+<ul>
+<li><code>LibCarla/source/carla/sensor/data/SafeDistanceEvent.h</code></li>
+</ul>
+<p>该对象相当于参与者 ID 列表。为此，我们将从 Array 模板派生</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;carla/rpc/ActorId.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;carla/sensor/data/Array.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">carla</span><span class="w"> </span><span class="p">{</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">sensor</span><span class="w"> </span><span class="p">{</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">data</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">SafeDistanceEvent</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Array</span><span class="o">&lt;</span><span class="n">rpc</span><span class="o">::</span><span class="n">ActorId</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+
+<span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">SafeDistanceEvent</span><span class="p">(</span><span class="n">RawData</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">data</span><span class="p">)</span>
+<span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="n">Array</span><span class="o">&lt;</span><span class="n">rpc</span><span class="o">::</span><span class="n">ActorId</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">data</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace data</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace sensor</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace carla</span>
+</code></pre></div>
+<p>数组模板将把我们在序列化 <strong><font color="#f8805a">Serialize</font></strong> 函数中创建的缓冲区重新解释为参与者 ID 数组，并且它能够直接从我们收到的缓冲区中执行此操作，而无需分配任何新内存。虽然对于这个小例子来说可能有点大材小用，但这种机制也适用于大数据块；想象一下我们正在发送高清图像，我们通过重用原始内存节省了很多。</p>
+<p>现在我们需要将此类公开给 Python。在我们的示例中，我们没有添加任何额外的方法，因此我们只公开与 Array 相关的方法。我们通过使用 <code>Boost.Python</code> 绑定来实现此目的，将以下内容添加到  <code>PythonAPI/carla/source/libcarla/SensorData.cpp</code> 。</p>
+<div class="highlight"><pre><span></span><code><span class="n">class_</span><span class="o">&lt;</span>
+<span class="w">    </span><span class="n">csd</span><span class="o">::</span><span class="n">SafeDistanceEvent</span><span class="p">,</span><span class="w">                    </span><span class="c1">// 实际类型</span>
+<span class="w">    </span><span class="n">bases</span><span class="o">&lt;</span><span class="n">cs</span><span class="o">::</span><span class="n">SensorData</span><span class="o">&gt;</span><span class="p">,</span><span class="w">                     </span><span class="c1">// 父类型</span>
+<span class="w">    </span><span class="n">boost</span><span class="o">::</span><span class="n">noncopyable</span><span class="p">,</span><span class="w">                        </span><span class="c1">// 禁用拷贝</span>
+<span class="w">    </span><span class="n">boost</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">csd</span><span class="o">::</span><span class="n">SafeDistanceEvent</span><span class="o">&gt;</span><span class="w">  </span><span class="c1">// 使用智能指针 shared_ptr.</span>
+<span class="w">  </span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;SafeDistanceEvent&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">no_init</span><span class="p">)</span><span class="w">              </span><span class="c1">// 名字, 禁用构造</span>
+<span class="w">  </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__len__&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csd</span><span class="o">::</span><span class="n">SafeDistanceEvent</span><span class="o">::</span><span class="n">size</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__iter__&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">iterator</span><span class="o">&lt;</span><span class="n">csd</span><span class="o">::</span><span class="n">SafeDistanceEvent</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="w">  </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__getitem__&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">+</span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">csd</span><span class="o">::</span><span class="n">SafeDistanceEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cr</span><span class="o">::</span><span class="n">ActorId</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">self</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">;</span>
+</code></pre></div>
+<p>注意：<code>csd</code>是名称空间<code>carla::sensor::data</code>的别名。</p>
+<p>我们在这里所做的是在 Python 中公开一些 C++ 方法。这样，Python API 将能够识别我们的新事件，并且其行为类似于 Python 中的数组，只是不能修改。</p>
+<h3 id="4-">4- 注册您的传感器 <span id="4-register-your-sensor"></span></h3>
+<p>现在管线已完成，我们已准备好注册新传感器。我们在 <code>LibCarla/source/carla/sensor/SensorRegistry.h</code> 中这样做。按照此头文件中的说明添加不同的包含和前向声明，并将以下对添加到注册表中</p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">ASafeDistanceSensor</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">s11n</span><span class="o">::</span><span class="n">SafeDistanceSerializer</span><span class="o">&gt;</span>
+</code></pre></div>
+<p>有了这个，传感器注册表现在可以发挥其魔力，将正确的数据分派到正确的序列化器。</p>
+<p>现在重新编译 Carla，希望一切顺利并且没有错误。不幸的是，这里的大多数错误都与模板有关，并且错误消息可能有点神秘。</p>
+<div class="highlight"><pre><span></span><code>make rebuild
+</code></pre></div>
+<h3 id="5-">5- 使用示例 <span id="5-usage-example"></span></h3>
+<p>最后，我们已经包含了传感器，并且已经完成了重新编译，现在我们的传感器应该可以在 Python 中使用。</p>
+<p>要生成这个传感器，我们只需在蓝图库中找到它，如果一切顺利，传感器工厂应该已将我们的传感器添加到库中</p>
+<div class="highlight"><pre><span></span><code><span class="n">blueprint</span> <span class="o">=</span> <span class="n">blueprint_library</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;sensor.other.safe_distance&#39;</span><span class="p">)</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">spawn_actor</span><span class="p">(</span><span class="n">blueprint</span><span class="p">,</span> <span class="n">carla</span><span class="o">.</span><span class="n">Transform</span><span class="p">(),</span> <span class="n">attach_to</span><span class="o">=</span><span class="n">vehicle</span><span class="p">)</span>
+</code></pre></div>
+<p>现在我们可以通过注册回调函数来开始监听事件</p>
+<div class="highlight"><pre><span></span><code><span class="n">world_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">actor_id</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+        <span class="n">vehicle</span> <span class="o">=</span> <span class="n">world_ref</span><span class="p">()</span><span class="o">.</span><span class="n">get_actor</span><span class="p">(</span><span class="n">actor_id</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vehicle too close: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">vehicle</span><span class="o">.</span><span class="n">type_id</span><span class="p">)</span>
+
+<span class="n">sensor</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+</code></pre></div>
+<p>此回调将执行另一辆车在我们的安全距离框中的每次更新，例如：
+<div class="highlight"><pre><span></span><code>Vehicle too close: vehicle.audi.a2
+Vehicle too close: vehicle.mercedes-benz.coupe
+</code></pre></div></p>
+<p>就是这样，我们有一个新的传感器正在工作！</p>
+<hr />
+<h2 id="_5">附录 <span id="appendix"></span></h2>
+<h3 id="_6">重用缓冲区 <span id="reusing-buffers"></span></h3>
+<p>为了优化内存使用，我们可以利用每个传感器发送相似大小缓冲区的事实；特别是，在相机的情况下，图像的大小在执行期间是恒定的。在这些情况下，我们可以通过重用帧之间分配的内存来节省大量资源。</p>
+<p>每个流都包含一个 <strong>缓冲池</strong> ，可用于避免不必要的内存分配。请记住，每个传感器都有一个关联的流，因此每个传感器都有自己的缓冲池。</p>
+<p>使用以下命令从池中检索缓冲区</p>
+<div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">Buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stream</span><span class="p">.</span><span class="n">PopBufferFromPool</span><span class="p">();</span>
+</code></pre></div>
+<p>如果池为空，则返回一个空缓冲区，即没有分配内存的缓冲区。在这种情况下，当您调整缓冲区大小时，将分配新的内存。在第一帧期间，这种情况会发生几次。但是，如果从池中检索缓冲区，则一旦缓冲区超出范围，其内存将返回到池中。下次从池中获取另一个缓冲区时，它将包含从前一个缓冲区分配的内存。正如您所看到的，缓冲区对象实际上充当指向连续原始内存的智能指针。只要您请求的内存不超过当前分配的内存，缓冲区就会重用该内存。如果您请求更多，则必须删除当前内存并分配更大的块。</p>
+<p>以下代码片段说明了缓冲区的工作原理</p>
+<div class="highlight"><pre><span></span><code><span class="n">Buffer</span><span class="w"> </span><span class="n">buffer</span><span class="p">;</span>
+<span class="n">buffer</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">1024u</span><span class="p">);</span><span class="w"> </span><span class="c1">// (size 1024 bytes, capacity 1024 bytes) -&gt; allocates</span>
+<span class="n">buffer</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">512u</span><span class="p">);</span><span class="w">  </span><span class="c1">// (size  512 bytes, capacity 1024 bytes)</span>
+<span class="n">buffer</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">2048u</span><span class="p">);</span><span class="w"> </span><span class="c1">// (size 2048 bytes, capacity 2048 bytes) -&gt; allocates</span>
+</code></pre></div>
+<h3 id="_7">异步发送数据 <span id="sending-data-asynchronously"></span></h3>
+<p>某些传感器可能需要异步发送数据，要么是为了性能，要么是因为数据是在不同的线程中生成的，例如，相机传感器从渲染线程发送图像。</p>
+<p>异步使用数据流是完全可以的，只要数据流本身是在游戏线程中创建的。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">MySensor::Tick</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">DeltaSeconds</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Super</span><span class="o">::</span><span class="n">Tick</span><span class="p">(</span><span class="n">DeltaSeconds</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">Stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetDataStream</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">async</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">launch</span><span class="o">::</span><span class="n">async</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">Stream</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Stream</span><span class="p">)]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">Data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ComputeData</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Stream</span><span class="p">.</span><span class="n">Send</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">Data</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="_8">客户端传感器 <span id="client-side-sensors"></span></h3>
+<p>有些传感器不需要模拟器进行测量，这些传感器可以完全在客户端运行，从而使模拟器免于额外的计算。此类传感器的示例是压线 <strong>LaneInvasion</strong> 传感器。</p>
+<p>通常的方法是在服务器端创建一个“虚拟”传感器，以便模拟器知道这样的参与者的存在。然而，这个虚拟传感器不会发出节拍信号，也不会发送任何类型的数据。然而，它在客户端的对应部分注册了一个“on tick”回调，以便在每次新更新时执行一些代码。例如，压线 LaneInvasion 传感器会注册一个回调，每次越过车道标记时都会发出通知。</p>
+<p>考虑到客户端的“on tick”回调是并发执行的，即相同的方法可能由不同的线程同时执行，这一点非常重要。访问的任何数据都必须正确同步，可以使用互斥体、使用原子，或者更好地确保所有访问的成员保持不变。</p>
+<h2 id="_9">其他</h2>
+<p><a href="https://blog.csdn.net/zataji/article/details/140858585">操作步骤博客</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

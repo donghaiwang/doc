@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Build windows ue5 - 人车模拟</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Build windows ue5";
+        var mkdocs_page_input_path = "build_windows_ue5.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> 人车模拟
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">首页</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">人车模拟</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Build windows ue5</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/doc/edit/master/docs/build_windows_ue5.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <div class="admonition 警告">
+<p class="admonition-title">警告</p>
+<p>这是一项正在进行的工作！！这个版本的Carla不被认为是一个稳定的版本。在接下来的几个月里，这个分支可能会发生许多重大变化，这可能会破坏您所做的任何修改。我们建议你把这个分支当作实验性的。</p>
+</div>
+<h1 id="windows-5-carla">在 Windows 中使用虚幻引擎 5 编译 Carla</h1>
+<h2 id="_1">设置环境</h2>
+<p>本指南详细介绍了如何使用虚幻引擎 5 在 Windows 上从源代码构建 Carla。</p>
+<p>在本地机器上克隆 Carla 的<code>ue5-dev</code>分支：</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>ue5-dev<span class="w"> </span>https://github.com/carla-simulator/carla.git<span class="w"> </span>CarlaUE5
+</code></pre></div>
+<p>运行安装脚本：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>CarlaUE5
+CarlaSetup.bat
+</code></pre></div>
+<p>Setup.bat 脚本会安装所有必需的软件包，包括 Visual Studio 2022、Cmake、Python 软件包和虚幻引擎 5。它还会下载 Carla 内容并构建 Carla。因此，此批处理文件可能需要很长时间才能完成。</p>
+<p>启动x64 Native tools
+<div class="highlight"><pre><span></span><code>call<span class="w"> </span><span class="s2">&quot;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat&quot;</span>
+</code></pre></div></p>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>运行<code>set PATH=D:\software\cmake-3.30.3-windows-x86_64\bin;%PATH%</code>设置cmake版本，并使用虚拟环境执行<code>Setup.bat</code>。</p>
+</div>
+<div class="admonition 笔记">
+<p class="admonition-title">笔记</p>
+<ul>
+<li>此版本的 Carla 需要<strong>虚幻引擎 5.3 的 Carla 分支</strong>。您需要将您的 GitHub 帐户链接到 Epic Games，才能获得克隆虚幻引擎存储库的权限。如果您尚未链接您的帐户，请按照 <a href="https://www.unrealengine.com/en-US/ue4-on-github">本指南</a> 操作</li>
+<li>要使用 Carla Unreal Engine 5 以前的版本，请确保定义 CARLA_UNREAL_ENGINE_PATH 环境变量，指向 CARLA Unreal Engine 5 绝对路径。如果未定义此变量，Setup.bat 脚本将下载并构建 Carla Unreal Engine 5，<strong>这需要额外 1 个多小时的构建时间和 225Gb 的磁盘空间</strong>。</li>
+<li>Setup.bat 脚本检查 PATH 变量顶部是否安装了任何 Python 版本，否则安装 Python。<strong>要使用您自己的 Python 版本，请确保在运行脚本之前为 Python 正确设置了 PATH 变量</strong>。 </li>
+<li><strong>应激活 Windows 开发者模式</strong>，否则构建将失败。请参阅 <a href="https://learn.microsoft.com/en-us/gaming/game-bar/guide/developer-mode">此处</a> 。</li>
+<li><strong>Carla 无法在外部磁盘上构建</strong>，Windows 没有提供构建所需的读/写/执行权限。 </li>
+</ul>
+</div>
+<h2 id="carla-ue5">构建并运行 Carla UE5</h2>
+<p>Setup.bat 文件本身启动以下命令，一旦您修改代码并希望重新启动，则需要使用以下命令：</p>
+<div class="admonition 警告">
+<p class="admonition-title">警告</p>
+<p>确保定义 <code>CARLA_UNREAL_ENGINE_PATH</code> 环境变量，指向 Carla Unreal Engine 5.3 绝对路径。Setup.bat 设置此变量，但如果采用其他方法安装要求，则可能无法设置。此外，Carla UE4 使用的环境变量是 <code>UE4_ROOT</code>。</p>
+</div>
+<ul>
+<li><strong>配置</strong>。在 CarlaUE5 文件夹中打开 VS 2022 的 x64 Native Tools 命令提示符并运行以下命令（包括了下载并编译Carla的依赖库）：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>-G<span class="w"> </span>Ninja<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>Build<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DBUILD_CARLA_UNREAL<span class="o">=</span>ON<span class="w"> </span>-DCARLA_UNREAL_ENGINE_PATH<span class="o">=</span>%CARLA_UNREAL_ENGINE_PATH%
+</code></pre></div>
+<ul>
+<li><strong>构建 Carla</strong>。在 CarlaUE5 文件夹中打开 VS 2022 的 x64 Native Tools 命令提示符并运行以下命令（如果出现问题，建议每个依赖或模块分开进行编译）：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>--build<span class="w"> </span>Build
+</code></pre></div>
+<ul>
+<li><strong>构建并安装 Python API</strong>。在 CarlaUE5 文件夹中打开 VS 2022 的 x64 Native Tools 命令提示符并运行以下命令：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>--build<span class="w"> </span>Build<span class="w"> </span>--target<span class="w"> </span>carla-python-api-install
+</code></pre></div>
+<ul>
+<li><strong>启动编辑器</strong>。在 CarlaUE5 文件夹中打开 VS 2022 的 x64 Native Tools 命令提示符并运行以下命令：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>--build<span class="w"> </span>Build<span class="w"> </span>--target<span class="w"> </span>launch
+</code></pre></div>
+<p><img alt="" src="../img/build/ue5_launch.png" /></p>
+<h2 id="carla-ue5_1">使用 Carla UE5 构建软件包</h2>
+<div class="admonition 警告">
+<p class="admonition-title">警告</p>
+<p>Carla UE5 的构建包尚未针对 Windows 进行全面测试。</p>
+</div>
+<p>在 CarlaUE5 文件夹中打开 VS 2022 的 x64 Native Tools 命令提示符并运行以下命令：</p>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>--build<span class="w"> </span>Build<span class="w"> </span>--target<span class="w"> </span>package
+</code></pre></div>
+<p>该包将在目录 <code>Build/Package</code> 中生成。</p>
+<h2 id="_2">运行包</h2>
+<p>软件包构建尚未针对 Windows 进行测试。</p>
+<h2 id="_3">问题</h2>
+<ul>
+<li>编译过程中，中间某一步报错</li>
+</ul>
+<blockquote>
+<p>为了提高排查错误的效率，可以把已经完成的一些步骤从<code>CarlaSetup.bat</code>中注释掉，比如：下载Carla资产、安装vs2022、克隆虚幻5仓库、编译虚幻5等。</p>
+</blockquote>
+<ul>
+<li>克隆虚幻5仓库报错：<code>error: RPC failed; curl 18 transfer closed with outstanding read data remaining</code></li>
+</ul>
+<blockquote>
+<div class="highlight"><pre><span></span><code><span class="c1"># 增加缓存</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>http.postBuffer<span class="w"> </span><span class="m">524288000</span>
+<span class="c1"># 只拉取最近一次提交的内容</span>
+git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>ue5-dev-carla<span class="w"> </span>https://github.com/CarlaUnreal/UnrealEngine.git<span class="w"> </span>UnrealEngine5_carla<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span>
+<span class="c1"># 将浅克隆转化完整克隆</span>
+git<span class="w"> </span>fetch<span class="w"> </span>--unshallow
+</code></pre></div>
+</blockquote>
+<ul>
+<li>
+<p>编译时，sqlite3报错：<code>FAILED: CMakeFiles/sqlite3.dir/_deps/sqlite3-src/shell.c.obj</code></p>
+<blockquote></blockquote>
+</li>
+<li>
+<p>无法安装Microsoft.VisualStudio.Community.Msi</p>
+</li>
+</ul>
+<blockquote>
+<p>删除文件夹<code>C：\Program Files （x86）\Windows Kits</code>后重新安装。（前提是用网络安装版安装文件，不能用离线安装版）</p>
+</blockquote>
+<ul>
+<li>VS2022安装时候出现“计算机正忙于安装一个非Visual Studio的程序”</li>
+</ul>
+<blockquote>
+<p>打开“任务管理器”。单击“详细信息”选项卡。查找“msiexec.exe”进程。如果有一个或多个，请全部选中，再选择“终止任务”。</p>
+</blockquote>
+<ul>
+<li>安装python包时出现：<code>ValueError: check_hostname requires server_hostname</code></li>
+</ul>
+<blockquote>
+<p>解决：关闭代理。</p>
+</blockquote>
+<ul>
+<li>fatal: fetch-pack: invalid index-pack output</li>
+</ul>
+<blockquote>
+<p>只克隆一层
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://gitlab.scm321.com/ufx/xxxx.git
+</code></pre></div></p>
+</blockquote>
+<ul>
+<li>编译Carla依赖时出错：<code>HTTP/2 stream 1 was not closed cleanly: PROTOCOL_ERROR (err 1)</code></li>
+</ul>
+<blockquote>
+<p>解决：问题是由于HTTP/2引起的，在Git配置中禁用HTTP/2，改用HTTP/1.1
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>http.version<span class="w"> </span>HTTP/1.1
+</code></pre></div></p>
+</blockquote>
+<ul>
+<li>安装vs2022时出现win10 SDK安装错误：</li>
+</ul>
+<blockquote>
+<p>解决：通过 <a href="https://developer.microsoft.com/zh-cn/windows/downloads/sdk-archive/">链接</a> 下载版本<code>10.0.20348.0</code>的Win10 SDK进行安装。如果安装并启动vs2022后，仍出现：<code>找不到 windows sdk 版本 10.0.20348.0</code>的问题，则根据 <a href="https://blog.csdn.net/qq_74286834/article/details/142055699">链接</a> 进行修复即可。</p>
+<p>即将文件<code>C:\Windows Kits\10\DesignTime\CommonConfiguration\Neutral\UAP\10.0.20348.0\UAP.props</code>文件的第5行中<code>WindowsSdkDir</code>中增加<code>&lt;WindowsSdkDir Condition="'$(WindowsSdkDir)' == ''"&gt;</code>。</p>
+</blockquote>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2025</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/doc" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+      <script src="../js/umlconvert.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
